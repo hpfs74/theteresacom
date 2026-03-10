@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📝 Grammatica — Gli Articoli</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e74c3c; }
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .mindmap { padding: 20px; }
+  .region-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .region-card.cat1 { border-color: #3498db; }
+  .region-card.cat2 { border-color: #e74c3c; }
+  .region-card.cat3 { border-color: #2ecc71; }
+  .region-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .region-title .emoji { font-size: 32px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fff3cd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #3498db; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #3498db; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #3498db; background: #f0f7ff; }
+  .quiz-opt.correct { border-color: #2ecc71; background: #d5f5e3; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #fadbd8; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>📝</span> Gli Articoli</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap')">🧠 Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button class="tab" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<div class="section active" id="mindmap">
+  <div class="mindmap">
+
+    <div class="region-card cat1">
+      <div class="region-title"><span class="emoji">📌</span> Articoli Determinativi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cosa fanno?</div><div class="value">Indicano qualcosa di PRECISO e CONOSCIUTO</div><div class="detail">"Dammi IL libro" = quel libro lì, lo sai quale!</div></div>
+        <div class="info-box"><div class="label">Maschile Singolare</div><div class="value">IL, LO, L'</div><div class="detail">IL gatto, LO zaino, L'amico</div></div>
+        <div class="info-box"><div class="label">Femminile Singolare</div><div class="value">LA, L'</div><div class="detail">LA gatta, L'amica</div></div>
+        <div class="info-box"><div class="label">Maschile Plurale</div><div class="value">I, GLI</div><div class="detail">I gatti, GLI zaini, GLI amici</div></div>
+        <div class="info-box"><div class="label">Femminile Plurale</div><div class="value">LE</div><div class="detail">LE gatte, LE amiche</div></div>
+        <div class="info-box"><div class="label">Quando si usa LO/GLI?</div><div class="value">Davanti a: s+cons, z, gn, ps, pn, x, y</div><div class="detail">LO studente, LO zaino, LO gnomo, GLI psicologi</div></div>
+        <div class="info-box"><div class="label">Quando si usa L'?</div><div class="value">Davanti a vocale (singolare)</div><div class="detail">L'albero, L'isola, L'orso</div></div>
+      </div>
+      <div class="fun-fact">Trucco per ricordare quando usare LO: pensa a "ZSGN" come uno strano starnuto! 🤧 Davanti a quelle lettere → LO!</div>
+    </div>
+
+    <div class="region-card cat2">
+      <div class="region-title"><span class="emoji">❓</span> Articoli Indeterminativi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cosa fanno?</div><div class="value">Indicano qualcosa di GENERICO, non preciso</div><div class="detail">"Dammi UN libro" = uno qualsiasi, non importa quale</div></div>
+        <div class="info-box"><div class="label">Maschile</div><div class="value">UN, UNO</div><div class="detail">UN gatto, UNO zaino, UNO studente</div></div>
+        <div class="info-box"><div class="label">Femminile</div><div class="value">UNA, UN'</div><div class="detail">UNA gatta, UN'amica</div></div>
+        <div class="info-box"><div class="label">Quando UNO?</div><div class="value">Stesse regole di LO!</div><div class="detail">UNO zaino, UNO gnomo, UNO psicologo</div></div>
+        <div class="info-box"><div class="label">Attenzione!</div><div class="value">UN' (con apostrofo) solo al FEMMINILE!</div><div class="detail">UN'amica (femm.) ma UN amico (masch.) — SENZA apostrofo!</div></div>
+      </div>
+      <div class="fun-fact">Errore classico: scrivere "un'amico" con l'apostrofo. NO! 🚫 L'apostrofo c'è solo al femminile: UN'amica sì, UN amico sì!</div>
+    </div>
+
+    <div class="region-card cat3">
+      <div class="region-title"><span class="emoji">🍕</span> Articoli Partitivi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cosa fanno?</div><div class="value">Indicano una PARTE, una QUANTITÀ indefinita</div><div class="detail">"Voglio DELLA pizza" = un po' di pizza 🍕</div></div>
+        <div class="info-box"><div class="label">Maschile Singolare</div><div class="value">DEL, DELLO, DELL'</div><div class="detail">DEL pane, DELLO zucchero, DELL'olio</div></div>
+        <div class="info-box"><div class="label">Femminile Singolare</div><div class="value">DELLA, DELL'</div><div class="detail">DELLA pasta, DELL'acqua</div></div>
+        <div class="info-box"><div class="label">Maschile Plurale</div><div class="value">DEI, DEGLI</div><div class="detail">DEI gatti, DEGLI zaini</div></div>
+        <div class="info-box"><div class="label">Femminile Plurale</div><div class="value">DELLE</div><div class="detail">DELLE ragazze, DELLE mele</div></div>
+        <div class="info-box"><div class="label">Come si formano?</div><div class="value">DI + articolo determinativo!</div><div class="detail">di+il=DEL, di+lo=DELLO, di+la=DELLA, di+i=DEI, di+gli=DEGLI, di+le=DELLE</div></div>
+      </div>
+      <div class="fun-fact">Al plurale, i partitivi funzionano come plurale degli indeterminativi: "un gatto" → "dei gatti", "una mela" → "delle mele" 🍎</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<div class="section" id="quiz">
+  <div class="quiz"><div id="quizContent"></div></div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { cat: "Determinativi", q: "Quali sono gli articoli determinativi maschili singolari?", a: "IL, LO, L'", extra: "IL libro, LO zaino, L'albero" },
+  { cat: "Determinativi", q: "Quando si usa LO invece di IL?", a: "Davanti a s+cons, z, gn, ps, pn, x, y", extra: "LO studente, LO zaino, LO gnomo 🤧" },
+  { cat: "Determinativi", q: "Quando si usa L'?", a: "Davanti a vocale (singolare)", extra: "L'amico, L'orso, L'isola 🏝️" },
+  { cat: "Determinativi", q: "Qual è il plurale di IL?", a: "I", extra: "IL gatto → I gatti" },
+  { cat: "Determinativi", q: "Qual è il plurale di LO?", a: "GLI", extra: "LO zaino → GLI zaini, LO studente → GLI studenti" },
+  { cat: "Determinativi", q: "Qual è l'articolo determinativo femminile plurale?", a: "LE", extra: "LE ragazze, LE case, LE amiche" },
+  { cat: "Indeterminativi", q: "A cosa servono gli articoli indeterminativi?", a: "Indicano qualcosa di generico, non preciso", extra: "\"Dammi UN libro\" = uno qualsiasi 📖" },
+  { cat: "Indeterminativi", q: "Quando si usa UNO?", a: "Stesse regole di LO!", extra: "UNO zaino, UNO studente, UNO gnomo" },
+  { cat: "Indeterminativi", q: "UN'amica o UN amica?", a: "UN'amica (con apostrofo!) ✅", extra: "L'apostrofo al femminile davanti a vocale" },
+  { cat: "Indeterminativi", q: "UN amico o UN'amico?", a: "UN amico (SENZA apostrofo!) ✅", extra: "Al maschile non si mette mai l'apostrofo!" },
+  { cat: "Indeterminativi", q: "Gli indeterminativi hanno il plurale?", a: "No! Si usano i partitivi", extra: "UN gatto → DEI gatti, UNA mela → DELLE mele" },
+  { cat: "Partitivi", q: "A cosa servono gli articoli partitivi?", a: "Indicano una quantità indefinita (un po' di...)", extra: "\"Voglio DELLA pizza\" = un po' di pizza 🍕" },
+  { cat: "Partitivi", q: "Come si formano i partitivi?", a: "DI + articolo determinativo", extra: "di+il=DEL, di+lo=DELLO, di+la=DELLA..." },
+  { cat: "Partitivi", q: "Qual è il partitivo per 'zucchero'?", a: "DELLO zucchero", extra: "Perché zucchero vuole LO → di+lo = DELLO" },
+  { cat: "Partitivi", q: "Qual è il partitivo plurale per 'ragazze'?", a: "DELLE ragazze", extra: "di+le = DELLE" },
+  { cat: "Partitivi", q: "Qual è il partitivo per 'amici'?", a: "DEGLI amici", extra: "Perché amici vuole GLI → di+gli = DEGLI" },
+  { cat: "Regole", q: "Che articolo va davanti a 'psicologo'?", a: "LO psicologo", extra: "PS- vuole LO, come Z e S+cons 🧠" },
+  { cat: "Regole", q: "Che articolo va davanti a 'yogurt'?", a: "LO yogurt", extra: "Y- vuole LO! GLI yogurt al plurale 🥛" },
+];
+
+let currentCard = 0;
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  currentCard = 0; updateCard();
+}
+updateCard();
+
+const quizQuestions = [
+  { q: "Quale articolo va davanti a 'zaino'?", opts: ["il", "lo", "un", "la"], correct: 1 },
+  { q: "Quale articolo va davanti a 'amica' (indeterminativo)?", opts: ["una", "un'", "un", "uno"], correct: 1 },
+  { q: "Quale articolo va davanti a 'amico' (indeterminativo)?", opts: ["un'", "uno", "un", "una"], correct: 2 },
+  { q: "Qual è il plurale di 'lo studente'?", opts: ["i studenti", "li studenti", "gli studenti", "le studenti"], correct: 2 },
+  { q: "Come si forma il partitivo 'DELLO'?", opts: ["di + il", "di + lo", "di + la", "di + le"], correct: 1 },
+  { q: "'Ho comprato ___ mele' — quale articolo?", opts: ["dei", "delle", "degli", "della"], correct: 1 },
+  { q: "Quale articolo va davanti a 'gnomo'?", opts: ["il", "lo", "un", "la"], correct: 1 },
+  { q: "'Dammi ___ acqua' (partitivo) — quale?", opts: ["della", "dell'", "dello", "del"], correct: 1 },
+  { q: "Gli articoli indeterminativi hanno il plurale?", opts: ["Sì: uni, une", "Sì: degli, delle", "No, si usano i partitivi", "Sì: i, le"], correct: 2 },
+  { q: "Quale articolo va davanti a 'psicologo'?", opts: ["il", "lo", "la", "un"], correct: 1 },
+  { q: "'___ zucchero' (partitivo) — quale?", opts: ["del", "dello", "della", "dei"], correct: 1 },
+  { q: "Quando si usa L' al posto di LA?", opts: ["Mai", "Davanti a consonante", "Davanti a vocale", "Davanti a s+consonante"], correct: 2 },
+];
+
+let quizIndex = 0, quizScore = 0, quizAnswered = false;
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 10 ? "🏆" : quizScore >= 7 ? "👏" : quizScore >= 5 ? "👍" : "📚";
+    container.innerHTML = `
+      <div class="quiz-score">${emoji} Hai risposto bene a ${quizScore} su ${quizQuestions.length}!</div>
+      <p style="text-align:center;color:#666">${quizScore >= 10 ? "Fantastico! Gli articoli non hanno segreti per te!" : quizScore >= 7 ? "Bravissima! Quasi perfetto!" : quizScore >= 5 ? "Bene! Ripassiamo le flash cards?" : "Dai, ripassiamo insieme le flash cards! 💪"}</p>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>`;
+    return;
+  }
+  const qq = quizQuestions[quizIndex]; quizAnswered = false;
+  container.innerHTML = `
+    <div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ${quizIndex + 1} / ${quizQuestions.length} — Punteggio: ${quizScore}</div>
+    <div class="quiz-question"><div class="quiz-q">${qq.q}</div><div class="quiz-options">
+      ${qq.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div></div>`;
+}
+function answerQuiz(idx) {
+  if (quizAnswered) return; quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  document.querySelectorAll('.quiz-opt').forEach((b, i) => { b.classList.add('disabled'); if (i === qq.correct) b.classList.add('correct'); if (i === idx && idx !== qq.correct) b.classList.add('wrong'); });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(() => { quizIndex++; renderQuiz(); }, 1200);
+}
+function restartQuiz() { quizIndex = 0; quizScore = 0; quizQuestions.sort(() => Math.random() - 0.5); renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>

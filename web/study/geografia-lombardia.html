@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗺️ Geografia - Lombardia</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e67e22; }
+  
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+  
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  
+  .mindmap { padding: 20px; }
+  .region-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .region-card.lombardia { border-color: #e67e22; }
+  
+  .region-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .region-title .emoji { font-size: 32px; }
+  
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  
+  .fun-fact { background: #fff3cd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #e67e22; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #e67e22; }
+
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #e67e22; background: #fef5e7; }
+  .quiz-opt.correct { border-color: #2ecc71; background: #d5f5e3; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #fadbd8; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-next { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e67e22; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .quiz-next:hover { background: #d35400; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>🗺️</span> Lombardia</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap')">🧠 Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button class="tab" onclick="showSection('quiz')">❓ Quiz</button>
+</div>
+
+<!-- MIND MAP SECTION -->
+<div class="section active" id="mindmap">
+  <div class="mindmap">
+    
+    <div class="region-card lombardia">
+      <div class="region-title"><span class="emoji">🏙️</span> Lombardia</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Capoluogo</div><div class="value">Milano</div></div>
+        <div class="info-box"><div class="label">Province</div><div class="value">12</div><div class="detail">Milano, Bergamo, Brescia, Como, Cremona, Lecco, Lodi, Mantova, Monza e Brianza, Pavia, Sondrio, Varese</div></div>
+        <div class="info-box"><div class="label">Popolazione</div><div class="value">~10 milioni</div><div class="detail">La regione più popolata d'Italia! 🥇</div></div>
+        <div class="info-box"><div class="label">Superficie</div><div class="value">23.864 km²</div></div>
+        <div class="info-box"><div class="label">Confini</div><div class="value">Svizzera 🇨🇭, Piemonte, Emilia-Romagna, Veneto, Trentino-Alto Adige</div></div>
+        <div class="info-box"><div class="label">Laghi</div><div class="value">Garda, Como, Maggiore, Iseo</div><div class="detail">Garda e Maggiore condivisi con altre regioni</div></div>
+        <div class="info-box"><div class="label">Fiumi</div><div class="value">Po, Adda, Oglio, Ticino, Mincio</div></div>
+        <div class="info-box"><div class="label">Monti e pianura</div><div class="value">Alpi (Bernina, Adamello), Prealpi, Pianura Padana</div></div>
+        <div class="info-box"><div class="label">Economia</div><div class="value">Finanza 💰, moda 👗, industria, agricoltura (riso, mais)</div></div>
+        <div class="info-box"><div class="label">Cibi tipici</div><div class="value">Risotto alla milanese, cotoletta, panettone 🎄, pizzoccheri, tortelli di zucca</div></div>
+        <div class="info-box"><div class="label">Luoghi famosi</div><div class="value">Duomo di Milano, Lago di Como, Certosa di Pavia, Mantova</div></div>
+        <div class="info-box"><div class="label">Territorio</div><div class="value">Alpi a nord, pianura a sud</div><div class="detail">Da montagna a pianura in pochi km!</div></div>
+      </div>
+      <div class="fun-fact">Milano è la capitale della moda e della finanza italiana. La Lombardia produce circa 1/5 del PIL italiano! 💪</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FLASH CARDS SECTION -->
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<!-- QUIZ SECTION -->
+<div class="section" id="quiz">
+  <div class="quiz">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<script>
+// TABS
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// FLASH CARDS DATA
+const cards = [
+  { cat: "Lombardia", q: "Qual è il capoluogo della Lombardia?", a: "Milano", extra: "Capitale della moda e della finanza italiana! 👗💰" },
+  { cat: "Lombardia", q: "Quante province ha la Lombardia?", a: "12", extra: "Milano, Bergamo, Brescia, Como, Cremona, Lecco, Lodi, Mantova, Monza e Brianza, Pavia, Sondrio, Varese" },
+  { cat: "Lombardia", q: "Quanti abitanti ha circa la Lombardia?", a: "~10 milioni", extra: "È la regione più popolata d'Italia! 🥇" },
+  { cat: "Lombardia", q: "Qual è la superficie della Lombardia?", a: "23.864 km²", extra: "Una regione grande, dalle Alpi alla Pianura Padana" },
+  { cat: "Lombardia", q: "Con quale stato estero confina la Lombardia?", a: "La Svizzera 🇨🇭", extra: "A nord, con il Canton Ticino e i Grigioni" },
+  { cat: "Lombardia", q: "Quali sono i laghi principali della Lombardia?", a: "Garda, Como, Maggiore, Iseo", extra: "Il Garda è il lago più grande d'Italia! 🏖️" },
+  { cat: "Lombardia", q: "Quali fiumi attraversano la Lombardia?", a: "Po, Adda, Oglio, Ticino, Mincio", extra: "Il Po segna il confine sud con l'Emilia-Romagna" },
+  { cat: "Lombardia", q: "Quali montagne ci sono in Lombardia?", a: "Alpi (Bernina, Adamello) e Prealpi", extra: "A nord montagne, al centro colline, a sud la Pianura Padana" },
+  { cat: "Lombardia", q: "Per cosa è famosa Milano nel mondo?", a: "Moda e finanza! 👗💰", extra: "Milano Fashion Week e la Borsa Italiana" },
+  { cat: "Lombardia", q: "Qual è il dolce natalizio tipico della Lombardia?", a: "Il panettone! 🎄", extra: "Nato a Milano, ora famoso in tutto il mondo" },
+  { cat: "Lombardia", q: "Cos'è il risotto alla milanese?", a: "Risotto con zafferano 🥘", extra: "Ha un colore giallo dorato grazie allo zafferano!" },
+  { cat: "Lombardia", q: "Cosa sono i pizzoccheri?", a: "Pasta di grano saraceno tipica della Valtellina", extra: "Con verza, patate, formaggio e burro! 🧀" },
+  { cat: "Lombardia", q: "Qual è il monumento più famoso di Milano?", a: "Il Duomo di Milano! ⛪", extra: "La chiesa gotica più grande d'Italia, ci sono voluti quasi 600 anni per finirla!" },
+  { cat: "Lombardia", q: "Quanto PIL produce la Lombardia rispetto all'Italia?", a: "Circa 1/5 (il 20%!)", extra: "È il motore economico del Paese 🚀" },
+  { cat: "Lombardia", q: "Con quali regioni italiane confina la Lombardia?", a: "Piemonte, Emilia-Romagna, Veneto, Trentino-Alto Adige", extra: "Ben 4 regioni + la Svizzera!" },
+];
+
+let currentCard = 0;
+
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  currentCard = 0;
+  updateCard();
+}
+
+updateCard();
+
+// QUIZ
+const quizQuestions = [
+  { q: "Qual è il capoluogo della Lombardia?", opts: ["Bergamo", "Milano", "Brescia", "Como"], correct: 1 },
+  { q: "Quante province ha la Lombardia?", opts: ["8", "10", "12", "15"], correct: 2 },
+  { q: "La Lombardia è la regione più ___ d'Italia:", opts: ["Grande", "Piccola", "Popolata", "Montuosa"], correct: 2 },
+  { q: "Con quale stato estero confina la Lombardia?", opts: ["Austria", "Francia", "Svizzera", "Slovenia"], correct: 2 },
+  { q: "Quale di questi NON è un lago lombardo?", opts: ["Como", "Iseo", "Trasimeno", "Garda"], correct: 2 },
+  { q: "Quale fiume segna il confine sud della Lombardia?", opts: ["Adda", "Ticino", "Po", "Oglio"], correct: 2 },
+  { q: "Qual è il dolce natalizio tipico di Milano?", opts: ["Pandoro", "Colomba", "Panettone", "Tiramisù"], correct: 2 },
+  { q: "Il Duomo di Milano è in stile:", opts: ["Romanico", "Barocco", "Gotico", "Rinascimentale"], correct: 2 },
+  { q: "Cosa dà il colore giallo al risotto alla milanese?", opts: ["Curry", "Curcuma", "Zafferano", "Peperone"], correct: 2 },
+  { q: "Quanta parte del PIL italiano produce la Lombardia?", opts: ["1/10", "1/5", "1/3", "1/2"], correct: 1 },
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 9 ? "🏆" : quizScore >= 7 ? "👏" : quizScore >= 5 ? "👍" : "📚";
+    container.innerHTML = `
+      <div class="quiz-score">${emoji} Hai risposto bene a ${quizScore} su ${quizQuestions.length}!</div>
+      <p style="text-align:center;color:#666">${quizScore >= 9 ? "Fantastico! Sei un esperto della Lombardia!" : quizScore >= 7 ? "Bravissima! Quasi perfetto!" : quizScore >= 5 ? "Bene! Ripassiamo le flash cards?" : "Dai, ripassiamo insieme le flash cards! 💪"}</p>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>
+    `;
+    return;
+  }
+  const qq = quizQuestions[quizIndex];
+  quizAnswered = false;
+  container.innerHTML = `
+    <div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ${quizIndex + 1} / ${quizQuestions.length} — Punteggio: ${quizScore}</div>
+    <div class="quiz-question">
+      <div class="quiz-q">${qq.q}</div>
+      <div class="quiz-options">
+        ${qq.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === qq.correct) b.classList.add('correct');
+    if (i === idx && idx !== qq.correct) b.classList.add('wrong');
+  });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(() => { quizIndex++; renderQuiz(); }, 1200);
+}
+
+function restartQuiz() {
+  quizIndex = 0; quizScore = 0;
+  quizQuestions.sort(() => Math.random() - 0.5);
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+</body>
+</html>

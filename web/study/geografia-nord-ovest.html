@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗺️ Geografia - Liguria, Piemonte, Valle d'Aosta</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e74c3c; }
+  
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+  
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  
+  /* MIND MAP */
+  .mindmap { padding: 20px; }
+  .region-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .region-card.liguria { border-color: #3498db; }
+  .region-card.piemonte { border-color: #e74c3c; }
+  .region-card.vda { border-color: #2ecc71; }
+  
+  .region-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .region-title .emoji { font-size: 32px; }
+  
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  
+  .fun-fact { background: #fff3cd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  
+  /* FLASH CARDS */
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #3498db; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #3498db; }
+
+  /* QUIZ */
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #3498db; background: #f0f7ff; }
+  .quiz-opt.correct { border-color: #2ecc71; background: #d5f5e3; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #fadbd8; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-next { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #3498db; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .quiz-next:hover { background: #2980b9; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>🗺️</span> Nord-Ovest Italia</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap')">🧠 Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button class="tab" onclick="showSection('quiz')">❓ Quiz</button>
+</div>
+
+<!-- MIND MAP SECTION -->
+<div class="section active" id="mindmap">
+  <div class="mindmap">
+    
+    <div class="region-card liguria">
+      <div class="region-title"><span class="emoji">🌊</span> Liguria</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Capoluogo</div><div class="value">Genova</div></div>
+        <div class="info-box"><div class="label">Province</div><div class="value">4</div><div class="detail">Genova, Savona, Imperia, La Spezia</div></div>
+        <div class="info-box"><div class="label">Popolazione</div><div class="value">~1,5 milioni</div></div>
+        <div class="info-box"><div class="label">Superficie</div><div class="value">5.422 km²</div><div class="detail">La regione più piccola del Nord!</div></div>
+        <div class="info-box"><div class="label">Forma</div><div class="value">Arco / Mezzaluna 🌙</div><div class="detail">Stretta e lunga lungo la costa</div></div>
+        <div class="info-box"><div class="label">Confini</div><div class="value">Francia 🇫🇷, Piemonte, Emilia-R., Toscana</div></div>
+        <div class="info-box"><div class="label">Mare</div><div class="value">Mar Ligure</div><div class="detail">Golfo di Genova</div></div>
+        <div class="info-box"><div class="label">Monti</div><div class="value">Alpi Marittime e Appennino Ligure</div></div>
+        <div class="info-box"><div class="label">Clima</div><div class="value">Mite tutto l'anno ☀️</div><div class="detail">Protetta dai monti dai venti freddi</div></div>
+        <div class="info-box"><div class="label">Economia</div><div class="value">Porto di Genova 🚢, turismo, fiori 🌸</div></div>
+        <div class="info-box"><div class="label">Cibi tipici</div><div class="value">Pesto 🌿, focaccia, farinata</div></div>
+        <div class="info-box"><div class="label">Luoghi famosi</div><div class="value">Cinque Terre, Portofino, Acquario di Genova</div></div>
+      </div>
+      <div class="fun-fact">Genova è la città natale di Cristoforo Colombo! E il Porto di Genova è il più grande d'Italia! 🚢</div>
+    </div>
+
+    <div class="region-card piemonte">
+      <div class="region-title"><span class="emoji">⛰️</span> Piemonte</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Capoluogo</div><div class="value">Torino</div></div>
+        <div class="info-box"><div class="label">Province</div><div class="value">8</div><div class="detail">Torino, Alessandria, Asti, Biella, Cuneo, Novara, Verbano-Cusio-Ossola, Vercelli</div></div>
+        <div class="info-box"><div class="label">Popolazione</div><div class="value">~4,3 milioni</div></div>
+        <div class="info-box"><div class="label">Superficie</div><div class="value">25.387 km²</div><div class="detail">La seconda regione più grande d'Italia!</div></div>
+        <div class="info-box"><div class="label">Nome significa</div><div class="value">"Ai piedi dei monti" 🏔️</div></div>
+        <div class="info-box"><div class="label">Confini</div><div class="value">Francia 🇫🇷, Svizzera 🇨🇭, Valle d'Aosta, Lombardia, Liguria, Emilia-R.</div></div>
+        <div class="info-box"><div class="label">Fiumi</div><div class="value">Po (il più lungo d'Italia! 652 km)</div><div class="detail">Nasce dal Monviso</div></div>
+        <div class="info-box"><div class="label">Laghi</div><div class="value">Lago Maggiore, Lago d'Orta</div></div>
+        <div class="info-box"><div class="label">Monti</div><div class="value">Alpi Occidentali, Monte Rosa (4.634 m)</div></div>
+        <div class="info-box"><div class="label">Economia</div><div class="value">FIAT/Stellantis 🚗, industria, vino 🍷, riso</div></div>
+        <div class="info-box"><div class="label">Cibi tipici</div><div class="value">Gianduiotto 🍫, grissini, bagna càuda, tartufo</div></div>
+        <div class="info-box"><div class="label">Luoghi famosi</div><div class="value">Mole Antonelliana, Reggia di Venaria, Langhe</div></div>
+      </div>
+      <div class="fun-fact">Torino è stata la prima capitale d'Italia (1861-1865)! E qui è nata la Nutella! 🍫</div>
+    </div>
+
+    <div class="region-card vda">
+      <div class="region-title"><span class="emoji">🏔️</span> Valle d'Aosta</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Capoluogo</div><div class="value">Aosta</div></div>
+        <div class="info-box"><div class="label">Province</div><div class="value">Nessuna!</div><div class="detail">È l'unica regione senza province</div></div>
+        <div class="info-box"><div class="label">Popolazione</div><div class="value">~123.000</div><div class="detail">La regione meno popolata d'Italia!</div></div>
+        <div class="info-box"><div class="label">Superficie</div><div class="value">3.261 km²</div><div class="detail">La regione più piccola d'Italia!</div></div>
+        <div class="info-box"><div class="label">Statuto</div><div class="value">Regione autonoma 🏛️</div><div class="detail">Bilingue: italiano e francese</div></div>
+        <div class="info-box"><div class="label">Confini</div><div class="value">Francia 🇫🇷, Svizzera 🇨🇭, Piemonte</div></div>
+        <div class="info-box"><div class="label">Monti</div><div class="value">Monte Bianco (4.810 m) 👑, Cervino, Monte Rosa, Gran Paradiso</div></div>
+        <div class="info-box"><div class="label">Trafori</div><div class="value">Monte Bianco 🚗, Gran San Bernardo</div></div>
+        <div class="info-box"><div class="label">Parco Nazionale</div><div class="value">Gran Paradiso 🦌</div><div class="detail">Il primo parco nazionale italiano (1922)</div></div>
+        <div class="info-box"><div class="label">Economia</div><div class="value">Turismo ⛷️, idroelettrico ⚡, fontina 🧀</div></div>
+        <div class="info-box"><div class="label">Cibi tipici</div><div class="value">Fontina, polenta, carbonada</div></div>
+        <div class="info-box"><div class="label">Luoghi famosi</div><div class="value">Courmayeur, Cervinia, Castelli medievali</div></div>
+      </div>
+      <div class="fun-fact">Il Monte Bianco è la montagna più alta d'Europa! E il nome "Aosta" viene dal latino "Augusta Praetoria" fondata dai Romani! 🏛️</div>
+    </div>
+  </div>
+</div>
+
+<!-- FLASH CARDS SECTION -->
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<!-- QUIZ SECTION -->
+<div class="section" id="quiz">
+  <div class="quiz">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<script>
+// TABS
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// FLASH CARDS DATA
+const cards = [
+  { cat: "Liguria", q: "Qual è il capoluogo della Liguria?", a: "Genova", extra: "Città natale di Cristoforo Colombo! 🧭" },
+  { cat: "Liguria", q: "Quante province ha la Liguria?", a: "4", extra: "Genova, Savona, Imperia, La Spezia" },
+  { cat: "Liguria", q: "Che forma ha la Liguria?", a: "Un arco / mezzaluna 🌙", extra: "Stretta e lunga lungo la costa" },
+  { cat: "Liguria", q: "Quale mare bagna la Liguria?", a: "Il Mar Ligure", extra: "Con il famoso Golfo di Genova" },
+  { cat: "Liguria", q: "Con quale stato estero confina la Liguria?", a: "La Francia 🇫🇷", extra: "A ovest, vicino a Ventimiglia" },
+  { cat: "Liguria", q: "Qual è il piatto più famoso della Liguria?", a: "Il pesto! 🌿", extra: "Fatto con basilico, pinoli, aglio, parmigiano e olio" },
+  { cat: "Liguria", q: "Perché il clima ligure è mite?", a: "I monti la proteggono dai venti freddi", extra: "Alpi e Appennini fanno da barriera ☀️" },
+  { cat: "Liguria", q: "Cos'è importante nel porto di Genova?", a: "È il porto più grande d'Italia! 🚢", extra: "Fondamentale per i commerci" },
+  { cat: "Liguria", q: "Cosa sono le Cinque Terre?", a: "5 borghi colorati sulla costa 🏘️", extra: "Patrimonio UNESCO! Monterosso, Vernazza, Corniglia, Manarola, Riomaggiore" },
+  
+  { cat: "Piemonte", q: "Qual è il capoluogo del Piemonte?", a: "Torino", extra: "Prima capitale d'Italia (1861-1865)! 🏛️" },
+  { cat: "Piemonte", q: "Cosa significa 'Piemonte'?", a: "Ai piedi dei monti 🏔️", extra: "Circondato dalle Alpi su tre lati" },
+  { cat: "Piemonte", q: "Quale fiume nasce in Piemonte?", a: "Il Po", extra: "Il più lungo d'Italia (652 km), nasce dal Monviso" },
+  { cat: "Piemonte", q: "Quante province ha il Piemonte?", a: "8", extra: "Torino, Alessandria, Asti, Biella, Cuneo, Novara, VCO, Vercelli" },
+  { cat: "Piemonte", q: "Con quali stati confina il Piemonte?", a: "Francia 🇫🇷 e Svizzera 🇨🇭", extra: "A ovest con la Francia, a nord con la Svizzera" },
+  { cat: "Piemonte", q: "Quale famosa fabbrica di auto è nata a Torino?", a: "La FIAT! 🚗", extra: "Fondata nel 1899, oggi parte di Stellantis" },
+  { cat: "Piemonte", q: "Quale dolce famoso è nato a Torino?", a: "Il gianduiotto 🍫", extra: "E anche la Nutella è nata in Piemonte (ad Alba)!" },
+  { cat: "Piemonte", q: "Qual è il lago più importante del Piemonte?", a: "Il Lago Maggiore", extra: "Condiviso con la Lombardia e la Svizzera" },
+  { cat: "Piemonte", q: "Cos'è la Mole Antonelliana?", a: "Il simbolo di Torino 🏛️", extra: "Ospita il Museo del Cinema, alta 167 m!" },
+  { cat: "Piemonte", q: "Per cosa sono famose le Langhe?", a: "Vino 🍷 e tartufo!", extra: "Barolo, Barbaresco... e il tartufo bianco d'Alba" },
+  
+  { cat: "Valle d'Aosta", q: "Qual è il capoluogo della Valle d'Aosta?", a: "Aosta", extra: "Dal latino Augusta Praetoria, fondata dai Romani 🏛️" },
+  { cat: "Valle d'Aosta", q: "Qual è la montagna più alta della Valle d'Aosta (e d'Europa)?", a: "Il Monte Bianco! 4.810 m 👑", extra: "Al confine con la Francia" },
+  { cat: "Valle d'Aosta", q: "Quante province ha la Valle d'Aosta?", a: "Nessuna! Zero! 😮", extra: "L'unica regione italiana senza province" },
+  { cat: "Valle d'Aosta", q: "Che tipo di regione è la Valle d'Aosta?", a: "Regione a statuto speciale / autonoma", extra: "Bilingue: italiano e francese 🇫🇷" },
+  { cat: "Valle d'Aosta", q: "Qual è il primo parco nazionale italiano?", a: "Il Gran Paradiso! 🦌", extra: "Creato nel 1922, famoso per lo stambecco" },
+  { cat: "Valle d'Aosta", q: "Qual è il formaggio tipico della Valle d'Aosta?", a: "La Fontina! 🧀", extra: "Usata nella fonduta valdostana" },
+  { cat: "Valle d'Aosta", q: "Con quali stati confina la Valle d'Aosta?", a: "Francia 🇫🇷 e Svizzera 🇨🇭", extra: "Collegata dal traforo del Monte Bianco" },
+  { cat: "Valle d'Aosta", q: "Qual è il record della Valle d'Aosta?", a: "La regione più piccola e meno popolata d'Italia!", extra: "Solo 3.261 km² e ~123.000 abitanti" },
+  { cat: "Valle d'Aosta", q: "Come si chiama la famosa montagna a forma di piramide?", a: "Il Cervino! 🏔️", extra: "4.478 m, al confine con la Svizzera (Matterhorn)" },
+  { cat: "Valle d'Aosta", q: "Cos'è Courmayeur?", a: "Una famosa località sciistica ⛷️", extra: "Ai piedi del Monte Bianco" },
+];
+
+let currentCard = 0;
+
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  currentCard = 0;
+  updateCard();
+}
+
+updateCard();
+
+// QUIZ
+const quizQuestions = [
+  { q: "Qual è il capoluogo della Liguria?", opts: ["La Spezia", "Genova", "Savona", "Imperia"], correct: 1 },
+  { q: "Quale regione è la più piccola d'Italia?", opts: ["Liguria", "Molise", "Valle d'Aosta", "Piemonte"], correct: 2 },
+  { q: "Dove nasce il fiume Po?", opts: ["Monte Bianco", "Monte Rosa", "Monviso", "Gran Paradiso"], correct: 2 },
+  { q: "Quante province ha la Valle d'Aosta?", opts: ["1", "2", "0", "3"], correct: 2 },
+  { q: "Qual è la montagna più alta d'Europa?", opts: ["Cervino", "Monte Rosa", "Monte Bianco", "Gran Paradiso"], correct: 2 },
+  { q: "Torino è stata la prima capitale d'Italia. In che anno?", opts: ["1871", "1861", "1848", "1900"], correct: 1 },
+  { q: "Quale regione ha la forma di mezzaluna?", opts: ["Piemonte", "Valle d'Aosta", "Lombardia", "Liguria"], correct: 3 },
+  { q: "Quale formaggio è tipico della Valle d'Aosta?", opts: ["Parmigiano", "Fontina", "Gorgonzola", "Pecorino"], correct: 1 },
+  { q: "La Valle d'Aosta è bilingue. Quali lingue?", opts: ["Italiano e tedesco", "Italiano e francese", "Italiano e spagnolo", "Italiano e sloveno"], correct: 1 },
+  { q: "Qual è il porto più grande d'Italia?", opts: ["Napoli", "Livorno", "Genova", "Venezia"], correct: 2 },
+  { q: "Cosa significa 'Piemonte'?", opts: ["Pietra dei monti", "Ai piedi dei monti", "Prima dei monti", "Sopra i monti"], correct: 1 },
+  { q: "Qual è il primo parco nazionale italiano?", opts: ["Stelvio", "Abruzzo", "Gran Paradiso", "Cinque Terre"], correct: 2 },
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 10 ? "🏆" : quizScore >= 7 ? "👏" : quizScore >= 5 ? "👍" : "📚";
+    container.innerHTML = `
+      <div class="quiz-score">${emoji} Hai risposto bene a ${quizScore} su ${quizQuestions.length}!</div>
+      <p style="text-align:center;color:#666">${quizScore >= 10 ? "Fantastico! Sei un esperto!" : quizScore >= 7 ? "Bravissima! Quasi perfetto!" : quizScore >= 5 ? "Bene! Ripassiamo le flash cards?" : "Dai, ripassiamo insieme le flash cards! 💪"}</p>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>
+    `;
+    return;
+  }
+  const qq = quizQuestions[quizIndex];
+  quizAnswered = false;
+  container.innerHTML = `
+    <div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ${quizIndex + 1} / ${quizQuestions.length} — Punteggio: ${quizScore}</div>
+    <div class="quiz-question">
+      <div class="quiz-q">${qq.q}</div>
+      <div class="quiz-options">
+        ${qq.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === qq.correct) b.classList.add('correct');
+    if (i === idx && idx !== qq.correct) b.classList.add('wrong');
+  });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(() => { quizIndex++; renderQuiz(); }, 1200);
+}
+
+function restartQuiz() {
+  quizIndex = 0; quizScore = 0;
+  quizQuestions.sort(() => Math.random() - 0.5);
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+</body>
+</html>

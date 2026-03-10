@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏰 Storia — La società feudale</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #8B4513; }
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 24px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.feudo { border-color: #8B4513; }
+  .topic-card.gerarchia { border-color: #DAA520; }
+  .topic-card.castello { border-color: #654321; }
+  .topic-card.vassallaggio { border-color: #B8860B; }
+  .topic-card.vita { border-color: #556B2F; }
+  .topic-card.cavaliere { border-color: #CD853F; }
+  .topic-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 30px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8fafc; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fdf5e6; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "🏰 "; }
+  .central-theme { background: linear-gradient(135deg, #654321, #8B4513); color: white; border-radius: 20px; padding: 28px; text-align: center; margin-bottom: 28px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .central-theme h2 { font-size: 26px; margin-bottom: 8px; }
+  .central-theme p { font-size: 16px; opacity: 0.9; }
+  .schema-box { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  .schema-box h3 { font-size: 18px; margin-bottom: 16px; text-align: center; color: #2c3e50; }
+  .schema-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .schema-col { background: #f8fafc; border-radius: 12px; padding: 16px; text-align: center; }
+  .schema-col h4 { margin-bottom: 8px; color: #8B4513; }
+  .schema-col .big { font-size: 28px; font-weight: 700; color: #2c3e50; }
+  .schema-col .sub { font-size: 13px; color: #666; margin-top: 4px; }
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #654321 0%, #8B4513 100%); color: white; }
+  .flashcard-front .question { font-size: 20px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 22px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #8B4513; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #8B4513; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #8B4513; background: #fdf5e6; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #8B4513; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .back-link { display: block; text-align: center; padding: 20px; color: #2c3e50; text-decoration: none; font-weight: 600; }
+  .back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<h1><span>🏰</span> La società feudale</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flashcards</button>
+  <button class="tab" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<div id="mappa" class="section active">
+  <div class="central-theme">
+    <h2>🏰 La società feudale</h2>
+    <p>Il feudo · Il castello · Vassalli e cavalieri · Pars dominica e massaricia</p>
+  </div>
+
+  <div class="topic-card feudo">
+    <div class="topic-title"><span class="emoji">🌾</span> La struttura del feudo</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Cos'è il feudo</div><div class="value">Un territorio dato dal re</div><div class="detail">Il re concedeva terre ai feudatari in cambio di fedeltà e servizio militare</div></div>
+      <div class="info-box"><div class="label">Pars dominica</div><div class="value">Terre del signore</div><div class="detail">Gestite direttamente dal feudatario: il castello, i campi migliori, i boschi</div></div>
+      <div class="info-box"><div class="label">Pars massaricia</div><div class="value">Terre dei contadini</div><div class="detail">Dove vivevano e lavoravano i contadini liberi con le loro case, campi e greggi</div></div>
+      <div class="info-box"><div class="label">Autosufficienza</div><div class="value">Il feudo produceva tutto</div><div class="detail">Cibo, vestiti, attrezzi: nel feudo c'era tutto il necessario per vivere</div></div>
+    </div>
+    <div class="fun-fact">Entrando nel feudo, un cavaliere vedeva prima la pars massaricia con case e pecore, poi raggiungeva il castello nella pars dominica!</div>
+  </div>
+
+  <div class="schema-box">
+    <h3>📊 Le due parti del feudo</h3>
+    <div class="schema-cols">
+      <div class="schema-col">
+        <h4>Pars Dominica</h4>
+        <div class="big">🏰</div>
+        <div class="sub">Terre del feudatario<br>Castello, campi migliori, boschi<br>Gestione diretta del signore</div>
+      </div>
+      <div class="schema-col">
+        <h4>Pars Massaricia</h4>
+        <div class="big">🏘️</div>
+        <div class="sub">Terre dei contadini liberi<br>Case, campi coltivati, pascoli<br>I contadini pagavano tributi</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card gerarchia">
+    <div class="topic-title"><span class="emoji">👑</span> La piramide feudale</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">In cima</div><div class="value">Il Re</div><div class="detail">Proprietario di tutte le terre, le concedeva ai feudatari più potenti</div></div>
+      <div class="info-box"><div class="label">Secondo livello</div><div class="value">Grandi feudatari</div><div class="detail">Duchi, conti, marchesi: ricevevano grandi territori dal re</div></div>
+      <div class="info-box"><div class="label">Terzo livello</div><div class="value">Piccoli feudatari</div><div class="detail">Ricevevano terre dai grandi feudatari, a cui giuravano fedeltà</div></div>
+      <div class="info-box"><div class="label">I guerrieri</div><div class="value">Cavalieri</div><div class="detail">Combattevano a cavallo con spada e armatura, al servizio del feudatario</div></div>
+      <div class="info-box"><div class="label">Alla base</div><div class="value">Contadini e servi della gleba</div><div class="detail">Lavoravano la terra. I servi della gleba non potevano lasciare il feudo</div></div>
+    </div>
+    <div class="fun-fact">Re → Grandi feudatari → Piccoli feudatari → Cavalieri → Contadini: ognuno doveva obbedienza a chi stava sopra!</div>
+  </div>
+
+  <div class="topic-card castello">
+    <div class="topic-title"><span class="emoji">🏯</span> Il castello medievale</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Mura e torri</div><div class="value">Difesa del feudo</div><div class="detail">Alte mura con camminamenti per le guardie e torri di avvistamento</div></div>
+      <div class="info-box"><div class="label">Torri di avvistamento</div><div class="value">Vedette armate</div><div class="detail">Uomini armati di archi e balestre sorvegliavano il territorio</div></div>
+      <div class="info-box"><div class="label">Il mastio (torre principale)</div><div class="value">Residenza del signore</div><div class="detail">La torre più alta e fortificata, ultimo rifugio in caso di attacco</div></div>
+      <div class="info-box"><div class="label">Fossato e ponte levatoio</div><div class="value">Protezione dell'ingresso</div><div class="detail">Il fossato circondava il castello; il ponte si alzava per impedire l'accesso</div></div>
+    </div>
+    <div class="fun-fact">I camminamenti delle mura permettevano alle guardie di camminare lungo tutto il perimetro del castello!</div>
+  </div>
+
+  <div class="topic-card vassallaggio">
+    <div class="topic-title"><span class="emoji">🤝</span> Il vassallaggio</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Cos'è</div><div class="value">Patto di fedeltà</div><div class="detail">Un uomo (vassallo) giurava fedeltà a un signore più potente</div></div>
+      <div class="info-box"><div class="label">Cerimonia</div><div class="value">L'investitura</div><div class="detail">Il vassallo si inginocchiava e metteva le mani in quelle del signore, giurando fedeltà</div></div>
+      <div class="info-box"><div class="label">Il vassallo riceveva</div><div class="value">Un feudo (terre)</div><div class="detail">In cambio della fedeltà, il signore gli concedeva terre da governare</div></div>
+      <div class="info-box"><div class="label">Il vassallo doveva</div><div class="value">Servizio militare e fedeltà</div><div class="detail">Combattere per il signore, dargli ospitalità e consiglio</div></div>
+    </div>
+    <div class="fun-fact">«Il vassallo del mio vassallo non è il mio vassallo» — ogni legame di fedeltà era personale!</div>
+  </div>
+
+  <div class="topic-card vita">
+    <div class="topic-title"><span class="emoji">👨‍🌾</span> La vita nel feudo</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Contadini liberi</div><div class="value">Vivevano nella pars massaricia</div><div class="detail">Coltivavano la terra, allevavano pecore e pagavano tributi al signore</div></div>
+      <div class="info-box"><div class="label">Servi della gleba</div><div class="value">Legati alla terra</div><div class="detail">Non potevano lasciare il feudo. Se la terra veniva venduta, venivano venduti con essa</div></div>
+      <div class="info-box"><div class="label">Corvées</div><div class="value">Lavoro obbligatorio gratuito</div><div class="detail">I contadini dovevano lavorare gratis alcuni giorni nei campi del signore</div></div>
+      <div class="info-box"><div class="label">Protezione</div><div class="value">Il signore difendeva tutti</div><div class="detail">In cambio di lavoro e tributi, il feudatario proteggeva i contadini dai nemici</div></div>
+    </div>
+  </div>
+
+  <div class="topic-card cavaliere">
+    <div class="topic-title"><span class="emoji">⚔️</span> Il cavaliere</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Equipaggiamento</div><div class="value">Armatura e spada</div><div class="detail">Il cavaliere indossava un'armatura di metallo e combatteva con la spada</div></div>
+      <div class="info-box"><div class="label">Ruolo</div><div class="value">Guerriero a cavallo</div><div class="detail">Combatteva per il suo signore e proteggeva il feudo</div></div>
+      <div class="info-box"><div class="label">Addestramento</div><div class="value">Fin da giovane</div><div class="detail">Da paggio a scudiero, fino alla cerimonia di investitura a cavaliere</div></div>
+      <div class="info-box"><div class="label">Valori</div><div class="value">Coraggio, lealtà, onore</div><div class="detail">Il codice cavalleresco imponeva di proteggere i deboli e servire il signore</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="flashcards" class="section">
+  <div class="flashcards">
+    <div class="card-category" id="fc-cat"></div>
+    <div class="card-counter" id="fc-counter"></div>
+    <div class="flashcard" id="fc" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="question" id="fc-q"></div><div class="hint">👆 Tocca per girare</div></div>
+        <div class="flashcard-back"><div class="answer" id="fc-a"></div><div class="extra" id="fc-extra"></div></div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="fc-prev" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="fc-next" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<div id="quiz" class="section">
+  <div class="quiz" id="quiz-container"></div>
+</div>
+
+<a href="index.html" class="back-link">← Torna all'indice</a>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { cat: "Il feudo", q: "Cos'è un feudo?", a: "Un territorio concesso dal re", extra: "Il re dava terre ai feudatari in cambio di fedeltà e servizio militare." },
+  { cat: "Il feudo", q: "Cos'è la pars dominica?", a: "Le terre gestite dal feudatario", extra: "Comprendeva il castello, i campi migliori e i boschi." },
+  { cat: "Il feudo", q: "Cos'è la pars massaricia?", a: "Le terre dei contadini", extra: "Qui vivevano i contadini liberi con le loro case, campi coltivati e greggi." },
+  { cat: "Gerarchia", q: "Chi stava in cima alla piramide feudale?", a: "Il Re", extra: "Era il proprietario di tutte le terre e le concedeva ai feudatari." },
+  { cat: "Gerarchia", q: "Chi erano i grandi feudatari?", a: "Duchi, conti e marchesi", extra: "Ricevevano grandi territori direttamente dal re." },
+  { cat: "Gerarchia", q: "Chi erano i servi della gleba?", a: "Contadini legati alla terra", extra: "Non potevano lasciare il feudo. Venivano venduti insieme alla terra." },
+  { cat: "Castello", q: "A cosa servivano le torri di avvistamento?", a: "Per sorvegliare il territorio", extra: "Uomini armati di archi e balestre controllavano dall'alto." },
+  { cat: "Castello", q: "Cos'è il mastio?", a: "La torre principale del castello", extra: "Residenza del signore e ultimo rifugio in caso di attacco." },
+  { cat: "Castello", q: "A cosa servivano i camminamenti delle mura?", a: "Per pattugliare le mura", extra: "Le guardie camminavano lungo tutto il perimetro del castello." },
+  { cat: "Vassallaggio", q: "Cos'è l'investitura?", a: "La cerimonia del vassallaggio", extra: "Il vassallo si inginocchiava e giurava fedeltà mettendo le mani in quelle del signore." },
+  { cat: "Vassallaggio", q: "Cosa riceveva il vassallo?", a: "Un feudo (terre)", extra: "In cambio doveva servizio militare, fedeltà e consiglio." },
+  { cat: "Vassallaggio", q: "Cosa doveva fare il vassallo per il signore?", a: "Combattere, dare ospitalità e consiglio", extra: "In cambio riceveva terre da governare e protezione." },
+  { cat: "Vita nel feudo", q: "Cosa sono le corvées?", a: "Lavoro obbligatorio e gratuito", extra: "I contadini dovevano lavorare gratis nei campi del signore per alcuni giorni." },
+  { cat: "Il cavaliere", q: "Qual era l'equipaggiamento del cavaliere?", a: "Armatura e spada", extra: "Combatteva a cavallo al servizio del suo signore." },
+  { cat: "Il cavaliere", q: "Quali valori seguiva il cavaliere?", a: "Coraggio, lealtà e onore", extra: "Il codice cavalleresco imponeva di proteggere i deboli e servire il signore." },
+];
+
+let currentCard = 0;
+function renderCard() {
+  const c = cards[currentCard];
+  document.getElementById('fc-cat').textContent = c.cat;
+  document.getElementById('fc-counter').textContent = (currentCard+1) + ' / ' + cards.length;
+  document.getElementById('fc-q').textContent = c.q;
+  document.getElementById('fc-a').textContent = c.a;
+  document.getElementById('fc-extra').textContent = c.extra;
+  document.getElementById('fc').classList.remove('flipped');
+  document.getElementById('fc-prev').disabled = currentCard === 0;
+  document.getElementById('fc-next').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('fc').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length-1) { currentCard++; renderCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; renderCard(); } }
+function shuffleCards() {
+  for (let i = cards.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [cards[i],cards[j]] = [cards[j],cards[i]]; }
+  currentCard = 0; renderCard();
+}
+renderCard();
+
+const quizQuestions = [
+  { q: "Cos'è il feudo?", opts: ["Una città medievale", "Un territorio concesso dal re a un feudatario", "Un mercato", "Una chiesa"], correct: 1 },
+  { q: "Cos'è la pars dominica?", opts: ["Le terre dei contadini", "Le terre gestite direttamente dal feudatario", "Il mercato del feudo", "La chiesa del villaggio"], correct: 1 },
+  { q: "Cos'è la pars massaricia?", opts: ["Il castello del signore", "I boschi del re", "Le terre dove vivevano e lavoravano i contadini", "La piazza del mercato"], correct: 2 },
+  { q: "Chi stava in cima alla piramide feudale?", opts: ["Il papa", "Il cavaliere", "Il feudatario", "Il re"], correct: 3 },
+  { q: "Chi erano i grandi feudatari?", opts: ["Contadini ricchi", "Duchi, conti e marchesi", "Cavalieri erranti", "Mercanti"], correct: 1 },
+  { q: "Cosa succedeva ai servi della gleba se la terra veniva venduta?", opts: ["Diventavano liberi", "Venivano venduti insieme alla terra", "Scappavano", "Andavano dal re"], correct: 1 },
+  { q: "Cos'è l'investitura?", opts: ["Una battaglia", "La cerimonia in cui il vassallo giurava fedeltà", "Una festa religiosa", "La costruzione di un castello"], correct: 1 },
+  { q: "Cosa riceveva il vassallo in cambio della fedeltà?", opts: ["Soldi", "Un feudo (terre)", "Una corona", "Un cavallo"], correct: 1 },
+  { q: "A cosa servivano le torri di avvistamento?", opts: ["Per pregare", "Per sorvegliare il territorio con archi e balestre", "Per conservare il cibo", "Per dormire"], correct: 1 },
+  { q: "Cosa sono le corvées?", opts: ["Feste medievali", "Battaglie tra cavalieri", "Lavoro obbligatorio e gratuito nei campi del signore", "Tasse in denaro"], correct: 2 },
+  { q: "Qual era l'equipaggiamento tipico del cavaliere?", opts: ["Arco e frecce", "Armatura e spada", "Lancia e scudo di legno", "Solo un cavallo"], correct: 1 },
+  { q: "Cos'è il mastio?", opts: ["Il fossato del castello", "La torre principale, residenza del signore", "Il ponte levatoio", "Le mura esterne"], correct: 1 },
+];
+
+let quizIndex = 0, quizScore = 0, quizAnswered = false;
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 10 ? '🏆' : quizScore >= 8 ? '👏' : quizScore >= 6 ? '👍' : '🌱';
+    container.innerHTML = '<div class="quiz-score">' + emoji + ' Hai risposto bene a ' + quizScore + ' su ' + quizQuestions.length + '!</div><p style="text-align:center;color:#666;margin-top:8px">' + (quizScore >= 10 ? "Fantastico! Sei pronta per l'interrogazione! 🌟" : quizScore >= 8 ? "Bravissima! Ottima preparazione!" : quizScore >= 6 ? "Bene! Ripassiamo qualche flash card?" : "Dai, ripassiamo le flash cards e riproviamo! 💪") + '</p><button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>';
+    return;
+  }
+  const qq = quizQuestions[quizIndex]; quizAnswered = false;
+  let html = '<div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ' + (quizIndex+1) + ' / ' + quizQuestions.length + ' — Punteggio: ' + quizScore + '</div>';
+  html += '<div class="quiz-question"><div class="quiz-q">' + qq.q + '</div><div class="quiz-options">';
+  for (let i = 0; i < qq.opts.length; i++) html += '<button class="quiz-opt" onclick="answerQuiz(' + i + ')">' + qq.opts[i] + '</button>';
+  html += '</div></div>'; container.innerHTML = html;
+}
+function answerQuiz(idx) {
+  if (quizAnswered) return; quizAnswered = true;
+  const qq = quizQuestions[quizIndex]; const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(function(b,i) { b.classList.add('disabled'); if (i===qq.correct) b.classList.add('correct'); });
+  if (idx !== qq.correct) btns[idx].classList.add('wrong');
+  if (idx === qq.correct) quizScore++;
+  setTimeout(function() { quizIndex++; renderQuiz(); }, 1200);
+}
+function restartQuiz() { quizIndex=0; quizScore=0; quizQuestions.sort(function(){return Math.random()-0.5;}); renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>

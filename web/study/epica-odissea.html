@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📜 Epica — L'Odissea di Omero</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #1a3a5c; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e67e22; }
+
+  h1 { text-align: center; padding: 20px; background: #1a3a5c; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* MIND MAP */
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.opera { border-color: #e67e22; }
+  .topic-card.personaggi { border-color: #8e44ad; }
+  .topic-card.viaggio { border-color: #2980b9; }
+  .topic-card.ritorno { border-color: #27ae60; }
+
+  .topic-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 32px; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+
+  .fun-fact { background: #fff3cd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+
+  /* JOURNEY MAP */
+  .journey { padding: 10px 0; }
+  .journey-step { display: flex; gap: 16px; margin-bottom: 4px; position: relative; }
+  .journey-line { width: 40px; display: flex; flex-direction: column; align-items: center; }
+  .journey-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .journey-connector { width: 3px; flex: 1; background: #ddd; min-height: 10px; }
+  .journey-content { background: white; border-radius: 12px; padding: 14px 18px; flex: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 8px; }
+  .journey-content h3 { font-size: 16px; margin-bottom: 4px; }
+  .journey-content p { font-size: 13px; color: #666; line-height: 1.5; }
+
+  /* FLASH CARDS */
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #e67e22 0%, #8e44ad 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #1a3a5c; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #e67e22; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #e67e22; }
+
+  /* QUIZ */
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #e67e22; background: #fef5e7; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d5f5e3; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #fadbd8; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e67e22; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>📜</span> L'Odissea — Epica</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap', this)">🧠 Mappa</button>
+  <button class="tab" onclick="showSection('journey', this)">🗺️ Viaggio</button>
+  <button class="tab" onclick="showSection('flashcards', this)">🃏 Flash Cards</button>
+  <button class="tab" onclick="showSection('quiz', this)">❓ Quiz</button>
+</div>
+
+<!-- MIND MAP SECTION -->
+<div class="section active" id="mindmap">
+
+  <div class="topic-card opera">
+    <div class="topic-title"><span class="emoji">📖</span> L'Opera</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Autore</div><div class="value">Omero</div><div class="detail">VIII secolo a.C. (Grecia antica)</div></div>
+      <div class="info-box"><div class="label">Tipo</div><div class="value">Poema epico in versi</div><div class="detail">Scritto in esametri</div></div>
+      <div class="info-box"><div class="label">Libri</div><div class="value">24 libri</div></div>
+      <div class="info-box"><div class="label">Tema centrale</div><div class="value">Il nostos (il ritorno)</div><div class="detail">Odisseo vuole tornare a Itaca</div></div>
+      <div class="info-box"><div class="label">Durata viaggio</div><div class="value">10 anni</div><div class="detail">+ 10 anni di guerra di Troia = 20 anni lontano</div></div>
+      <div class="info-box"><div class="label">Incipit</div><div class="value">"Cantami, o Musa..."</div><div class="detail">Invocazione alla Musa (tradizione epica)</div></div>
+      <div class="info-box"><div class="label">Struttura</div><div class="value">3 parti</div><div class="detail">Telemachia (1-4), Racconti (5-12), Ritorno (13-24)</div></div>
+      <div class="info-box"><div class="label">Collegamento</div><div class="value">Dopo l'Iliade</div><div class="detail">L'Iliade = guerra di Troia, Odissea = viaggio di ritorno</div></div>
+    </div>
+    <div class="fun-fact">Il nome "Odissea" viene da Odisseo (Ulisse in latino). Oggi usiamo "odissea" per dire "viaggio lungo e pieno di avventure"!</div>
+  </div>
+
+  <div class="topic-card personaggi">
+    <div class="topic-title"><span class="emoji">👥</span> Personaggi Principali</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Protagonista</div><div class="value">Odisseo (Ulisse) 🦊</div><div class="detail">Re di Itaca — astuto, coraggioso, curioso</div></div>
+      <div class="info-box"><div class="label">Epiteti di Odisseo</div><div class="value">"Multiforme", "Molto astuto"</div><div class="detail">polytropos, polymetis (in greco)</div></div>
+      <div class="info-box"><div class="label">Moglie</div><div class="value">Penelope 🧶</div><div class="detail">Fedele — tesse e disfa la tela per 3 anni</div></div>
+      <div class="info-box"><div class="label">Figlio</div><div class="value">Telemaco</div><div class="detail">Cerca il padre (Telemachia, libri 1-4)</div></div>
+      <div class="info-box"><div class="label">Padre</div><div class="value">Laerte</div><div class="detail">Vecchio re, vive in campagna</div></div>
+      <div class="info-box"><div class="label">Dea alleata</div><div class="value">Atena 🦉</div><div class="detail">Dea della saggezza, protegge Odisseo</div></div>
+      <div class="info-box"><div class="label">Dio nemico</div><div class="value">Poseidone 🔱</div><div class="detail">Dio del mare, padre di Polifemo</div></div>
+      <div class="info-box"><div class="label">Antagonisti</div><div class="value">I Proci (pretendenti)</div><div class="detail">Vogliono sposare Penelope. Capo: Antinoo</div></div>
+      <div class="info-box"><div class="label">Cane fedele</div><div class="value">Argo 🐕</div><div class="detail">Aspetta 20 anni, riconosce Odisseo e muore</div></div>
+      <div class="info-box"><div class="label">Ninfa</div><div class="value">Calipso</div><div class="detail">Trattiene Odisseo 7 anni sulla sua isola</div></div>
+      <div class="info-box"><div class="label">Maga</div><div class="value">Circe ⚗️</div><div class="detail">Trasforma i compagni in maiali, poi li aiuta</div></div>
+      <div class="info-box"><div class="label">Mostro</div><div class="value">Polifemo 👁️</div><div class="detail">Ciclope, figlio di Poseidone</div></div>
+    </div>
+    <div class="fun-fact">Odisseo è l'eroe dell'intelligenza! Vince con l'astuzia, non con la forza — il contrario di Achille nell'Iliade.</div>
+  </div>
+
+  <div class="topic-card ritorno">
+    <div class="topic-title"><span class="emoji">🎯</span> Valori e Temi</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Odisseo rappresenta</div><div class="value">Astuzia e intelligenza 🧠</div><div class="detail">Risolve problemi con l'ingegno</div></div>
+      <div class="info-box"><div class="label">Penelope rappresenta</div><div class="value">Fedeltà e pazienza 🧶</div><div class="detail">Aspetta 20 anni il marito</div></div>
+      <div class="info-box"><div class="label">Telemaco rappresenta</div><div class="value">La crescita / maturità</div><div class="detail">Da ragazzo insicuro a giovane coraggioso</div></div>
+      <div class="info-box"><div class="label">Il viaggio rappresenta</div><div class="value">La conoscenza e le prove della vita</div><div class="detail">Ogni tappa insegna qualcosa</div></div>
+      <div class="info-box"><div class="label">Ospitalità (xenia)</div><div class="value">Regola sacra dei Greci</div><div class="detail">Chi viola l'ospitalità viene punito (es. i Proci)</div></div>
+      <div class="info-box"><div class="label">Il destino</div><div class="value">Gli dei decidono la sorte</div><div class="detail">Ma l'uomo può lottare con astuzia</div></div>
+    </div>
+    <div class="fun-fact">La tela di Penelope è diventata un modo di dire: "la tela di Penelope" = un lavoro che non finisce mai!</div>
+  </div>
+</div>
+
+<!-- JOURNEY SECTION -->
+<div class="section" id="journey">
+  <h2 style="text-align:center;margin:20px 0;font-size:22px;">🗺️ Il Viaggio di Odisseo</h2>
+  <div class="journey">
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#e74c3c">🏛️</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Troia</h3><p>Dopo 10 anni di guerra, Odisseo parte per tornare a Itaca con i suoi compagni e 12 navi.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#e67e22">⚔️</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Ciconi (Ismaro)</h3><p>Saccheggiano la città ma i Ciconi contrattaccano. Perdono 6 uomini per nave.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#f1c40f">🌸</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Lotofagi</h3><p>Popolo che mangia il fiore di loto: chi lo mangia dimentica tutto e non vuole più partire. Odisseo trascina via i compagni.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#e74c3c">👁️</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Polifemo (Ciclope)</h3><p>Il gigante con un occhio solo li imprigiona nella grotta. Odisseo dice di chiamarsi <strong>"Nessuno"</strong>, lo acceca con un palo e scappa nascosto sotto le pecore. Polifemo chiede vendetta al padre Poseidone.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#3498db">💨</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Eolo (Re dei Venti)</h3><p>Regala un otre con tutti i venti contrari. Quasi a Itaca, i compagni lo aprono pensando sia un tesoro → vengono respinti indietro!</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#e74c3c">🏔️</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Lestrigoni</h3><p>Giganti cannibali! Distruggono 11 navi su 12. Resta solo la nave di Odisseo.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#8e44ad">⚗️</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Circe (1 anno)</h3><p>La maga trasforma i compagni in maiali. Ermes dà a Odisseo l'erba <em>moly</em> per resistere. Circe li aiuta e li manda nell'Ade.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#2c3e50">💀</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Ade (Mondo dei Morti)</h3><p>Odisseo consulta l'indovino <strong>Tiresia</strong> che gli rivela le prove future. Incontra la madre Anticlea e l'eroe Achille.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#e67e22">🎵</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Sirene</h3><p>Cantano per attirare i marinai. Odisseo si fa legare all'albero della nave, i compagni hanno la cera nelle orecchie. Così ascolta senza morire!</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#e74c3c">🐙</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Scilla e Cariddi</h3><p><strong>Scilla</strong>: mostro a 6 teste che mangia 6 compagni. <strong>Cariddi</strong>: gorgo che inghiotte le navi. Odisseo sceglie di passare vicino a Scilla (male minore).</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#f39c12">☀️</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Isola del Sole (Trinacria)</h3><p>I compagni mangiano i buoi sacri al dio Sole nonostante il divieto. Zeus li punisce con una tempesta: <strong>muoiono tutti tranne Odisseo</strong>.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#8e44ad">💕</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Calipso (7 anni)</h3><p>La ninfa lo trattiene sulla sua isola, gli offre l'immortalità. Odisseo rifiuta: vuole tornare da Penelope. Zeus ordina a Calipso di lasciarlo andare.</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#3498db">🚣</div><div class="journey-connector"></div></div>
+      <div class="journey-content"><h3>Feaci</h3><p>Naufrago, viene accolto dalla principessa <strong>Nausicaa</strong> e dal re <strong>Alcinoo</strong>. Qui racconta tutte le sue avventure. I Feaci lo riportano a Itaca!</p></div></div>
+
+    <div class="journey-step"><div class="journey-line"><div class="journey-dot" style="background:#27ae60">🏠</div></div>
+      <div class="journey-content"><h3>Itaca — Il Ritorno!</h3><p>Travestito da mendicante (grazie ad Atena), il cane <strong>Argo</strong> lo riconosce. Vince la <strong>prova dell'arco</strong>, uccide i Proci con Telemaco. Penelope lo riconosce con la <strong>prova del letto</strong> (ricavato da un ulivo).</p></div></div>
+
+  </div>
+</div>
+
+<!-- FLASH CARDS SECTION -->
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<!-- QUIZ SECTION -->
+<div class="section" id="quiz">
+  <div class="quiz">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<script>
+// TABS
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// FLASH CARDS DATA
+const cards = [
+  { cat: "L'Opera", q: "Chi ha scritto l'Odissea?", a: "Omero", extra: "VIII secolo a.C., poeta greco 🇬🇷" },
+  { cat: "L'Opera", q: "Quanti libri ha l'Odissea?", a: "24 libri", extra: "Divisi in 3 parti: Telemachia, Racconti, Ritorno" },
+  { cat: "L'Opera", q: "Cos'è il 'nostos'?", a: "Il ritorno in patria", extra: "È il tema centrale di tutta l'Odissea" },
+  { cat: "L'Opera", q: "Con che parole inizia l'Odissea?", a: "\"Cantami, o Musa...\"", extra: "Invocazione alla Musa — tradizione dei poemi epici" },
+  { cat: "L'Opera", q: "Quanto dura il viaggio di Odisseo?", a: "10 anni", extra: "+ 10 anni di guerra di Troia = 20 anni lontano da casa!" },
+  { cat: "L'Opera", q: "Qual è la differenza tra Iliade e Odissea?", a: "Iliade = guerra di Troia\nOdissea = viaggio di ritorno", extra: "Entrambe attribuite a Omero" },
+
+  { cat: "Personaggi", q: "Chi è il protagonista dell'Odissea?", a: "Odisseo (Ulisse in latino)", extra: "Re di Itaca, eroe dell'astuzia 🦊" },
+  { cat: "Personaggi", q: "Cosa significa 'polytropos', epiteto di Odisseo?", a: "Multiforme / dai molti modi", extra: "Sa adattarsi a ogni situazione" },
+  { cat: "Personaggi", q: "Chi è Penelope?", a: "La moglie di Odisseo", extra: "Simbolo di fedeltà — aspetta 20 anni 🧶" },
+  { cat: "Personaggi", q: "Che stratagemma usa Penelope?", a: "La tela: di giorno tesse, di notte disfa", extra: "Per rimandare le nozze con i Proci, per 3 anni" },
+  { cat: "Personaggi", q: "Chi è Telemaco?", a: "Il figlio di Odisseo e Penelope", extra: "Nei libri 1-4 parte a cercare il padre (Telemachia)" },
+  { cat: "Personaggi", q: "Quale dea protegge Odisseo?", a: "Atena 🦉", extra: "Dea della saggezza e della strategia" },
+  { cat: "Personaggi", q: "Quale dio è nemico di Odisseo?", a: "Poseidone 🔱", extra: "Dio del mare, padre di Polifemo" },
+  { cat: "Personaggi", q: "Chi sono i Proci?", a: "I pretendenti di Penelope", extra: "Vogliono sposarla e prendere il trono. Capo: Antinoo" },
+  { cat: "Personaggi", q: "Chi è il cane Argo?", a: "Il cane fedele di Odisseo 🐕", extra: "Lo aspetta 20 anni, lo riconosce e muore" },
+
+  { cat: "Avventure", q: "Chi è Polifemo?", a: "Un ciclope (gigante con un occhio solo)", extra: "Figlio di Poseidone 👁️" },
+  { cat: "Avventure", q: "Come si presenta Odisseo a Polifemo?", a: "Dice di chiamarsi 'Nessuno'", extra: "Così quando Polifemo grida aiuto dice 'Nessuno mi ha accecato!'" },
+  { cat: "Avventure", q: "Come scappano dalla grotta di Polifemo?", a: "Legati sotto le pecore 🐑", extra: "Polifemo tocca il dorso ma non il ventre delle pecore" },
+  { cat: "Avventure", q: "Cosa fa Circe ai compagni?", a: "Li trasforma in maiali 🐷", extra: "Ermes dà a Odisseo l'erba moly per resistere" },
+  { cat: "Avventure", q: "Come fa Odisseo ad ascoltare le Sirene?", a: "Si fa legare all'albero della nave", extra: "I compagni hanno la cera nelle orecchie 🎵" },
+  { cat: "Avventure", q: "Cosa sono Scilla e Cariddi?", a: "Scilla = mostro a 6 teste\nCariddi = gorgo marino", extra: "Odisseo sceglie Scilla: perde 6 uomini invece della nave" },
+  { cat: "Avventure", q: "Perché i compagni muoiono tutti?", a: "Mangiano i buoi sacri al dio Sole ☀️", extra: "Zeus li punisce con una tempesta — sopravvive solo Odisseo" },
+  { cat: "Avventure", q: "Chi è Calipso?", a: "Una ninfa che trattiene Odisseo 7 anni", extra: "Gli offre l'immortalità, ma lui rifiuta!" },
+  { cat: "Avventure", q: "Chi sono i Lotofagi?", a: "Popolo che mangia il fiore di loto 🌸", extra: "Chi lo mangia dimentica tutto e non vuole più partire" },
+  { cat: "Avventure", q: "Chi sono i Feaci?", a: "Il popolo che riporta Odisseo a Itaca", extra: "La principessa Nausicaa lo trova, il re Alcinoo lo ospita" },
+  { cat: "Avventure", q: "Cosa rivela Tiresia nell'Ade?", a: "Le prove future che Odisseo dovrà affrontare", extra: "Odisseo scende nel mondo dei morti per consultarlo 💀" },
+
+  { cat: "Il Ritorno", q: "Come si traveste Odisseo a Itaca?", a: "Da mendicante (con l'aiuto di Atena)", extra: "Per non farsi riconoscere dai Proci" },
+  { cat: "Il Ritorno", q: "Chi riconosce per primo Odisseo?", a: "Il cane Argo 🐕", extra: "Dopo 20 anni — muore subito dopo averlo visto" },
+  { cat: "Il Ritorno", q: "Cos'è la prova dell'arco?", a: "Tendere l'arco di Odisseo e tirare attraverso 12 scuri", extra: "Solo Odisseo ci riesce! Poi inizia la strage dei Proci 🏹" },
+  { cat: "Il Ritorno", q: "Come Penelope riconosce Odisseo?", a: "Con la prova del letto", extra: "Solo lui sa che il letto è ricavato da un ulivo 🫒" },
+];
+
+let currentCard = 0;
+
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = (currentCard + 1) + ' / ' + cards.length;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  currentCard = 0;
+  updateCard();
+}
+updateCard();
+
+// QUIZ
+const quizQuestions = [
+  { q: "Quanto dura l'assenza di Odisseo da Itaca?", opts: ["10 anni", "15 anni", "20 anni", "7 anni"], correct: 2 },
+  { q: "Quale di questi NON è un epiteto di Odisseo?", opts: ["Piè veloce", "Multiforme", "Molto astuto", "Distruttore di città"], correct: 0 },
+  { q: "In che ordine Odisseo incontra questi pericoli?", opts: ["Sirene → Polifemo → Circe", "Polifemo → Circe → Sirene", "Circe → Polifemo → Sirene", "Polifemo → Sirene → Circe"], correct: 1 },
+  { q: "Perché Poseidone odia Odisseo?", opts: ["Ha offeso il tempio di Poseidone", "Ha accecato suo figlio Polifemo", "Ha rifiutato di fare sacrifici", "Ha rubato il tridente"], correct: 1 },
+  { q: "Cosa rappresenta la tela di Penelope?", opts: ["La sua abilità artistica", "Un dono per i Proci", "Uno stratagemma per prendere tempo", "Un compito di Atena"], correct: 2 },
+  { q: "Come si presenta Odisseo a Polifemo?", opts: ["Re di Itaca", "Nessuno", "Un mercante", "Figlio di Zeus"], correct: 1 },
+  { q: "Quale valore incarna Odisseo?", opts: ["La forza bruta", "L'astuzia e l'intelligenza", "La ricchezza", "La bellezza"], correct: 1 },
+  { q: "Chi riporta Odisseo a Itaca?", opts: ["Calipso", "Atena", "I Feaci", "Ermes"], correct: 2 },
+  { q: "Perché i compagni di Odisseo muoiono?", opts: ["Offendono Poseidone", "Mangiano i buoi sacri al Sole", "Aprono l'otre di Eolo", "Ascoltano le Sirene"], correct: 1 },
+  { q: "Cosa offre Calipso a Odisseo?", opts: ["Ricchezze infinite", "Una flotta di navi", "L'immortalità", "Il potere su tutti i mari"], correct: 2 },
+  { q: "Chi è il primo a riconoscere Odisseo a Itaca?", opts: ["Penelope", "Telemaco", "La nutrice Euriclea", "Il cane Argo"], correct: 3 },
+  { q: "Come Penelope verifica che è davvero Odisseo?", opts: ["Gli chiede la password", "La prova del letto (ulivo)", "Lo riconosce dalla cicatrice", "Gli chiede il nome del cane"], correct: 1 },
+  { q: "Qual è il primo parco— ops! Cos'è la Telemachia?", opts: ["Il viaggio di Telemaco (libri 1-4)", "La vendetta di Telemaco", "Il pianto di Telemaco", "L'arrivo di Telemaco a Troia"], correct: 0 },
+  { q: "Cosa fanno le Sirene?", opts: ["Lanciano frecce", "Cantano per attirare i marinai", "Creano tempeste", "Rapiscono i marinai nel sonno"], correct: 1 },
+  { q: "Cosa significa 'nostos'?", opts: ["Guerra", "Vendetta", "Ritorno in patria", "Viaggio per mare"], correct: 2 },
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 13 ? "🏆" : quizScore >= 10 ? "👏" : quizScore >= 7 ? "👍" : "📚";
+    container.innerHTML =
+      '<div class="quiz-score">' + emoji + ' Hai risposto bene a ' + quizScore + ' su ' + quizQuestions.length + '!</div>' +
+      '<p style="text-align:center;color:#666">' +
+      (quizScore >= 13 ? "Fantastico! Sei pronta per l'interrogazione! 🌟" : quizScore >= 10 ? "Bravissima! Quasi perfetto!" : quizScore >= 7 ? "Bene! Ripassiamo le flash cards?" : "Dai, ripassiamo le flash cards e riproviamo! 💪") +
+      '</p><button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>';
+    return;
+  }
+  const qq = quizQuestions[quizIndex];
+  quizAnswered = false;
+  let html = '<div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ' + (quizIndex + 1) + ' / ' + quizQuestions.length + ' — Punteggio: ' + quizScore + '</div>';
+  html += '<div class="quiz-question"><div class="quiz-q">' + qq.q + '</div><div class="quiz-options">';
+  for (let i = 0; i < qq.opts.length; i++) {
+    html += '<button class="quiz-opt" onclick="answerQuiz(' + i + ')">' + qq.opts[i] + '</button>';
+  }
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(function(b, i) {
+    b.classList.add('disabled');
+    if (i === qq.correct) b.classList.add('correct');
+    if (i === idx && idx !== qq.correct) b.classList.add('wrong');
+  });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(function() { quizIndex++; renderQuiz(); }, 1200);
+}
+
+function restartQuiz() {
+  quizIndex = 0; quizScore = 0;
+  quizQuestions.sort(function() { return Math.random() - 0.5; });
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📝 Grammatica — Gli Aggettivi</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e74c3c; }
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .mindmap { padding: 20px; }
+  .region-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .region-card.cat1 { border-color: #3498db; }
+  .region-card.cat2 { border-color: #e74c3c; }
+  .region-card.cat3 { border-color: #2ecc71; }
+  .region-card.cat4 { border-color: #f39c12; }
+  .region-card.cat5 { border-color: #9b59b6; }
+  .region-card.cat6 { border-color: #1abc9c; }
+  .region-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .region-title .emoji { font-size: 32px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fff3cd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #3498db; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #3498db; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #3498db; background: #f0f7ff; }
+  .quiz-opt.correct { border-color: #2ecc71; background: #d5f5e3; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #fadbd8; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>📝</span> Gli Aggettivi</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap')">🧠 Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button class="tab" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<div class="section active" id="mindmap">
+  <div class="mindmap">
+
+    <div class="region-card cat1">
+      <div class="region-title"><span class="emoji">🌈</span> Aggettivi Qualificativi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cosa fanno?</div><div class="value">Descrivono una QUALITÀ del nome</div><div class="detail">bello, grande, simpatico, veloce, dolce</div></div>
+        <div class="info-box"><div class="label">Grado Positivo</div><div class="value">La qualità semplice, senza confronti</div><div class="detail">Teresa è simpatica 😊</div></div>
+        <div class="info-box"><div class="label">Grado Comparativo</div><div class="value">Confronto tra due elementi</div><div class="detail">Maggioranza: PIÙ simpatica DI...<br>Minoranza: MENO simpatica DI...<br>Uguaglianza: simpatica COME / QUANTO...</div></div>
+        <div class="info-box"><div class="label">Grado Superlativo Relativo</div><div class="value">Il massimo rispetto a un gruppo</div><div class="detail">Teresa è LA PIÙ simpatica DELLA classe 🏆</div></div>
+        <div class="info-box"><div class="label">Grado Superlativo Assoluto</div><div class="value">Il massimo in assoluto, senza confronti</div><div class="detail">Teresa è simpaticISSIMA! (oppure: molto simpatica)</div></div>
+      </div>
+      <div class="fun-fact">Alcuni aggettivi hanno forme speciali: buono → migliore → ottimo, cattivo → peggiore → pessimo, grande → maggiore → massimo! 🌟</div>
+    </div>
+
+    <div class="region-card cat2">
+      <div class="region-title"><span class="emoji">👜</span> Aggettivi Possessivi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cosa fanno?</div><div class="value">Indicano a CHI appartiene qualcosa</div></div>
+        <div class="info-box"><div class="label">Singolare</div><div class="value">mio/mia, tuo/tua, suo/sua</div><div class="detail">Il MIO zaino, la TUA penna</div></div>
+        <div class="info-box"><div class="label">Plurale</div><div class="value">nostro/a, vostro/a, loro</div><div class="detail">I NOSTRI libri, le VOSTRE idee, i LORO cani</div></div>
+        <div class="info-box"><div class="label">Regola</div><div class="value">Concordano in genere e numero col nome!</div><div class="detail">"LORO" è invariabile: il loro gatto, la loro casa</div></div>
+      </div>
+      <div class="fun-fact">Con i nomi di parentela al singolare l'articolo sparisce: "mia mamma" (non "la mia mamma"). Ma al plurale torna: "le mie sorelle"! 👨‍👩‍👧‍👦</div>
+    </div>
+
+    <div class="region-card cat3">
+      <div class="region-title"><span class="emoji">👉</span> Aggettivi Dimostrativi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cosa fanno?</div><div class="value">Indicano la POSIZIONE di qualcosa</div></div>
+        <div class="info-box"><div class="label">QUESTO/A/I/E</div><div class="value">Vicino a chi parla</div><div class="detail">QUESTO libro (qui, vicino a me) 📖</div></div>
+        <div class="info-box"><div class="label">QUELLO/A/I/E</div><div class="value">Lontano da chi parla</div><div class="detail">QUEL libro (là, lontano) 📕</div></div>
+        <div class="info-box"><div class="label">Forme di QUELLO</div><div class="value">Si comporta come l'articolo!</div><div class="detail">quel ragazzo, quello zaino, quell'albero, quei ragazzi, quegli zaini</div></div>
+      </div>
+      <div class="fun-fact">"Quello" cambia forma come gli articoli determinativi: QUEL (=il), QUELLO (=lo), QUELL' (=l'), QUEI (=i), QUEGLI (=gli)! Stesse regole! 🤓</div>
+    </div>
+
+    <div class="region-card cat4">
+      <div class="region-title"><span class="emoji">🌫️</span> Aggettivi Indefiniti</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cosa fanno?</div><div class="value">Indicano una quantità VAGA, non precisa</div></div>
+        <div class="info-box"><div class="label">Di quantità</div><div class="value">molto, poco, tanto, troppo, tutto, ogni, qualche</div><div class="detail">Ho MOLTI amici, OGNI giorno, QUALCHE volta</div></div>
+        <div class="info-box"><div class="label">Di qualità</div><div class="value">qualsiasi, qualunque, certo, altro</div><div class="detail">Un giorno QUALSIASI, un CERTO signore</div></div>
+        <div class="info-box"><div class="label">Attenzione!</div><div class="value">OGNI e QUALCHE sono sempre SINGOLARI</div><div class="detail">OGNI ragazzo (non "ogni ragazzi"!), QUALCHE libro</div></div>
+      </div>
+      <div class="fun-fact">"Ogni" vuole sempre il singolare anche se il significato è plurale: "ogni studente" = tutti gli studenti! 🧠</div>
+    </div>
+
+    <div class="region-card cat5">
+      <div class="region-title"><span class="emoji">🔢</span> Aggettivi Numerali</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Cardinali</div><div class="value">Indicano una quantità PRECISA</div><div class="detail">uno, due, tre, cento, mille...</div></div>
+        <div class="info-box"><div class="label">Ordinali</div><div class="value">Indicano l'ORDINE in una serie</div><div class="detail">primo, secondo, terzo, decimo...</div></div>
+        <div class="info-box"><div class="label">Moltiplicativi</div><div class="value">Indicano quante volte</div><div class="detail">doppio, triplo, quadruplo...</div></div>
+      </div>
+      <div class="fun-fact">Teresa è in QUINTA (ordinale) elementare e ha UNDICI (cardinale) anni! I numerali sono ovunque! 🔢</div>
+    </div>
+
+    <div class="region-card cat6">
+      <div class="region-title"><span class="emoji">❓❗</span> Interrogativi ed Esclamativi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Interrogativi</div><div class="value">Servono per fare domande</div><div class="detail">QUALE libro vuoi? QUANTI anni hai? CHE film vediamo?</div></div>
+        <div class="info-box"><div class="label">Esclamativi</div><div class="value">Esprimono meraviglia, stupore</div><div class="detail">CHE bello! QUANTA neve! QUALE sorpresa!</div></div>
+        <div class="info-box"><div class="label">Sono gli stessi!</div><div class="value">che, quale, quanto</div><div class="detail">Cambia solo il tono e la punteggiatura (? o !)</div></div>
+      </div>
+      <div class="fun-fact">Le stesse parole diventano interrogative o esclamative: "Che bel voto?" (domanda) vs "Che bel voto!" (sorpresa) — cambia solo il segno! ❓❗</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<div class="section" id="quiz">
+  <div class="quiz"><div id="quizContent"></div></div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { cat: "Qualificativi", q: "Cos'è un aggettivo qualificativo?", a: "Descrive una qualità del nome", extra: "bello, grande, veloce, dolce, furbo 🌈" },
+  { cat: "Qualificativi", q: "Quali sono i 3 gradi dell'aggettivo?", a: "Positivo, Comparativo, Superlativo", extra: "bella → più bella → bellissima" },
+  { cat: "Qualificativi", q: "Cos'è il grado comparativo di maggioranza?", a: "PIÙ + aggettivo + DI", extra: "Teresa è PIÙ alta DI Marco" },
+  { cat: "Qualificativi", q: "Cos'è il superlativo assoluto?", a: "Il massimo senza confronti: -ISSIMO o MOLTO+agg", extra: "bellissimo = molto bello 🌟" },
+  { cat: "Qualificativi", q: "Qual è il comparativo speciale di 'buono'?", a: "Migliore!", extra: "buono → migliore (comp.) → ottimo (sup. assoluto)" },
+  { cat: "Qualificativi", q: "Qual è il superlativo assoluto di 'cattivo'?", a: "Pessimo!", extra: "cattivo → peggiore → pessimo 😬" },
+  { cat: "Possessivi", q: "Cosa indicano gli aggettivi possessivi?", a: "A CHI appartiene qualcosa", extra: "mio, tuo, suo, nostro, vostro, loro" },
+  { cat: "Possessivi", q: "Quale possessivo è invariabile?", a: "LORO — non cambia mai!", extra: "il loro gatto, la loro casa, i loro libri 📚" },
+  { cat: "Possessivi", q: "Si dice 'la mia mamma' o 'mia mamma'?", a: "Mia mamma (senza articolo!)", extra: "Con parentela al singolare l'articolo sparisce 👩" },
+  { cat: "Dimostrativi", q: "Quando si usa QUESTO?", a: "Per indicare qualcosa VICINO a chi parla", extra: "QUESTO libro qui, davanti a me 📖" },
+  { cat: "Dimostrativi", q: "Quando si usa QUELLO?", a: "Per indicare qualcosa LONTANO da chi parla", extra: "QUEL libro là, lontano 📕" },
+  { cat: "Dimostrativi", q: "'QUELLO' cambia forma. Come?", a: "Come gli articoli determinativi!", extra: "quel (=il), quello (=lo), quell' (=l'), quei (=i), quegli (=gli)" },
+  { cat: "Indefiniti", q: "Cosa indicano gli aggettivi indefiniti?", a: "Una quantità VAGA, non precisa", extra: "molto, poco, tanto, troppo, ogni, qualche 🌫️" },
+  { cat: "Indefiniti", q: "OGNI è singolare o plurale?", a: "Sempre SINGOLARE!", extra: "Ogni ragazzo ✅ (non 'ogni ragazzi' ❌)" },
+  { cat: "Indefiniti", q: "QUALCHE è singolare o plurale?", a: "Sempre SINGOLARE!", extra: "Qualche libro ✅ (ma significa 'alcuni libri')" },
+  { cat: "Numerali", q: "Cosa sono gli aggettivi numerali cardinali?", a: "Indicano una quantità PRECISA", extra: "uno, due, tre, dieci, cento, mille 🔢" },
+  { cat: "Numerali", q: "Cosa sono gli aggettivi numerali ordinali?", a: "Indicano l'ORDINE in una serie", extra: "primo, secondo, terzo, quarto, quinto... 🥇" },
+  { cat: "Interr./Esclam.", q: "Quali sono gli aggettivi interrogativi?", a: "Che, quale, quanto", extra: "CHE libro leggi? QUALE vuoi? QUANTI ne hai?" },
+  { cat: "Interr./Esclam.", q: "Che differenza c'è tra interrogativo ed esclamativo?", a: "Stesse parole, cambiano tono e punteggiatura!", extra: "Che bello? (domanda) vs Che bello! (sorpresa) ❓❗" },
+  { cat: "Qualificativi", q: "Cos'è il comparativo di uguaglianza?", a: "Agg. + COME / QUANTO", extra: "Teresa è alta COME Giulia, simpatica QUANTO Sara" },
+];
+
+let currentCard = 0;
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  currentCard = 0; updateCard();
+}
+updateCard();
+
+const quizQuestions = [
+  { q: "'Bellissimo' è un aggettivo di grado...", opts: ["positivo", "comparativo", "superlativo relativo", "superlativo assoluto"], correct: 3 },
+  { q: "Qual è il comparativo di maggioranza di 'buono'?", opts: ["più buono", "migliore", "ottimo", "buonissimo"], correct: 1 },
+  { q: "'MIO' è un aggettivo...", opts: ["qualificativo", "possessivo", "dimostrativo", "indefinito"], correct: 1 },
+  { q: "Quale aggettivo possessivo è invariabile?", opts: ["mio", "suo", "nostro", "loro"], correct: 3 },
+  { q: "'QUESTO' indica qualcosa di...", opts: ["lontano", "vicino", "indefinito", "passato"], correct: 1 },
+  { q: "'OGNI' vuole il nome al...", opts: ["singolare", "plurale", "sia singolare che plurale", "maschile"], correct: 0 },
+  { q: "Qual è il superlativo assoluto di 'cattivo'?", opts: ["cattivissimo", "peggiore", "pessimo", "più cattivo"], correct: 2 },
+  { q: "'Primo, secondo, terzo' sono aggettivi numerali...", opts: ["cardinali", "ordinali", "moltiplicativi", "distributivi"], correct: 1 },
+  { q: "'Teresa è PIÙ alta DI Marco' — che grado è?", opts: ["positivo", "comparativo di maggioranza", "superlativo relativo", "superlativo assoluto"], correct: 1 },
+  { q: "'Che bello!' — 'che' è un aggettivo...", opts: ["qualificativo", "possessivo", "indefinito", "esclamativo"], correct: 3 },
+  { q: "Come si forma il superlativo assoluto?", opts: ["più + aggettivo", "agg. + -issimo (o molto + agg.)", "il più + aggettivo", "meno + aggettivo"], correct: 1 },
+  { q: "'QUEL ragazzo, QUELLO zaino' — perché cambia forma?", opts: ["Sono aggettivi diversi", "Segue le regole degli articoli", "È un errore", "Dipende dal significato"], correct: 1 },
+];
+
+let quizIndex = 0, quizScore = 0, quizAnswered = false;
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 10 ? "🏆" : quizScore >= 7 ? "👏" : quizScore >= 5 ? "👍" : "📚";
+    container.innerHTML = `
+      <div class="quiz-score">${emoji} Hai risposto bene a ${quizScore} su ${quizQuestions.length}!</div>
+      <p style="text-align:center;color:#666">${quizScore >= 10 ? "Fantastico! Sei la regina degli aggettivi!" : quizScore >= 7 ? "Bravissima! Quasi perfetto!" : quizScore >= 5 ? "Bene! Ripassiamo le flash cards?" : "Dai, ripassiamo insieme le flash cards! 💪"}</p>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>`;
+    return;
+  }
+  const qq = quizQuestions[quizIndex]; quizAnswered = false;
+  container.innerHTML = `
+    <div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ${quizIndex + 1} / ${quizQuestions.length} — Punteggio: ${quizScore}</div>
+    <div class="quiz-question"><div class="quiz-q">${qq.q}</div><div class="quiz-options">
+      ${qq.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div></div>`;
+}
+function answerQuiz(idx) {
+  if (quizAnswered) return; quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  document.querySelectorAll('.quiz-opt').forEach((b, i) => { b.classList.add('disabled'); if (i === qq.correct) b.classList.add('correct'); if (i === idx && idx !== qq.correct) b.classList.add('wrong'); });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(() => { quizIndex++; renderQuiz(); }, 1200);
+}
+function restartQuiz() { quizIndex = 0; quizScore = 0; quizQuestions.sort(() => Math.random() - 0.5); renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>

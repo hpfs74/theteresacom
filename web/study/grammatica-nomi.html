@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📝 Grammatica — I Nomi</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e74c3c; }
+  
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+  
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  
+  .mindmap { padding: 20px; }
+  .region-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .region-card.cat1 { border-color: #3498db; }
+  .region-card.cat2 { border-color: #e74c3c; }
+  .region-card.cat3 { border-color: #2ecc71; }
+  .region-card.cat4 { border-color: #f39c12; }
+  .region-card.cat5 { border-color: #9b59b6; }
+  .region-card.cat6 { border-color: #1abc9c; }
+  
+  .region-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .region-title .emoji { font-size: 32px; }
+  
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  
+  .fun-fact { background: #fff3cd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #3498db; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #3498db; }
+
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #3498db; background: #f0f7ff; }
+  .quiz-opt.correct { border-color: #2ecc71; background: #d5f5e3; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #fadbd8; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-next { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #3498db; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .quiz-next:hover { background: #2980b9; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>📝</span> I Nomi (Sostantivi)</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap')">🧠 Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button class="tab" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<!-- MIND MAP -->
+<div class="section active" id="mindmap">
+  <div class="mindmap">
+
+    <div class="region-card cat1">
+      <div class="region-title"><span class="emoji">🏷️</span> Comuni e Propri</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Nome Comune</div><div class="value">Indica una categoria generica</div><div class="detail">gatto, città, ragazza, fiume</div></div>
+        <div class="info-box"><div class="label">Nome Proprio</div><div class="value">Indica un essere o cosa precisa</div><div class="detail">Teresa, Roma, Fido, Tevere</div></div>
+        <div class="info-box"><div class="label">Regola d'oro</div><div class="value">Il nome proprio si scrive MAIUSCOLO! ✍️</div></div>
+      </div>
+      <div class="fun-fact">"Teresa" è un nome proprio, "ragazza" è un nome comune. Ma Teresa è una ragazza speciale! 😄</div>
+    </div>
+
+    <div class="region-card cat2">
+      <div class="region-title"><span class="emoji">🧱</span> Concreti e Astratti</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Nome Concreto</div><div class="value">Si può percepire con i 5 sensi</div><div class="detail">libro, musica, profumo, gelato 🍦</div></div>
+        <div class="info-box"><div class="label">Nome Astratto</div><div class="value">Non si può toccare, vedere, sentire</div><div class="detail">felicità, coraggio, amicizia, libertà</div></div>
+      </div>
+      <div class="fun-fact">Puoi toccare un "libro" (concreto), ma non puoi toccare la "felicità" (astratto)... anche se la senti dentro! 💛</div>
+    </div>
+
+    <div class="region-card cat3">
+      <div class="region-title"><span class="emoji">👥</span> Individuali e Collettivi</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Nome Individuale</div><div class="value">Indica un solo elemento</div><div class="detail">albero, soldato, pecora, stella</div></div>
+        <div class="info-box"><div class="label">Nome Collettivo</div><div class="value">Indica un gruppo (anche al singolare!)</div><div class="detail">bosco, esercito, gregge, costellazione</div></div>
+      </div>
+      <div class="fun-fact">"Squadra" è singolare ma indica tanti giocatori insieme! Come la tua classe: una "scolaresca" 🏫</div>
+    </div>
+
+    <div class="region-card cat4">
+      <div class="region-title"><span class="emoji">🔧</span> Primitivi, Derivati, Alterati, Composti</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Primitivo</div><div class="value">Non deriva da nessun altro nome</div><div class="detail">casa, libro, fiore</div></div>
+        <div class="info-box"><div class="label">Derivato</div><div class="value">Nasce da un primitivo + prefisso/suffisso</div><div class="detail">cas-alinga, libr-eria, fior-ista</div></div>
+        <div class="info-box"><div class="label">Alterato</div><div class="value">Cambia sfumatura con un suffisso</div><div class="detail">cas-ina (piccola), cas-ona (grande), cas-accia (brutta)</div></div>
+        <div class="info-box"><div class="label">Composto</div><div class="value">Unione di due parole</div><div class="detail">porta + ombrelli = portaombrelli 🌂</div></div>
+      </div>
+      <div class="fun-fact">I suffissi alterativi: -ino/-ina (piccolo), -one/-ona (grande), -etto/-etta (carino), -accio/-accia (brutto). "Gattino" fa tenerezza, "gattaccio" fa paura! 🐱</div>
+    </div>
+
+    <div class="region-card cat5">
+      <div class="region-title"><span class="emoji">♀️♂️</span> Genere: Maschile e Femminile</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Maschile → Femminile</div><div class="value">Cambio di desinenza</div><div class="detail">gatto → gatta, maestro → maestra</div></div>
+        <div class="info-box"><div class="label">Nomi indipendenti</div><div class="value">Cambiano completamente</div><div class="detail">uomo → donna, padre → madre</div></div>
+        <div class="info-box"><div class="label">Nomi di genere comune</div><div class="value">Cambia solo l'articolo</div><div class="detail">il/la cantante, il/la nipote</div></div>
+      </div>
+      <div class="fun-fact">Alcuni nomi cambiano significato col genere: "il banco" (di scuola) → "la banca" (dove tieni i soldi)! 🏦</div>
+    </div>
+
+    <div class="region-card cat6">
+      <div class="region-title"><span class="emoji">🔢</span> Numero: Singolare e Plurale</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Regola base</div><div class="value">-o → -i (libro/libri), -a → -e (casa/case), -e → -i (fiore/fiori)</div></div>
+        <div class="info-box"><div class="label">Nomi invariabili</div><div class="value">Non cambiano al plurale!</div><div class="detail">la città → le città, il re → i re, il bar → i bar</div></div>
+        <div class="info-box"><div class="label">Plurali irregolari</div><div class="value">Cambiano in modo speciale</div><div class="detail">uomo → uomini, uovo → uova 🥚</div></div>
+      </div>
+      <div class="fun-fact">Attenzione ai nomi che al plurale cambiano genere! "L'uovo" (maschile) → "Le uova" (femminile)! 🤯</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FLASH CARDS -->
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="quiz">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { cat: "Comuni/Propri", q: "Cos'è un nome comune?", a: "Un nome che indica una categoria generica", extra: "Es. gatto, città, ragazza, montagna" },
+  { cat: "Comuni/Propri", q: "Cos'è un nome proprio?", a: "Un nome che indica un essere o cosa precisa", extra: "Es. Teresa, Roma, Fido — si scrive MAIUSCOLO! ✍️" },
+  { cat: "Comuni/Propri", q: "'Roma' è un nome comune o proprio?", a: "Proprio! ✅", extra: "Indica una città precisa, si scrive maiuscolo" },
+  { cat: "Concreti/Astratti", q: "Cos'è un nome concreto?", a: "Un nome che si percepisce con i 5 sensi", extra: "Puoi vederlo, toccarlo, sentirlo... Es. pizza, campana 🍕" },
+  { cat: "Concreti/Astratti", q: "Cos'è un nome astratto?", a: "Un nome che NON si percepisce con i sensi", extra: "Es. felicità, coraggio, amicizia 💛" },
+  { cat: "Concreti/Astratti", q: "'Libertà' è concreto o astratto?", a: "Astratto!", extra: "Non puoi toccarla o vederla, ma è importantissima! 🕊️" },
+  { cat: "Individuali/Collettivi", q: "Cos'è un nome collettivo?", a: "Un nome singolare che indica un GRUPPO", extra: "Es. gregge (tante pecore), sciame (tante api) 🐝" },
+  { cat: "Individuali/Collettivi", q: "Qual è il collettivo di 'albero'?", a: "Bosco! 🌲", extra: "Un bosco = tanti alberi insieme" },
+  { cat: "Individuali/Collettivi", q: "Qual è il collettivo di 'soldato'?", a: "Esercito! ⚔️", extra: "Un esercito = tanti soldati" },
+  { cat: "Struttura", q: "Cos'è un nome primitivo?", a: "Un nome base, che non deriva da altri", extra: "Es. casa, libro, fiore — sono la 'radice'" },
+  { cat: "Struttura", q: "Cos'è un nome derivato?", a: "Un nome che nasce da un primitivo", extra: "fiore → fiorista, fioraio, fioriera 🌸" },
+  { cat: "Struttura", q: "Cos'è un nome alterato?", a: "Un nome che cambia sfumatura con un suffisso", extra: "-ino (piccolo), -one (grande), -etto (carino), -accio (brutto)" },
+  { cat: "Struttura", q: "Come si chiama 'porta + ombrelli'?", a: "Nome composto! (Portaombrelli)", extra: "Due parole unite in una sola 🌂" },
+  { cat: "Struttura", q: "Che tipo di nome è 'casetta'?", a: "Alterato (diminutivo/vezzeggiativo)", extra: "Casa + -etta = una casa piccola e carina 🏠" },
+  { cat: "Genere", q: "Come si forma il femminile di 'gatto'?", a: "Gatta! (si cambia -o in -a)", extra: "Regola base: maestro → maestra, ragazzo → ragazza" },
+  { cat: "Genere", q: "Cosa sono i nomi di genere comune?", a: "Nomi che cambiano genere solo con l'articolo", extra: "il cantante / la cantante, il nipote / la nipote 🎤" },
+  { cat: "Genere", q: "Qual è il femminile di 'uomo'?", a: "Donna!", extra: "Questo è un nome 'indipendente': cambia completamente!" },
+  { cat: "Numero", q: "Come si forma il plurale dei nomi in -o?", a: "Si cambia -o in -i", extra: "libro → libri, gatto → gatti 📚" },
+  { cat: "Numero", q: "Cosa sono i nomi invariabili?", a: "Nomi che NON cambiano al plurale", extra: "la città → le città, il bar → i bar, il cinema → i cinema" },
+  { cat: "Numero", q: "Qual è il plurale di 'uovo'?", a: "Uova! (E diventa femminile!) 🥚", extra: "L'uovo (masch.) → Le uova (femm.) — plurale irregolare!" },
+];
+
+let currentCard = 0;
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  currentCard = 0; updateCard();
+}
+updateCard();
+
+const quizQuestions = [
+  { q: "Quale di questi è un nome proprio?", opts: ["gatto", "Teresa", "città", "fiume"], correct: 1 },
+  { q: "Quale di questi è un nome astratto?", opts: ["pizza", "amicizia", "quaderno", "campana"], correct: 1 },
+  { q: "'Gregge' è un nome...", opts: ["primitivo", "derivato", "collettivo", "composto"], correct: 2 },
+  { q: "Qual è il nome derivato di 'fiore'?", opts: ["fiorellino", "fiorista", "fiorone", "fioraccio"], correct: 1 },
+  { q: "'Casetta' è un nome...", opts: ["primitivo", "derivato", "alterato", "composto"], correct: 2 },
+  { q: "Quale di questi è un nome composto?", opts: ["libreria", "portaombrelli", "casina", "gattone"], correct: 1 },
+  { q: "Come si forma il plurale di 'casa'?", opts: ["casi", "case", "casa", "case"], correct: 1 },
+  { q: "Qual è il plurale di 'uovo'?", opts: ["uovi", "uova", "uove", "uovini"], correct: 1 },
+  { q: "Quale di questi è un nome invariabile?", opts: ["libro", "gatto", "città", "fiore"], correct: 2 },
+  { q: "'Il/la cantante' è un nome di genere...", opts: ["maschile", "femminile", "comune", "neutro"], correct: 2 },
+  { q: "Quale suffisso indica qualcosa di GRANDE?", opts: ["-ino", "-one", "-etto", "-uccio"], correct: 1 },
+  { q: "'Felicità' è un nome...", opts: ["concreto e comune", "astratto e comune", "concreto e proprio", "astratto e proprio"], correct: 1 },
+];
+
+let quizIndex = 0, quizScore = 0, quizAnswered = false;
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 10 ? "🏆" : quizScore >= 7 ? "👏" : quizScore >= 5 ? "👍" : "📚";
+    container.innerHTML = `
+      <div class="quiz-score">${emoji} Hai risposto bene a ${quizScore} su ${quizQuestions.length}!</div>
+      <p style="text-align:center;color:#666">${quizScore >= 10 ? "Fantastico! Sei un genio della grammatica!" : quizScore >= 7 ? "Bravissima! Quasi perfetto!" : quizScore >= 5 ? "Bene! Ripassiamo le flash cards?" : "Dai, ripassiamo insieme le flash cards! 💪"}</p>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>`;
+    return;
+  }
+  const qq = quizQuestions[quizIndex];
+  quizAnswered = false;
+  container.innerHTML = `
+    <div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ${quizIndex + 1} / ${quizQuestions.length} — Punteggio: ${quizScore}</div>
+    <div class="quiz-question"><div class="quiz-q">${qq.q}</div><div class="quiz-options">
+      ${qq.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div></div>`;
+}
+function answerQuiz(idx) {
+  if (quizAnswered) return; quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach((b, i) => { b.classList.add('disabled'); if (i === qq.correct) b.classList.add('correct'); if (i === idx && idx !== qq.correct) b.classList.add('wrong'); });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(() => { quizIndex++; renderQuiz(); }, 1200);
+}
+function restartQuiz() { quizIndex = 0; quizScore = 0; quizQuestions.sort(() => Math.random() - 0.5); renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>

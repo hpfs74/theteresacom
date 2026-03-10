@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ Storia — Lez. 2: I progressi tecnici migliorano l'economia</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #2980b9; }
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 24px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.dominio { border-color: #e67e22; }
+  .topic-card.agricoltura { border-color: #2ecc71; }
+  .topic-card.aratro { border-color: #795548; }
+  .topic-card.energia { border-color: #3498db; }
+  .topic-card.trasporti { border-color: #1abc9c; }
+  .topic-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 30px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8fafc; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #e8f4fd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "⚙️ "; }
+  .central-theme { background: linear-gradient(135deg, #2c3e50, #2980b9); color: white; border-radius: 20px; padding: 28px; text-align: center; margin-bottom: 28px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .central-theme h2 { font-size: 26px; margin-bottom: 8px; }
+  .central-theme p { font-size: 16px; opacity: 0.9; }
+  .schema-box { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  .schema-box h3 { font-size: 18px; margin-bottom: 16px; text-align: center; color: #2c3e50; }
+  .schema-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .schema-col { background: #f8fafc; border-radius: 12px; padding: 16px; text-align: center; }
+  .schema-col h4 { margin-bottom: 8px; color: #2980b9; }
+  .schema-col .big { font-size: 28px; font-weight: 700; color: #2c3e50; }
+  .schema-col .sub { font-size: 13px; color: #666; margin-top: 4px; }
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #2c3e50 0%, #2980b9 100%); color: white; }
+  .flashcard-front .question { font-size: 20px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 22px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #2980b9; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #2980b9; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #2980b9; background: #e8f4fd; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #2980b9; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .back-link { display: block; text-align: center; padding: 20px; color: #2c3e50; text-decoration: none; font-weight: 600; }
+  .back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<h1><span>⚙️</span> Lezione 2 — I progressi tecnici migliorano l'economia</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flashcards</button>
+  <button class="tab" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<div id="mappa" class="section active">
+  <div class="central-theme">
+    <h2>⚙️ Cambiamenti nell'economia tra X e XI secolo</h2>
+    <p>Dominio utile · Innovazioni agricole · Innovazioni tecnologiche</p>
+  </div>
+
+  <div class="topic-card dominio">
+    <div class="topic-title"><span class="emoji">👨‍🌾</span> Il Dominio Utile</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Cos'è</div><div class="value">Maggiori diritti per i contadini</div><div class="detail">I contadini ottennero più diritti sulla terra che lavoravano</div></div>
+      <div class="info-box"><div class="label">Effetto</div><div class="value">Migliorano le condizioni</div><div class="detail">Più motivazione a coltivare bene → più produttività</div></div>
+    </div>
+  </div>
+
+  <div class="topic-card agricoltura">
+    <div class="topic-title"><span class="emoji">🌱</span> Innovazioni in Agricoltura</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Rotazione triennale</div><div class="value">Da 2 a 3 anni di ciclo</div><div class="detail">Biennale: metà produttiva. Triennale: due terzi!</div></div>
+      <div class="info-box"><div class="label">Colture</div><div class="value">Grano + legumi + maggese</div><div class="detail">I legumi arricchiscono il terreno e lo rendono più produttivo</div></div>
+      <div class="info-box"><div class="label">Più terre coltivabili</div><div class="value">Terreno produttivo: ⅔</div><div class="detail">Prima era solo la metà, ora due terzi ogni anno</div></div>
+      <div class="info-box"><div class="label">Pascolo</div><div class="value">Bestiame sulla parte a riposo</div><div class="detail">Buoi, cavalli, asini concimavano i terreni rendendoli più fertili</div></div>
+    </div>
+    <div class="fun-fact">Grano → legumi → maggese → grano: così il terreno non si esauriva mai!</div>
+  </div>
+
+  <div class="schema-box">
+    <h3>📊 Rotazione biennale vs triennale</h3>
+    <div class="schema-cols">
+      <div class="schema-col">
+        <h4>Biennale</h4>
+        <div class="big">½</div>
+        <div class="sub">del terreno è produttivo<br>Grano + maggese (2 anni)</div>
+      </div>
+      <div class="schema-col">
+        <h4>Triennale</h4>
+        <div class="big">⅔</div>
+        <div class="sub">del terreno è produttivo<br>Grano + legumi + maggese (3 anni)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card aratro">
+    <div class="topic-title"><span class="emoji">🔧</span> Il Nuovo Aratro</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Vecchio aratro</div><div class="value">Tagliava solo in superficie</div><div class="detail">Si limitava a tagliare il terreno superficialmente</div></div>
+      <div class="info-box"><div class="label">Nuovo aratro</div><div class="value">Versoio in ferro</div><div class="detail">Entrava in profondità, rovesciava le zolle portando su strati ricchi di nutrienti</div></div>
+      <div class="info-box"><div class="label">Attacco migliorato</div><div class="value">Da collare a spalla</div><div class="detail">Il collare soffocava l'animale. L'attacco da spalla permetteva di tirare con tutta la forza</div></div>
+      <div class="info-box"><div class="label">Animali usati</div><div class="value">Cavalli (più forti dei buoi)</div><div class="detail">Con le ruote per spostarlo facilmente</div></div>
+    </div>
+    <div class="fun-fact">Il nuovo aratro è sorretto da ruote, ha il versoio in ferro e gli animali sono attaccati tramite un collare a spalla che non li soffoca.</div>
+  </div>
+
+  <div class="topic-card energia">
+    <div class="topic-title"><span class="emoji">💨</span> Fonti di Energia: Acqua e Vento</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Ruota ad acqua</div><div class="value">Sfruttava fiumi e torrenti</div><div class="detail">Per macinare il grano nei mulini e muovere i magli nelle fucine</div></div>
+      <div class="info-box"><div class="label">Mulino a vento</div><div class="value">Spagna e Olanda</div><div class="detail">Dove non c'erano corsi d'acqua</div></div>
+      <div class="info-box"><div class="label">Mantice</div><div class="value">Soffio d'aria per il fuoco</div><div class="detail">Usato nelle fucine dei fabbri e nelle fonderie dei metalli</div></div>
+      <div class="info-box"><div class="label">Manifatture</div><div class="value">Prime botteghe tessili</div><div class="detail">Per strizzare la lana e trasformare materie prime in oggetti da vendere</div></div>
+    </div>
+  </div>
+
+  <div class="topic-card trasporti">
+    <div class="topic-title"><span class="emoji">⛵</span> Trasporti e Commerci</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Via terra</div><div class="value">Lenti e costosi</div><div class="detail">Spostarsi via terra era difficile e dispendioso</div></div>
+      <div class="info-box"><div class="label">Navigazione a vela</div><div class="value">Sfruttava la forza del vento</div><div class="detail">Unica possibilità per Calabria, Sicilia, Liguria</div></div>
+      <div class="info-box"><div class="label">Trasporto fluviale</div><div class="value">Grande importanza</div><div class="detail">Sui fiumi europei (soprattutto francesi e tedeschi) si svilupparono intensi traffici commerciali</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="flashcards" class="section">
+  <div class="flashcards">
+    <div class="card-category" id="fc-cat"></div>
+    <div class="card-counter" id="fc-counter"></div>
+    <div class="flashcard" id="fc" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="question" id="fc-q"></div><div class="hint">👆 Tocca per girare</div></div>
+        <div class="flashcard-back"><div class="answer" id="fc-a"></div><div class="extra" id="fc-extra"></div></div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="fc-prev" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="fc-next" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<div id="quiz" class="section">
+  <div class="quiz" id="quiz-container"></div>
+</div>
+
+<a href="index.html" class="back-link">← Torna all'indice</a>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { cat: "Dominio utile", q: "Cos'è il dominio utile?", a: "Maggiori diritti per i contadini", extra: "I contadini ottennero più diritti sulla terra che lavoravano, migliorando le loro condizioni." },
+  { cat: "Dominio utile", q: "Perché il dominio utile migliora le condizioni dei contadini?", a: "Più motivazione a coltivare bene", extra: "Avendo diritti sulla terra, i contadini lavorano meglio → più produttività." },
+  { cat: "Agricoltura", q: "Qual è la differenza tra rotazione biennale e triennale?", a: "Biennale = ½ produttivo, Triennale = ⅔", extra: "Con la triennale si coltivano grano, legumi e maggese su 3 anni." },
+  { cat: "Agricoltura", q: "Cosa si coltivava nella rotazione triennale?", a: "Grano, legumi e maggese", extra: "I legumi arricchiscono il terreno e lo rendono più produttivo." },
+  { cat: "Agricoltura", q: "A cosa serviva la parte di terreno non coltivata (maggese)?", a: "Pascolo per il bestiame", extra: "Buoi, cavalli e asini pascolavano e concimavano il terreno." },
+  { cat: "Agricoltura", q: "Perché i legumi erano importanti?", a: "Arricchivano il terreno", extra: "Rendevano il terreno più produttivo per le coltivazioni successive." },
+  { cat: "Aratro", q: "Cosa aveva di speciale il nuovo aratro?", a: "Versoio in FERRO, entrava in profondità", extra: "Rovesciava le zolle portando in superficie strati più ricchi di nutrienti." },
+  { cat: "Aratro", q: "Perché si passò dal collare all'attacco da spalla?", a: "Il collare soffocava l'animale", extra: "L'attacco da spalla permetteva al cavallo di tirare con tutta la sua forza." },
+  { cat: "Aratro", q: "Perché si usavano i cavalli al posto dei buoi?", a: "Erano più forti e agili", extra: "Il nuovo aratro richiedeva molta forza per entrare in profondità nel terreno." },
+  { cat: "Energia", q: "Quali erano le due fonti di energia nel Medioevo?", a: "ACQUA e VENTO", extra: "Ruota ad acqua per mulini, mulino a vento in Spagna e Olanda." },
+  { cat: "Energia", q: "A cosa serviva la ruota ad acqua?", a: "Macinare il grano e muovere i magli", extra: "Sfruttava la corrente di fiumi e torrenti." },
+  { cat: "Energia", q: "Cos'è il mantice?", a: "Attrezzo che produce un soffio d'aria", extra: "Usato per alimentare il fuoco nelle fucine dei fabbri e nelle fonderie." },
+  { cat: "Energia", q: "Dove si usava il mulino a vento?", a: "In Spagna e in Olanda", extra: "Nelle campagne dove non c'erano corsi d'acqua." },
+  { cat: "Manifatture", q: "Cosa facevano le prime botteghe?", a: "Trasformavano materie prime in oggetti", extra: "Botteghe tessili per la lana, fonderie per i metalli." },
+  { cat: "Trasporti", q: "Perché il trasporto fluviale era così importante?", a: "Via terra era lento e costoso", extra: "Sui fiumi francesi e tedeschi si svilupparono intensi traffici commerciali." },
+  { cat: "Trasporti", q: "Dove si usava la navigazione a vela?", a: "Per raggiungere Calabria, Sicilia, Liguria", extra: "Via mare era l'unica possibilità per queste regioni." },
+];
+
+let currentCard = 0;
+function renderCard() {
+  const c = cards[currentCard];
+  document.getElementById('fc-cat').textContent = c.cat;
+  document.getElementById('fc-counter').textContent = (currentCard+1) + ' / ' + cards.length;
+  document.getElementById('fc-q').textContent = c.q;
+  document.getElementById('fc-a').textContent = c.a;
+  document.getElementById('fc-extra').textContent = c.extra;
+  document.getElementById('fc').classList.remove('flipped');
+  document.getElementById('fc-prev').disabled = currentCard === 0;
+  document.getElementById('fc-next').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('fc').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length-1) { currentCard++; renderCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; renderCard(); } }
+function shuffleCards() {
+  for (let i = cards.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [cards[i],cards[j]] = [cards[j],cards[i]]; }
+  currentCard = 0; renderCard();
+}
+renderCard();
+
+const quizQuestions = [
+  { q: "Cos'è il dominio utile?", opts: ["Il diritto del re sulla terra", "Maggiori diritti per i contadini sulla terra", "Una tassa sul grano", "Il potere dei feudatari"], correct: 1 },
+  { q: "Con la rotazione triennale, quanta parte del terreno è produttiva?", opts: ["La metà", "Un terzo", "Due terzi", "Tutto"], correct: 2 },
+  { q: "Cosa si coltivava nella rotazione triennale?", opts: ["Solo grano", "Grano e mais", "Grano, legumi e maggese", "Solo legumi"], correct: 2 },
+  { q: "Perché i legumi erano importanti nella rotazione triennale?", opts: ["Costavano di più", "Arricchivano il terreno", "Crescevano più in fretta", "Servivano solo come mangime"], correct: 1 },
+  { q: "A cosa serviva il maggese?", opts: ["Per costruire case", "Come pascolo per il bestiame che concimava il terreno", "Per piantare alberi", "Non serviva a niente"], correct: 1 },
+  { q: "Cosa aveva di nuovo il nuovo aratro?", opts: ["Era tutto di legno", "Aveva un versoio in ferro che entrava in profondità", "Era più piccolo", "Non servivano animali"], correct: 1 },
+  { q: "Perché si cambiò l'attacco del cavallo dal collare alla spalla?", opts: ["Per risparmiare soldi", "Il collare soffocava l'animale", "I cavalli preferivano la spalla", "Il collare era troppo pesante"], correct: 1 },
+  { q: "Perché si usavano i cavalli al posto dei buoi?", opts: ["Costavano meno", "Erano più forti e agili", "Mangiavano meno", "Erano più belli"], correct: 1 },
+  { q: "Quali erano le due principali fonti di energia nel Medioevo?", opts: ["Fuoco e carbone", "Acqua e vento", "Legna e petrolio", "Sole e vapore"], correct: 1 },
+  { q: "A cosa serviva la ruota ad acqua?", opts: ["Per irrigare i campi", "Per macinare il grano e muovere i magli", "Per lavare i vestiti", "Per produrre elettricità"], correct: 1 },
+  { q: "Cos'è il mantice?", opts: ["Un tipo di aratro", "Un attrezzo che produce un soffio d'aria per il fuoco", "Un mulino a vento", "Una barca fluviale"], correct: 1 },
+  { q: "Dove si usava il mulino a vento?", opts: ["In Italia", "In Spagna e Olanda", "In Francia", "In Inghilterra"], correct: 1 },
+  { q: "Perché il trasporto via mare era fondamentale per Calabria, Sicilia e Liguria?", opts: ["Perché amavano il mare", "Perché via terra era lento e costoso", "Perché non avevano fiumi", "Perché il re lo ordinava"], correct: 1 },
+  { q: "Dove si svilupparono i maggiori traffici commerciali fluviali?", opts: ["In Italia", "Sui fiumi francesi e tedeschi", "In Spagna", "In Inghilterra"], correct: 1 },
+];
+
+let quizIndex = 0, quizScore = 0, quizAnswered = false;
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 12 ? '🏆' : quizScore >= 9 ? '👏' : quizScore >= 7 ? '👍' : '🌱';
+    container.innerHTML = '<div class="quiz-score">' + emoji + ' Hai risposto bene a ' + quizScore + ' su ' + quizQuestions.length + '!</div><p style="text-align:center;color:#666;margin-top:8px">' + (quizScore >= 12 ? "Fantastico! Sei pronta per l'interrogazione! 🌟" : quizScore >= 9 ? "Bravissima! Ottima preparazione!" : quizScore >= 7 ? "Bene! Ripassiamo qualche flash card?" : "Dai, ripassiamo le flash cards e riproviamo! 💪") + '</p><button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>';
+    return;
+  }
+  const qq = quizQuestions[quizIndex]; quizAnswered = false;
+  let html = '<div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ' + (quizIndex+1) + ' / ' + quizQuestions.length + ' — Punteggio: ' + quizScore + '</div>';
+  html += '<div class="quiz-question"><div class="quiz-q">' + qq.q + '</div><div class="quiz-options">';
+  for (let i = 0; i < qq.opts.length; i++) html += '<button class="quiz-opt" onclick="answerQuiz(' + i + ')">' + qq.opts[i] + '</button>';
+  html += '</div></div>'; container.innerHTML = html;
+}
+function answerQuiz(idx) {
+  if (quizAnswered) return; quizAnswered = true;
+  const qq = quizQuestions[quizIndex]; const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(function(b,i) { b.classList.add('disabled'); if (i===qq.correct) b.classList.add('correct'); });
+  if (idx !== qq.correct) btns[idx].classList.add('wrong');
+  if (idx === qq.correct) quizScore++;
+  setTimeout(function() { quizIndex++; renderQuiz(); }, 1200);
+}
+function restartQuiz() { quizIndex=0; quizScore=0; quizQuestions.sort(function(){return Math.random()-0.5;}); renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>

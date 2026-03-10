@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Scienze — Libro A - U3: Calore e Temperatura</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff8f0; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #c0392b; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e74c3c; }
+  h1 { text-align: center; padding: 20px; background: #c0392b; color: white; margin: 0; font-size: 26px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.calore { border-color: #e74c3c; }
+  .topic-card.trasmissione { border-color: #e67e22; }
+  .topic-card.dilatazione { border-color: #f39c12; }
+  .topic-card.temperatura { border-color: #3498db; }
+  .topic-card.cambiamenti { border-color: #8e44ad; }
+  .topic-card.schema { border-color: #27ae60; }
+  .topic-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 32px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #fff8f0; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fef0e0; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  .flow-diagram { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; align-items: center; }
+  .flow-box { background: #fff8f0; border-radius: 12px; padding: 10px 16px; text-align: center; font-weight: 600; font-size: 14px; border: 2px solid #ddd; }
+  .flow-box.solid { border-color: #3498db; background: #ebf5fb; }
+  .flow-box.liquid { border-color: #27ae60; background: #e8f8f0; }
+  .flow-box.gas { border-color: #e74c3c; background: #fdf2f2; }
+  .flow-arrow { font-size: 18px; color: #e74c3c; font-weight: 700; }
+  .flow-label { font-size: 11px; color: #888; text-transform: uppercase; }
+
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #c0392b; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #e74c3c; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #e74c3c; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #e74c3c; background: #fff8f0; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .back-btn { display: inline-block; margin: 15px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-weight: 600; }
+  .back-btn:hover { background: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<h1><a href="index.html" class="back-btn">← Indice</a> <span>🌡️</span> Scienze — Libro A - U3: Calore e Temperatura</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flash')">🃏 Flashcard</button>
+  <button class="tab" onclick="showSection('quiz')">❓ Quiz</button>
+</div>
+
+<div id="mappa" class="section active">
+
+  <div class="topic-card calore">
+    <div class="topic-title"><span class="emoji">🔥</span> Calore e Temperatura</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Calore</div>
+        <div class="value">Energia termica legata al movimento delle molecole</div>
+        <div class="detail">NON è materia! È una forma di ENERGIA</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Temperatura</div>
+        <div class="value">La misura di quanto è caldo un corpo</div>
+        <div class="detail">Più veloci le molecole → più caldo il corpo</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Differenza</div>
+        <div class="value">Calore = energia; Temperatura = misura</div>
+      </div>
+    </div>
+    <div class="fun-fact">Il calore passa SEMPRE da un corpo più caldo a uno più freddo, fino a raggiungere la stessa temperatura!</div>
+  </div>
+
+  <div class="topic-card trasmissione">
+    <div class="topic-title"><span class="emoji">➡️</span> Come si Trasmette il Calore</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">🧱 Conduzione</div>
+        <div class="value">Nei SOLIDI</div>
+        <div class="detail">La mano appoggiata al termosifone si scalda — il calore passa per contatto diretto</div>
+      </div>
+      <div class="info-box">
+        <div class="label">💧 Convezione</div>
+        <div class="value">Nei FLUIDI (liquidi e gas)</div>
+        <div class="detail">L'acqua della pentola a contatto col fuoco si riscalda e sale, la fredda scende → moto circolare</div>
+      </div>
+      <div class="info-box">
+        <div class="label">☀️ Irraggiamento</div>
+        <div class="value">Nell'aria e nel VUOTO</div>
+        <div class="detail">La Terra è riscaldata dal Sole grazie alle radiazioni termiche — non serve contatto!</div>
+      </div>
+    </div>
+    <div class="info-grid" style="margin-top:12px">
+      <div class="info-box">
+        <div class="label">Conduttori</div>
+        <div class="value">Trasmettono bene il calore</div>
+        <div class="detail">Es: metalli (rame, alluminio, ferro)</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Isolanti</div>
+        <div class="value">NON trasmettono bene il calore</div>
+        <div class="detail">Es: legno, plastica, vetro, lana</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card dilatazione">
+    <div class="topic-title"><span class="emoji">↔️</span> Dilatazione Termica</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Cos'è</div>
+        <div class="value">Il calore fa aumentare il volume dei corpi</div>
+        <div class="detail">Le molecole si muovono di più e si allontanano</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Vale per</div>
+        <div class="value">Solidi, liquidi e gas</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Esempio</div>
+        <div class="value">L'alcol nel termometro sale perché si dilata</div>
+        <div class="detail">A contatto col corpo caldo, aumenta il suo volume</div>
+      </div>
+    </div>
+    <div class="fun-fact">I fili della luce tra un traliccio e l'altro non sono tesi — perché in estate si dilatano col calore e devono avere spazio!</div>
+  </div>
+
+  <div class="topic-card temperatura">
+    <div class="topic-title"><span class="emoji">🌡️</span> Misurare la Temperatura</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Strumento</div>
+        <div class="value">Il termometro</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Scale termometriche</div>
+        <div class="value">°C (Celsius), °F (Fahrenheit), K (Kelvin)</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Unità del calore</div>
+        <div class="value">La caloria (cal)</div>
+        <div class="detail">Quantità di calore acquistata o ceduta</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card cambiamenti">
+    <div class="topic-title"><span class="emoji">🔄</span> I Cambiamenti di Stato</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Causa</div>
+        <div class="value">Il calore fornito o tolto a un corpo</div>
+      </div>
+    </div>
+    <div class="flow-diagram">
+      <div class="flow-box solid">🧊 SOLIDO</div>
+      <div style="text-align:center"><div class="flow-arrow">→</div><div class="flow-label">Fusione</div></div>
+      <div class="flow-box liquid">💧 LIQUIDO</div>
+      <div style="text-align:center"><div class="flow-arrow">→</div><div class="flow-label">Vaporizzazione</div></div>
+      <div class="flow-box gas">💨 AERIFORME</div>
+    </div>
+    <div class="flow-diagram" style="margin-top:8px">
+      <div class="flow-box gas">💨 AERIFORME</div>
+      <div style="text-align:center"><div class="flow-arrow">→</div><div class="flow-label">Liquefazione</div></div>
+      <div class="flow-box liquid">💧 LIQUIDO</div>
+      <div style="text-align:center"><div class="flow-arrow">→</div><div class="flow-label">Solidificazione</div></div>
+      <div class="flow-box solid">🧊 SOLIDO</div>
+    </div>
+    <div class="info-grid" style="margin-top:16px">
+      <div class="info-box">
+        <div class="label">Sublimazione</div>
+        <div class="value">Solido → Aeriforme (diretto!)</div>
+        <div class="detail">Es: la naftalina, il ghiaccio secco</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Brinamento</div>
+        <div class="value">Aeriforme → Solido (diretto!)</div>
+        <div class="detail">Es: la brina che si forma sulle foglie</div>
+      </div>
+    </div>
+    <div class="fun-fact">Durante la fusione e l'ebollizione la temperatura resta costante! L'energia serve a rompere i legami tra molecole, non a scaldare.</div>
+  </div>
+
+  <div class="topic-card schema">
+    <div class="topic-title"><span class="emoji">🗺️</span> Mappa Riassuntiva: Il Calore</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">È una forma di</div>
+        <div class="value">ENERGIA</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Causa</div>
+        <div class="value">Cambiamenti di stato</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Provoca la</div>
+        <div class="value">Dilatazione termica (solidi, liquidi, gas)</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Si propaga per</div>
+        <div class="value">Conduzione, Convezione, Irraggiamento</div>
+      </div>
+      <div class="info-box">
+        <div class="label">È dovuto a</div>
+        <div class="value">Agitazione delle molecole</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Misurato dalla</div>
+        <div class="value">Temperatura (con il termometro)</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FLASHCARD -->
+<div id="flash" class="section">
+  <div class="flashcards">
+    <div class="card-category">Scienze — Libro A U3</div>
+    <div class="card-counter" id="cardCounter">1 / 22</div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">Tocca per girare ↻</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">← Prec</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Succ →</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+  <div class="quiz" id="quizContainer"></div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { q: "Cos'è il CALORE?", a: "Energia termica legata al movimento delle molecole", e: "Non è materia, è una forma di ENERGIA" },
+  { q: "Cos'è la TEMPERATURA?", a: "La misura di quanto è caldo un corpo", e: "Più veloci le molecole → più alta la temperatura" },
+  { q: "In che direzione passa il calore?", a: "Dal corpo più caldo a quello più freddo", e: "Fino a raggiungere la stessa temperatura" },
+  { q: "Cos'è la CONDUZIONE?", a: "Trasmissione del calore nei SOLIDI", e: "Per contatto diretto — es: mano sul termosifone" },
+  { q: "Cos'è la CONVEZIONE?", a: "Trasmissione del calore nei FLUIDI", e: "Il liquido caldo sale, il freddo scende → moto circolare" },
+  { q: "Cos'è l'IRRAGGIAMENTO?", a: "Trasmissione del calore nell'aria e nel vuoto", e: "Es: il Sole riscalda la Terra tramite radiazioni" },
+  { q: "Cosa sono i CONDUTTORI?", a: "Materiali che trasmettono bene il calore", e: "Es: rame, alluminio, ferro (metalli)" },
+  { q: "Cosa sono gli ISOLANTI?", a: "Materiali che NON trasmettono bene il calore", e: "Es: legno, plastica, vetro, lana" },
+  { q: "Cos'è la DILATAZIONE TERMICA?", a: "Il calore fa aumentare il volume dei corpi", e: "Le molecole si muovono di più e si allontanano" },
+  { q: "Con quale strumento si misura la temperatura?", a: "Il termometro", e: "" },
+  { q: "Quali sono le 3 scale termometriche?", a: "Celsius (°C), Fahrenheit (°F), Kelvin (K)", e: "" },
+  { q: "In cosa si misura il calore?", a: "In calorie (cal)", e: "" },
+  { q: "Cos'è la FUSIONE?", a: "Solido → Liquido", e: "Es: il ghiaccio che si scioglie" },
+  { q: "Cos'è la SOLIDIFICAZIONE?", a: "Liquido → Solido", e: "Es: l'acqua che diventa ghiaccio" },
+  { q: "Cos'è la VAPORIZZAZIONE?", a: "Liquido → Aeriforme", e: "Es: l'acqua che bolle e diventa vapore" },
+  { q: "Cos'è la LIQUEFAZIONE (condensazione)?", a: "Aeriforme → Liquido", e: "Es: il vapore che diventa gocce sul coperchio" },
+  { q: "Cos'è la SUBLIMAZIONE?", a: "Solido → Aeriforme (diretto!)", e: "Es: la naftalina, il ghiaccio secco" },
+  { q: "Cos'è il BRINAMENTO?", a: "Aeriforme → Solido (diretto!)", e: "Es: la brina sulle foglie al mattino" },
+  { q: "Cosa succede alla temperatura durante fusione ed ebollizione?", a: "Resta COSTANTE!", e: "L'energia serve a rompere i legami, non a scaldare" },
+  { q: "Perché il termometro funziona?", a: "Perché il liquido si dilata col calore", e: "L'alcol sale nel tubicino perché il suo volume aumenta" },
+  { q: "Perché una spirale sopra una candela gira?", a: "Per i moti convettivi dell'aria calda", e: "L'aria calda sale → convezione" },
+  { q: "Perché i fili della luce non sono tesi?", a: "Per la dilatazione termica in estate", e: "Si allungano col calore e servono spazio" }
+];
+
+let currentCard = 0;
+function showCard() {
+  const c = cards[currentCard];
+  document.getElementById('cardQuestion').textContent = c.q;
+  document.getElementById('cardAnswer').textContent = c.a;
+  document.getElementById('cardExtra').textContent = c.e;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; showCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; showCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  currentCard = 0; showCard();
+}
+showCard();
+
+const quizData = [
+  { q: "Il calore è:", o: ["Una forma di materia", "Una forma di energia", "Un liquido caldo", "Un tipo di temperatura"], c: 1 },
+  { q: "Il calore passa:", o: ["Dal freddo al caldo", "Dal caldo al freddo", "In entrambe le direzioni", "Solo nei solidi"], c: 1 },
+  { q: "In un liquido la propagazione del calore avviene:", o: ["Per conduzione", "Per irraggiamento", "Per convezione", "Per condensazione"], c: 2 },
+  { q: "Tra queste sostanze, quale è un ISOLANTE?", o: ["Argento", "Rame", "Zinco", "Vetro"], c: 3 },
+  { q: "Fornendo calore a un solido avviene:", o: ["Condensazione", "Dilatazione", "Solidificazione", "Vaporizzazione"], c: 1 },
+  { q: "La Terra è riscaldata dal Sole per:", o: ["Conduzione", "Convezione", "Irraggiamento", "Dilatazione"], c: 2 },
+  { q: "La fusione è il passaggio:", o: ["Liquido → Gas", "Solido → Liquido", "Gas → Liquido", "Liquido → Solido"], c: 1 },
+  { q: "La sublimazione è il passaggio:", o: ["Liquido → Gas", "Gas → Solido", "Solido → Gas direttamente", "Solido → Liquido"], c: 2 },
+  { q: "Il brinamento è il passaggio:", o: ["Solido → Gas", "Gas → Solido direttamente", "Liquido → Solido", "Gas → Liquido"], c: 1 },
+  { q: "Durante la fusione la temperatura:", o: ["Aumenta", "Diminuisce", "Resta costante", "Oscilla"], c: 2 },
+  { q: "La conduzione avviene soprattutto nei:", o: ["Liquidi", "Gas", "Solidi", "Nel vuoto"], c: 2 },
+  { q: "Lo strumento per misurare la temperatura è:", o: ["La bilancia", "Il dinamometro", "Il termometro", "Il barometro"], c: 2 },
+  { q: "L'unità di misura del calore è:", o: ["Il grado", "Il kelvin", "La caloria", "Il newton"], c: 2 },
+  { q: "La dilatazione termica è causata da:", o: ["Il freddo", "Il calore", "La pressione", "L'acqua"], c: 1 },
+  { q: "L'acqua raffreddandosi si contrae. Ma allo stato solido:", o: ["Le molecole sono più ordinate e occupano PIÙ spazio", "Le molecole occupano meno spazio", "Le molecole occupano lo stesso spazio", "Le molecole si agitano di più"], c: 0 },
+  { q: "La spirale sopra una candela accesa gira per:", o: ["L'irraggiamento", "La conduzione nell'aria", "I moti convettivi dell'aria", "La dilatazione dell'aria"], c: 2 },
+  { q: "Perché i fili della luce tra i tralicci non sono tesi?", o: ["Per condurre meglio l'elettricità", "Per evitare che si spezzino in caso di terremoto", "Per evitare che in estate si spezzino dilatandosi", "Per evitare che in inverno si spezzino contraendosi"], c: 2 },
+  { q: "Quando l'acqua bolle, il coperchio si alza perché:", o: ["Il vapore spinge il coperchio", "L'acqua si dilata", "Le molecole d'acqua si trasformano in vapore", "Il calore fonde il coperchio"], c: 2 }
+];
+
+let quizScore = 0, quizCurrent = 0, quizShuffled = [];
+function buildQuiz() {
+  quizScore = 0; quizCurrent = 0;
+  quizShuffled = [...quizData].sort(() => Math.random() - 0.5);
+  showQuizQuestion();
+}
+function showQuizQuestion() {
+  const container = document.getElementById('quizContainer');
+  if (quizCurrent >= quizShuffled.length) {
+    const pct = Math.round(quizScore / quizShuffled.length * 100);
+    const emoji = pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+    container.innerHTML = `<div class="quiz-score">${emoji} Risultato finale: ${quizScore} / ${quizShuffled.length} (${pct}%)</div><button class="quiz-restart" onclick="buildQuiz()">🔄 Ricomincia</button>`;
+    return;
+  }
+  const q = quizShuffled[quizCurrent];
+  container.innerHTML = `<div class="quiz-score">Domanda ${quizCurrent + 1} / ${quizShuffled.length} — Punti: ${quizScore}</div><div class="quiz-question"><div class="quiz-q">${quizCurrent + 1}. ${q.q}</div><div class="quiz-options">${q.o.map((opt, oi) => `<button class="quiz-opt" onclick="checkAnswer(this, ${oi}, ${q.c})">${opt}</button>`).join('')}</div></div>`;
+}
+function checkAnswer(btn, selected, correct) {
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => { o.classList.add('disabled'); if (i === correct) o.classList.add('correct'); });
+  if (selected !== correct) btn.classList.add('wrong'); else quizScore++;
+  quizCurrent++;
+  setTimeout(showQuizQuestion, 1200);
+}
+buildQuiz();
+</script>
+</body>
+</html>

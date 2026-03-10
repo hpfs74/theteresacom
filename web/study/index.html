@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 Teresa — Ripasso</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 24px;
+}
+.container { max-width: 600px; width: 100%; margin: 0 auto; }
+h1 { color: white; text-align: center; font-size: 2.2em; margin-bottom: 8px; }
+.subtitle { color: rgba(255,255,255,0.85); text-align: center; margin-bottom: 32px; font-size: 1.15em; }
+
+.section-title {
+  color: rgba(255,255,255,0.95);
+  font-size: 0.85em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 28px 0 12px 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.25);
+}
+
+.card {
+  background: white; border-radius: 20px; padding: 20px 20px;
+  margin-bottom: 12px; text-decoration: none; color: #333;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card:hover, .card:active {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+}
+.card-icon { font-size: 2em; flex-shrink: 0; }
+.card-info { flex: 1; }
+.card-title { font-size: 1.1em; font-weight: 700; margin-bottom: 3px; }
+.card-desc { font-size: 0.88em; color: #777; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📚 Ripasso</h1>
+  <p class="subtitle">Scegli cosa ripassare!</p>
+
+  <!-- GEOMETRIA -->
+  <div class="section-title">📐 Geometria</div>
+
+  <a class="card" href="geometria-u2.html">
+    <span class="card-icon">📐</span>
+    <div class="card-info">
+      <div class="card-title">U2 — Enti Geometrici Fondamentali</div>
+      <div class="card-desc">Punto, retta, piano, segmento, semirette, assiomi, congruenti</div>
+    </div>
+  </a>
+
+  <a class="card" href="geometria-u3.html">
+    <span class="card-icon">📐</span>
+    <div class="card-info">
+      <div class="card-title">U3 — Angoli e Rette nel Piano</div>
+      <div class="card-desc">Angoli, bisettrice, rette incidenti, perpendicolari, parallele</div>
+    </div>
+  </a>
+
+  <!-- STORIA -->
+  <div class="section-title">📜 Storia</div>
+
+  <a class="card" href="storia-lezione1.html">
+    <span class="card-icon">📜</span>
+    <div class="card-info">
+      <div class="card-title">Lez. 1 — L'Europa alla ripresa</div>
+      <div class="card-desc">Le paure dell'anno Mille e la ripresa economica</div>
+    </div>
+  </a>
+
+  <a class="card" href="storia-lezione2.html">
+    <span class="card-icon">⚙️</span>
+    <div class="card-info">
+      <div class="card-title">Lez. 2 — Progressi tecnici</div>
+      <div class="card-desc">Dominio utile, rotazione triennale, aratro, energia, trasporti</div>
+    </div>
+  </a>
+
+  <a class="card" href="storia-feudalesimo.html">
+    <span class="card-icon">🏰</span>
+    <div class="card-info">
+      <div class="card-title">La società feudale</div>
+      <div class="card-desc">Il feudo, il castello, vassalli e cavalieri</div>
+    </div>
+  </a>
+
+  <a class="card" href="storia-chiesa-riforma.html">
+    <span class="card-icon">⛪</span>
+    <div class="card-info">
+      <div class="card-title">La crisi e la riforma della Chiesa</div>
+      <div class="card-desc">Simonia, nepotismo, Cluny, Gregorio VII, Dictatus Papae, scomunica</div>
+    </div>
+  </a>
+
+  <!-- GEOGRAFIA -->
+  <div class="section-title">🗺️ Geografia</div>
+
+  <a class="card" href="geografia-nord-ovest.html">
+    <span class="card-icon">🗺️</span>
+    <div class="card-info">
+      <div class="card-title">Nord-Ovest d'Italia</div>
+      <div class="card-desc">Le regioni del Nord-Ovest</div>
+    </div>
+  </a>
+
+  <a class="card" href="geografia-lombardia.html">
+    <span class="card-icon">🗺️</span>
+    <div class="card-info">
+      <div class="card-title">Lombardia</div>
+      <div class="card-desc">Milano, laghi e pianura</div>
+    </div>
+  </a>
+
+  <a class="card" href="geografia-trentino.html">
+    <span class="card-icon">🗺️</span>
+    <div class="card-info">
+      <div class="card-title">Trentino-Alto Adige</div>
+      <div class="card-desc">Dolomiti, due province autonome e tre lingue</div>
+    </div>
+  </a>
+
+  <!-- SCIENZE -->
+  <div class="section-title">🔬 Scienze</div>
+
+  <a class="card" href="scienze-a-u1-metodo.html">
+    <span class="card-icon">🔬</span>
+    <div class="card-info">
+      <div class="card-title">Libro A - U1 — Il Metodo Scientifico</div>
+      <div class="card-desc">Galileo, 4 fasi, analisi qualitativa/quantitativa, misurazioni, grafici</div>
+    </div>
+  </a>
+
+  <a class="card" href="scienze-a-u2-materia.html">
+    <span class="card-icon">⚗️</span>
+    <div class="card-info">
+      <div class="card-title">Libro A - U2 — La Materia e le sue Proprietà</div>
+      <div class="card-desc">Materia, massa/peso/densità, molecole/atomi, 3 stati, impenetrabilità, capillarità, tensione superficiale</div>
+    </div>
+  </a>
+
+  <a class="card" href="scienze-a-u3-calore.html">
+    <span class="card-icon">🌡️</span>
+    <div class="card-info">
+      <div class="card-title">Libro A - U3 — Calore e Temperatura</div>
+      <div class="card-desc">Calore vs temperatura, conduzione/convezione/irraggiamento, dilatazione, cambiamenti di stato</div>
+    </div>
+  </a>
+
+  <a class="card" href="scienze-biologia.html">
+    <span class="card-icon">🔬</span>
+    <div class="card-info">
+      <div class="card-title">Biologia — La Cellula</div>
+      <div class="card-desc">Cellula, organismi, fotosintesi, mitosi</div>
+    </div>
+  </a>
+
+  <a class="card" href="scienze-u1-cellula.html">
+    <span class="card-icon">🧬</span>
+    <div class="card-info">
+      <div class="card-title">Libro C - U1 — La Cellula e i Viventi</div>
+      <div class="card-desc">Biodiversità, parti della cellula, procarioti/eucarioti, mitosi, tessuti e apparati</div>
+    </div>
+  </a>
+
+  <a class="card" href="scienze-u2-bisogni-viventi.html">
+    <span class="card-icon">🌿</span>
+    <div class="card-info">
+      <div class="card-title">Libro C - U2 — I Bisogni Fondamentali dei Viventi</div>
+      <div class="card-desc">Eterotrofi/autotrofi, fotosintesi, respirazione, circolazione, vasi legnosi/cribrosi, traspirazione</div>
+    </div>
+  </a>
+
+  <!-- ITALIANO -->
+  <div class="section-title">📝 Italiano</div>
+
+  <a class="card" href="epica-odissea.html">
+    <span class="card-icon">⚔️</span>
+    <div class="card-info">
+      <div class="card-title">Epica — Odissea</div>
+      <div class="card-desc">Il viaggio di Ulisse</div>
+    </div>
+  </a>
+
+  <a class="card" href="grammatica-nomi.html">
+    <span class="card-icon">📝</span>
+    <div class="card-info">
+      <div class="card-title">Grammatica — I Nomi</div>
+      <div class="card-desc">Comuni/propri, concreti/astratti, collettivi, primitivi/derivati</div>
+    </div>
+  </a>
+
+  <a class="card" href="grammatica-articoli.html">
+    <span class="card-icon">📝</span>
+    <div class="card-info">
+      <div class="card-title">Grammatica — Gli Articoli</div>
+      <div class="card-desc">Determinativi, indeterminativi, partitivi</div>
+    </div>
+  </a>
+
+  <a class="card" href="grammatica-aggettivi.html">
+    <span class="card-icon">📝</span>
+    <div class="card-info">
+      <div class="card-title">Grammatica — Gli Aggettivi</div>
+      <div class="card-desc">Qualificativi, possessivi, dimostrativi, indefiniti, numerali</div>
+    </div>
+  </a>
+
+  <!-- MUSICA -->
+  <div class="section-title">🎵 Musica</div>
+
+  <a class="card" href="musica-orchestra.html">
+    <span class="card-icon">🎵</span>
+    <div class="card-info">
+      <div class="card-title">L'Orchestra e gli Strumenti</div>
+      <div class="card-desc">Sachs-Hornbostel, cordofoni, aerofoni, percussioni, elettrofoni</div>
+    </div>
+  </a>
+
+</div>
+</body>
+</html>

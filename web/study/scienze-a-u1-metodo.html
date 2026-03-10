@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Scienze — Libro A - U1: Il Metodo Scientifico</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff8f0; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #c0392b; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e74c3c; }
+  h1 { text-align: center; padding: 20px; background: #c0392b; color: white; margin: 0; font-size: 26px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.metodo { border-color: #e74c3c; }
+  .topic-card.analisi { border-color: #e67e22; }
+  .topic-card.misura { border-color: #f39c12; }
+  .topic-card.relazione { border-color: #3498db; }
+  .topic-card.grafici { border-color: #8e44ad; }
+  .topic-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 32px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #fff8f0; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fef0e0; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  .steps { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .step { display: flex; align-items: center; gap: 12px; background: #fff8f0; border-radius: 12px; padding: 14px; }
+  .step-num { background: #e74c3c; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+  .step-text { font-size: 15px; }
+  .step-text strong { color: #c0392b; }
+
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #c0392b; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #e74c3c; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #e74c3c; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #e74c3c; background: #fff8f0; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .back-btn { display: inline-block; margin: 15px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-weight: 600; }
+  .back-btn:hover { background: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<h1><a href="index.html" class="back-btn">← Indice</a> <span>🔬</span> Scienze — Libro A - U1: Il Metodo Scientifico</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flash')">🃏 Flashcard</button>
+  <button class="tab" onclick="showSection('quiz')">❓ Quiz</button>
+</div>
+
+<div id="mappa" class="section active">
+
+  <div class="topic-card metodo">
+    <div class="topic-title"><span class="emoji">🔬</span> Il Metodo Scientifico Sperimentale</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Ideato da</div>
+        <div class="value">Galileo Galilei (1564-1642)</div>
+      </div>
+      <div class="info-box">
+        <div class="label">A cosa serve</div>
+        <div class="value">Studiare i fenomeni della natura</div>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Osservazione</strong> — descrizione di un fenomeno, ambiente, essere vivente o oggetto</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Ipotesi</strong> — ricerca di una possibile spiegazione a ciò che si è osservato</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Esperimento</strong> — progettazione di un esperimento per verificare l'ipotesi</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Risultati e Legge</strong> — se confermano l'ipotesi → si ricava una <strong>legge</strong> generale</div></div>
+    </div>
+    <div class="fun-fact">L'esperimento viene ripetuto PIÙ VOLTE perché una sola prova non è sufficiente per essere sicuri!</div>
+  </div>
+
+  <div class="topic-card analisi">
+    <div class="topic-title"><span class="emoji">👁️</span> Analisi Qualitativa e Quantitativa</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Analisi QUALITATIVA</div>
+        <div class="value">Si osserva usando i cinque sensi</div>
+        <div class="detail">Raccoglie informazioni senza numeri (colore, forma, odore...)</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Analisi QUANTITATIVA</div>
+        <div class="value">Si misura con dati precisi (numeri)</div>
+        <div class="detail">Usa strumenti di misura per avere dati esatti</div>
+      </div>
+    </div>
+    <div class="fun-fact">Dire "l'acqua è calda" è qualitativo. Dire "l'acqua è a 45°C" è quantitativo!</div>
+  </div>
+
+  <div class="topic-card misura">
+    <div class="topic-title"><span class="emoji">📏</span> Le Misurazioni</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Misurare significa</div>
+        <div class="value">Determinare lunghezza, peso, volume, temperatura, velocità...</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Ogni misura è formata da</div>
+        <div class="value">Un NUMERO + un'UNITÀ DI MISURA</div>
+        <div class="detail">Es: lunghezza = 1 m, peso = 5 kg</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Incertezza</div>
+        <div class="value">Ogni misurazione ha sempre degli errori</div>
+        <div class="detail">Si ripete più volte e si calcola la MEDIA</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Scala graduata</div>
+        <div class="value">Tutti gli strumenti sono tarati</div>
+        <div class="detail">Cioè dotati di una scala per leggere la misura</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card relazione">
+    <div class="topic-title"><span class="emoji">📝</span> La Relazione di Laboratorio</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">A cosa serve</div>
+        <div class="value">Comunicare il lavoro svolto ad altri</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Deve contenere</div>
+        <div class="value">Titolo, materiali, procedimento, risultati</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Dati si presentano con</div>
+        <div class="value">Tabelle e grafici</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card grafici">
+    <div class="topic-title"><span class="emoji">📊</span> I Tipi di Grafici</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Diagramma cartesiano</div>
+        <div class="value">Asse X e asse Y</div>
+        <div class="detail">Per mostrare come cambia una grandezza nel tempo</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Diagramma a colonne</div>
+        <div class="value">Barre verticali affiancate</div>
+        <div class="detail">Per confrontare quantità diverse</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Diagramma a torta</div>
+        <div class="value">Cerchio diviso in "fette"</div>
+        <div class="detail">Per mostrare le parti di un totale (%)</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Ideogramma</div>
+        <div class="value">Usa immagini/simboli</div>
+        <div class="detail">Ogni simbolo rappresenta una quantità</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FLASHCARD -->
+<div id="flash" class="section">
+  <div class="flashcards">
+    <div class="card-category">Scienze — Libro A U1</div>
+    <div class="card-counter" id="cardCounter">1 / 18</div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">Tocca per girare ↻</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">← Prec</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Succ →</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+  <div class="quiz" id="quizContainer"></div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { q: "Chi ha ideato il metodo scientifico?", a: "Galileo Galilei (1564-1642)", e: "" },
+  { q: "Qual è la prima fase del metodo scientifico?", a: "L'osservazione", e: "Descrizione di un fenomeno, ambiente o oggetto" },
+  { q: "Cos'è un'ipotesi?", a: "Una possibile spiegazione di ciò che si è osservato", e: "Deve essere verificata con un esperimento" },
+  { q: "A cosa serve l'esperimento?", a: "A verificare se l'ipotesi è vera", e: "Va ripetuto più volte per avere risultati sicuri" },
+  { q: "Cosa succede se l'esperimento conferma l'ipotesi?", a: "Si ricava una LEGGE generale", e: "Altrimenti si cerca una nuova spiegazione" },
+  { q: "Cos'è l'analisi qualitativa?", a: "Osservazione usando i cinque sensi", e: "Non usa numeri: colore, forma, odore..." },
+  { q: "Cos'è l'analisi quantitativa?", a: "Misurazione con dati precisi (numeri)", e: "Usa strumenti di misura" },
+  { q: "Da cosa è formata ogni misura?", a: "Un NUMERO + un'UNITÀ DI MISURA", e: "Es: 1 m, 5 kg, 20 °C" },
+  { q: "Perché ogni misurazione ha incertezza?", a: "Perché si commettono sempre degli errori", e: "Si ripete più volte e si calcola la media" },
+  { q: "Cos'è la scala graduata?", a: "La scala presente su ogni strumento tarato", e: "Permette di leggere la misura" },
+  { q: "Cos'è la relazione di laboratorio?", a: "Un documento per comunicare il lavoro svolto", e: "Contiene titolo, materiali, procedimento, risultati" },
+  { q: "Come si presentano i dati di un esperimento?", a: "Con tabelle e grafici", e: "" },
+  { q: "Cos'è un diagramma cartesiano?", a: "Un grafico con asse X e asse Y", e: "Mostra come cambia una grandezza" },
+  { q: "Cos'è un diagramma a colonne?", a: "Barre verticali per confrontare quantità", e: "" },
+  { q: "Cos'è un diagramma a torta?", a: "Cerchio diviso in fette (%)", e: "Mostra le parti di un totale" },
+  { q: "Cos'è un ideogramma?", a: "Grafico che usa immagini/simboli", e: "Ogni simbolo = una quantità" },
+  { q: "Quali sono le 4 fasi del metodo scientifico?", a: "1. Osservazione 2. Ipotesi 3. Esperimento 4. Legge", e: "" },
+  { q: "Perché l'esperimento va ripetuto più volte?", a: "Perché una sola prova non basta per essere sicuri", e: "" }
+];
+
+let currentCard = 0;
+function showCard() {
+  const c = cards[currentCard];
+  document.getElementById('cardQuestion').textContent = c.q;
+  document.getElementById('cardAnswer').textContent = c.a;
+  document.getElementById('cardExtra').textContent = c.e;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; showCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; showCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  currentCard = 0; showCard();
+}
+showCard();
+
+const quizData = [
+  { q: "Il metodo scientifico è stato ideato da:", o: ["Newton", "Einstein", "Galileo Galilei", "Leonardo da Vinci"], c: 2 },
+  { q: "La prima fase del metodo scientifico è:", o: ["L'esperimento", "L'ipotesi", "L'osservazione", "La legge"], c: 2 },
+  { q: "Un'ipotesi basata sull'osservazione viene verificata con:", o: ["L'applicazione di una teoria", "L'esecuzione di un esperimento", "La comunicazione dei risultati", "La formulazione di una legge"], c: 1 },
+  { q: "L'analisi qualitativa usa:", o: ["Strumenti di misura", "I cinque sensi", "Solo la vista", "Solo numeri"], c: 1 },
+  { q: "L'analisi quantitativa è basata su:", o: ["I cinque sensi", "Opinioni personali", "Dati espressi in numeri e unità di misura", "Solo osservazioni"], c: 2 },
+  { q: "Ogni misura è formata da:", o: ["Solo un numero", "Un numero e un'unità di misura", "Solo lettere", "Una formula"], c: 1 },
+  { q: "Per ridurre l'incertezza nelle misurazioni si:", o: ["Misura una volta sola", "Si cambia strumento ogni volta", "Si ripete più volte e si fa la media", "Si arrotonda il risultato"], c: 2 },
+  { q: "La relazione di laboratorio serve a:", o: ["Fare i compiti", "Comunicare il lavoro svolto ad altri", "Inventare nuovi esperimenti", "Scrivere ipotesi"], c: 1 },
+  { q: "Il diagramma a torta mostra:", o: ["Come cambia una grandezza nel tempo", "Le parti di un totale in percentuale", "Barre affiancate", "Immagini ripetute"], c: 1 },
+  { q: "L'ideogramma usa:", o: ["Assi cartesiani", "Colonne verticali", "Fette di cerchio", "Immagini e simboli"], c: 3 },
+  { q: "Il diagramma a colonne serve a:", o: ["Confrontare quantità diverse", "Mostrare percentuali", "Usare simboli", "Calcolare la media"], c: 0 },
+  { q: "Quale caratteristica di una mela si può MISURARE?", o: ["La consistenza della polpa", "Il colore della buccia", "Il sapore della polpa", "Il peso del frutto"], c: 3 },
+  { q: "Se l'esperimento NON conferma l'ipotesi:", o: ["Si ricava una legge", "Si pubblica lo stesso", "Si cerca una nuova spiegazione", "Si smette di studiare"], c: 2 },
+  { q: "Quante fasi ha il metodo scientifico?", o: ["2", "3", "4", "5"], c: 2 },
+  { q: "Gli strumenti di misurazione sono dotati di:", o: ["Un motore", "Una scala graduata", "Un display digitale sempre", "Un'antenna"], c: 1 }
+];
+
+let quizScore = 0, quizCurrent = 0, quizShuffled = [];
+function buildQuiz() {
+  quizScore = 0; quizCurrent = 0;
+  quizShuffled = [...quizData].sort(() => Math.random() - 0.5);
+  showQuizQuestion();
+}
+function showQuizQuestion() {
+  const container = document.getElementById('quizContainer');
+  if (quizCurrent >= quizShuffled.length) {
+    const pct = Math.round(quizScore / quizShuffled.length * 100);
+    const emoji = pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+    container.innerHTML = `<div class="quiz-score">${emoji} Risultato finale: ${quizScore} / ${quizShuffled.length} (${pct}%)</div><button class="quiz-restart" onclick="buildQuiz()">🔄 Ricomincia</button>`;
+    return;
+  }
+  const q = quizShuffled[quizCurrent];
+  container.innerHTML = `<div class="quiz-score">Domanda ${quizCurrent + 1} / ${quizShuffled.length} — Punti: ${quizScore}</div><div class="quiz-question"><div class="quiz-q">${quizCurrent + 1}. ${q.q}</div><div class="quiz-options">${q.o.map((opt, oi) => `<button class="quiz-opt" onclick="checkAnswer(this, ${oi}, ${q.c})">${opt}</button>`).join('')}</div></div>`;
+}
+function checkAnswer(btn, selected, correct) {
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => { o.classList.add('disabled'); if (i === correct) o.classList.add('correct'); });
+  if (selected !== correct) btn.classList.add('wrong'); else quizScore++;
+  quizCurrent++;
+  setTimeout(showQuizQuestion, 1200);
+}
+buildQuiz();
+</script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Scienze — Biologia: La Cellula e gli Organismi</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f8f4; color: #333; }
+
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #1a5c3a; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #16a085; }
+
+  h1 { text-align: center; padding: 20px; background: #1a5c3a; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* MIND MAP */
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.cellula { border-color: #27ae60; }
+  .topic-card.procarioti { border-color: #16a085; }
+  .topic-card.organelli { border-color: #2ecc71; }
+  .topic-card.riproduzione { border-color: #1abc9c; }
+  .topic-card.pluricellulari { border-color: #26d0ce; }
+  .topic-card.fotosintesi { border-color: #52c41a; }
+
+  .topic-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 32px; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8fffe; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+
+  .fun-fact { background: #e8f5e8; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "🌱 "; }
+
+  /* FLASH CARDS */
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #16a085 0%, #27ae60 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #1a5c3a; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #16a085; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #16a085; }
+
+  /* QUIZ */
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #16a085; background: #f0fdf4; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #16a085; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>🔬</span> Scienze — Biologia: La Cellula e gli Organismi</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap', this)">🧠 Mappa Mentale</button>
+  <button class="tab" onclick="showSection('flashcards', this)">🃏 Flash Card</button>
+  <button class="tab" onclick="showSection('quiz', this)">✅ Quiz</button>
+</div>
+
+<!-- MIND MAP SECTION -->
+<div class="section active" id="mindmap">
+
+  <div class="topic-card cellula">
+    <div class="topic-title"><span class="emoji">🧪</span> La Cellula</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Definizione</div><div class="value">Unità fondamentale della vita</div><div class="detail">La più piccola struttura vivente</div></div>
+      <div class="info-box"><div class="label">Scoperta</div><div class="value">Robert Hooke (1665)</div><div class="detail">Osservando il sughero al microscopio</div></div>
+      <div class="info-box"><div class="label">Nome</div><div class="value">"Cellula" = piccola cella</div><div class="detail">Hooke la chiamò così perché ricordava le celle dei monasteri</div></div>
+      <div class="info-box"><div class="label">Teoria cellulare</div><div class="value">Tutti i viventi sono fatti di cellule</div><div class="detail">Schleiden, Schwann, Virchow (1800)</div></div>
+      <div class="info-box"><div class="label">Biodiversità</div><div class="value">Varietà di forme di vita</div><div class="detail">Diverse specie, ecosistemi e geni</div></div>
+      <div class="info-box"><div class="label">Importanza biodiversità</div><div class="value">Equilibrio degli ecosistemi</div><div class="detail">Ogni organismo ha un ruolo</div></div>
+    </div>
+    <div class="fun-fact">Il corpo umano ha circa 37 trilioni di cellule! Se le mettessimo in fila farebbero 95 volte il giro della Terra! 🌍</div>
+  </div>
+
+  <div class="topic-card procarioti">
+    <div class="topic-title"><span class="emoji">🦠</span> Procarioti vs Eucarioti</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Cellula procariote</div><div class="value">SENZA nucleo</div><div class="detail">DNA libero nel citoplasma</div></div>
+      <div class="info-box"><div class="label">Cellula eucariote</div><div class="value">CON nucleo</div><div class="detail">DNA racchiuso nella membrana nucleare</div></div>
+      <div class="info-box"><div class="label">Esempi procarioti</div><div class="value">Batteri e archei</div><div class="detail">Organismi unicellulari</div></div>
+      <div class="info-box"><div class="label">Esempi eucarioti</div><div class="value">Animali, piante, funghi, protisti</div><div class="detail">Possono essere unicellulari o pluricellulari</div></div>
+      <div class="info-box"><div class="label">Cellula animale</div><div class="value">Eucariote senza parete cellulare</div><div class="detail">Ha centrioli e lisosomi</div></div>
+      <div class="info-box"><div class="label">Cellula vegetale</div><div class="value">Eucariote con parete cellulare</div><div class="detail">Ha cloroplasti e vacuoli grandi</div></div>
+    </div>
+    <div class="fun-fact">I batteri esistono da 3,5 miliardi di anni — molto prima di noi! Sono i veri "veterani" della Terra! 🦖</div>
+  </div>
+
+  <div class="topic-card organelli">
+    <div class="topic-title"><span class="emoji">🏭</span> Organelli Cellulari</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Nucleo</div><div class="value">Centro di controllo</div><div class="detail">Contiene il DNA e controlla la cellula</div></div>
+      <div class="info-box"><div class="label">Mitocondri</div><div class="value">Centrali energetiche</div><div class="detail">Producono ATP (energia) dalla respirazione</div></div>
+      <div class="info-box"><div class="label">Ribosomi</div><div class="value">Fabbrica proteine</div><div class="detail">Leggono il codice genetico e fanno proteine</div></div>
+      <div class="info-box"><div class="label">Reticolo endoplasmatico</div><div class="value">Sistema di trasporto</div><div class="detail">Liscio (lipidi) e rugoso (proteine)</div></div>
+      <div class="info-box"><div class="label">Apparato di Golgi</div><div class="value">Ufficio postale</div><div class="detail">Modifica e confeziona le proteine</div></div>
+      <div class="info-box"><div class="label">SOLO vegetali</div><div class="value">Cloroplasti, parete, vacuolo</div><div class="detail">Fotosintesi, protezione, sostegno</div></div>
+      <div class="info-box"><div class="label">SOLO animali</div><div class="value">Centrioli, lisosomi</div><div class="detail">Divisione cellulare, digestione</div></div>
+      <div class="info-box"><div class="label">Membrana plasmatica</div><div class="value">Barriera selettiva</div><div class="detail">Controlla cosa entra ed esce</div></div>
+    </div>
+    <div class="fun-fact">I mitocondri hanno il loro DNA! Sono come "inquilini" antichi che vivono nelle nostre cellule da miliardi di anni! 🏠</div>
+  </div>
+
+  <div class="topic-card riproduzione">
+    <div class="topic-title"><span class="emoji">🔄</span> Riproduzione Cellulare</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Scissione binaria</div><div class="value">Divisione dei procarioti</div><div class="detail">1 cellula → 2 cellule identiche</div></div>
+      <div class="info-box"><div class="label">Fasi scissione</div><div class="value">1) DNA si duplica 2) Si attacca alla membrana 3) La cellula si allunga 4) Si divide</div><div class="detail">Processo semplice e veloce</div></div>
+      <div class="info-box"><div class="label">Mitosi</div><div class="value">Divisione degli eucarioti</div><div class="detail">Più complessa della scissione binaria</div></div>
+      <div class="info-box"><div class="label">Fasi mitosi</div><div class="value">Profase, Metafase, Anafase, Telofase</div><div class="detail">+ Citodieresi (divisione del citoplasma)</div></div>
+      <div class="info-box"><div class="label">Cellule somatiche</div><div class="value">Cellule del corpo</div><div class="detail">Tutte tranne i gameti (46 cromosomi)</div></div>
+      <div class="info-box"><div class="label">Cellule riproduttive</div><div class="value">Gameti (uovo e spermatozoo)</div><div class="detail">23 cromosomi ciascuna</div></div>
+    </div>
+    <div class="fun-fact">Ogni giorno il tuo corpo produce 25 miliardi di nuove cellule! È come costruire una città intera! 🏙️</div>
+  </div>
+
+  <div class="topic-card pluricellulari">
+    <div class="topic-title"><span class="emoji">🏗️</span> Organismi Pluricellulari</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Organizzazione</div><div class="value">Cellule → Tessuti → Organi → Sistemi</div><div class="detail">Come mattoni che formano una casa</div></div>
+      <div class="info-box"><div class="label">Tessuti</div><div class="value">Cellule simili che fanno lo stesso lavoro</div><div class="detail">Es: tessuto muscolare, nervoso</div></div>
+      <div class="info-box"><div class="label">Organi</div><div class="value">Più tessuti insieme</div><div class="detail">Es: cuore, fegato, foglia</div></div>
+      <div class="info-box"><div class="label">Sistemi</div><div class="value">Organi che collaborano</div><div class="detail">Es: sistema digestivo, circolatorio</div></div>
+      <div class="info-box"><div class="label">Specializzazione</div><div class="value">Ogni cellula ha un compito specifico</div><div class="detail">Come in una fabbrica: ognuno fa una cosa</div></div>
+      <div class="info-box"><div class="label">Forme diverse</div><div class="value">Funzione determina forma</div><div class="detail">Neuroni lunghi, globuli rossi rotondi</div></div>
+    </div>
+    <div class="fun-fact">Siamo come una città di 37 trilioni di abitanti dove ognuno sa perfettamente il suo lavoro! 👥</div>
+  </div>
+
+  <div class="topic-card fotosintesi">
+    <div class="topic-title"><span class="emoji">🌱</span> Fotosintesi e Piante</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Autotrofi</div><div class="value">Producono il proprio cibo</div><div class="detail">Es: piante (fotosintesi)</div></div>
+      <div class="info-box"><div class="label">Eterotrofi</div><div class="value">Si nutrono di altri organismi</div><div class="detail">Es: animali, funghi</div></div>
+      <div class="info-box"><div class="label">Fotosintesi</div><div class="value">CO₂ + H₂O + luce → glucosio + O₂</div><div class="detail">Avviene nei cloroplasti delle foglie</div></div>
+      <div class="info-box"><div class="label">Foglia - struttura</div><div class="value">Epidermide, mesofillo, nervature</div><div class="detail">Stomi per respirare, cuticola per protezione</div></div>
+      <div class="info-box"><div class="label">Stomi</div><div class="value">Pori per gli scambi gassosi</div><div class="detail">Si aprono e chiudono secondo necessità</div></div>
+      <div class="info-box"><div class="label">Radice - funzioni</div><div class="value">Assorbimento, ancoraggio, riserva</div><div class="detail">Acqua, sali minerali, stabilità</div></div>
+      <div class="info-box"><div class="label">Radice - parti</div><div class="value">Epidermide, corteccia, cilindro centrale</div><div class="detail">Peli radicali aumentano l'assorbimento</div></div>
+      <div class="info-box"><div class="label">Clorofilla</div><div class="value">Pigmento verde della fotosintesi</div><div class="detail">Cattura la luce solare</div></div>
+    </div>
+    <div class="fun-fact">Le piante producono tutto l'ossigeno che respiriamo! Senza fotosintesi non potremmo vivere! 🫁</div>
+  </div>
+
+</div>
+
+<!-- FLASH CARDS SECTION -->
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<!-- QUIZ SECTION -->
+<div class="section" id="quiz">
+  <div class="quiz">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<script>
+// TABS
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// FLASH CARDS DATA
+const cards = [
+  { cat: "La Cellula", q: "Che cos'è la cellula?", a: "È l'unità fondamentale della vita", extra: "La più piccola struttura che può essere considerata vivente 🧪" },
+  { cat: "La Cellula", q: "Chi ha scoperto la cellula e in che modo?", a: "Robert Hooke nel 1665, osservando il sughero al microscopio", extra: "La chiamò 'cellula' perché le strutture ricordavano le celle dei monasteri 🔬" },
+  { cat: "La Cellula", q: "Che cos'è la biodiversità?", a: "È la varietà di forme di vita sulla Terra", extra: "Include diversità di specie, ecosistemi e patrimoni genetici 🌍" },
+  
+  { cat: "Procarioti vs Eucarioti", q: "Quali sono le differenze tra cellula procariote e eucariote?", a: "Procariote: SENZA nucleo (DNA libero)\nEucariote: CON nucleo (DNA racchiuso)", extra: "Pro = prima, Eu = vero (del nucleo) 🦠" },
+  { cat: "Procarioti vs Eucarioti", q: "In quali organismi si trova la cellula procariote?", a: "Batteri e archei", extra: "Sono sempre organismi unicellulari 🔬" },
+  { cat: "Procarioti vs Eucarioti", q: "Quali organismi sono formati da cellule eucariote?", a: "Animali, piante, funghi e protisti", extra: "Possono essere unicellulari o pluricellulari 🐾🌿" },
+  { cat: "Procarioti vs Eucarioti", q: "Quali sono le due tipologie di cellula eucariote?", a: "Cellula animale e cellula vegetale", extra: "Animale: senza parete, Vegetale: con parete cellulare 🐾🌱" },
+  
+  { cat: "Organelli", q: "Quali organelli sono comuni a cellula animale e vegetale?", a: "Nucleo, mitocondri, ribosomi, reticolo endoplasmatico, apparato di Golgi, membrana plasmatica", extra: "Il nucleo controlla, i mitocondri danno energia, i ribosomi fanno proteine 🏭" },
+  { cat: "Organelli", q: "Quali organelli sono SOLO nella cellula vegetale?", a: "Cloroplasti, parete cellulare, vacuolo grande", extra: "Cloroplasti = fotosintesi, Parete = protezione, Vacuolo = sostegno 🌿" },
+  { cat: "Organelli", q: "Quali organelli sono SOLO nella cellula animale?", a: "Centrioli e lisosomi", extra: "Centrioli = divisione cellulare, Lisosomi = digestione cellulare 🐾" },
+  
+  { cat: "Riproduzione", q: "Descrivi il processo di scissione binaria", a: "1) Il DNA si duplica\n2) Si attacca alla membrana\n3) La cellula si allunga\n4) Si divide in due", extra: "È la divisione dei procarioti — semplice e veloce! ⚡" },
+  { cat: "Riproduzione", q: "Descrivi il processo di mitosi", a: "Profase → Metafase → Anafase → Telofase + Citodieresi", extra: "È la divisione degli eucarioti — più complessa della scissione binaria 🔄" },
+  { cat: "Riproduzione", q: "Differenza tra cellule somatiche e riproduttive?", a: "Somatiche: cellule del corpo (46 cromosomi)\nRiproduttive: gameti (23 cromosomi)", extra: "Soma = corpo, Gameti = cellule sessuali (uovo e spermatozoo) 👶" },
+  
+  { cat: "Pluricellulari", q: "Come si organizzano le cellule in un organismo pluricellulare?", a: "Cellule → Tessuti → Organi → Sistemi", extra: "Come mattoni che formano una casa! 🏗️" },
+  { cat: "Pluricellulari", q: "Perché le cellule hanno forme diverse?", a: "La funzione determina la forma", extra: "Neuroni lunghi per trasmettere, globuli rossi tondi per scorrere 🧠❤️" },
+  
+  { cat: "Fotosintesi", q: "Differenza tra organismo autotrofo e eterotrofo?", a: "Autotrofo: produce il proprio cibo\nEterotrofo: si nutre di altri organismi", extra: "Auto = da solo, Etero = diverso 🌱🦁" },
+  { cat: "Fotosintesi", q: "Descrivi il processo di fotosintesi", a: "CO₂ + H₂O + luce solare → glucosio + O₂", extra: "Avviene nei cloroplasti delle foglie — produce tutto l'ossigeno! 🌿☀️" },
+  { cat: "Piante", q: "Descrivi la struttura della foglia", a: "Epidermide (protezione), mesofillo (fotosintesi), nervature (trasporto), stomi (scambi gassosi)", extra: "La cuticola impermeabile protegge dall'acqua 🍃" },
+  { cat: "Piante", q: "Descrivi la struttura della radice", a: "Epidermide (assorbimento), corteccia (trasporto), cilindro centrale (conduzione)", extra: "I peli radicali aumentano l'assorbimento di acqua e sali 🌳" },
+];
+
+let currentCard = 0;
+
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = (currentCard + 1) + ' / ' + cards.length;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  currentCard = 0;
+  updateCard();
+}
+updateCard();
+
+// QUIZ
+const quizQuestions = [
+  { q: "Chi ha scoperto la cellula?", opts: ["Charles Darwin", "Robert Hooke", "Louis Pasteur", "Gregor Mendel"], correct: 1 },
+  { q: "Cosa significa 'biodiversità'?", opts: ["Studio della biologia", "Varietà di forme di vita", "Divisione delle cellule", "Crescita delle piante"], correct: 1 },
+  { q: "Qual è la principale differenza tra procarioti ed eucarioti?", opts: ["La dimensione", "La presenza o assenza del nucleo", "Il colore", "La forma"], correct: 1 },
+  { q: "Dove si trova la cellula procariote?", opts: ["Solo nelle piante", "Solo negli animali", "Nei batteri e archei", "Solo nei funghi"], correct: 2 },
+  { q: "Quali sono i due tipi di cellula eucariote?", opts: ["Grande e piccola", "Animale e vegetale", "Rotonda e allungata", "Semplice e complessa"], correct: 1 },
+  { q: "Quale organello è presente SOLO nella cellula vegetale?", opts: ["Nucleo", "Mitocondri", "Cloroplasti", "Ribosomi"], correct: 2 },
+  { q: "Quale organello è presente SOLO nella cellula animale?", opts: ["Reticolo endoplasmatico", "Lisosomi", "Apparato di Golgi", "Membrana plasmatica"], correct: 1 },
+  { q: "Come si chiama la divisione cellulare dei procarioti?", opts: ["Mitosi", "Meiosi", "Scissione binaria", "Citodieresi"], correct: 2 },
+  { q: "Quante fasi ha la mitosi?", opts: ["2", "3", "4", "5"], correct: 2 },
+  { q: "Quanti cromosomi hanno le cellule riproduttive umane?", opts: ["46", "23", "92", "12"], correct: 1 },
+  { q: "Come si organizzano le cellule negli organismi pluricellulari?", opts: ["Casualmente", "Cellule → Tessuti → Organi → Sistemi", "Solo in tessuti", "Solo in organi"], correct: 1 },
+  { q: "Perché le cellule hanno forme diverse?", opts: ["Per bellezza", "La funzione determina la forma", "È casuale", "Per colore diverso"], correct: 1 },
+  { q: "Cosa significa 'autotrofo'?", opts: ["Che vive da solo", "Che produce il proprio cibo", "Che si muove autonomamente", "Che è molto grande"], correct: 1 },
+  { q: "Dove avviene la fotosintesi?", opts: ["Nei mitocondri", "Nel nucleo", "Nei cloroplasti", "Nei ribosomi"], correct: 2 },
+  { q: "Cosa sono gli stomi?", opts: ["Radici della pianta", "Pori per gli scambi gassosi", "Semi della pianta", "Rami della pianta"], correct: 1 },
+  { q: "Qual è la funzione principale delle radici?", opts: ["Produrre ossigeno", "Assorbimento di acqua e sali", "Fare fotosintesi", "Produrre semi"], correct: 1 },
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 14 ? "🏆" : quizScore >= 12 ? "👏" : quizScore >= 10 ? "👍" : "🌱";
+    container.innerHTML =
+      '<div class="quiz-score">' + emoji + ' Hai risposto bene a ' + quizScore + ' su ' + quizQuestions.length + '!</div>' +
+      '<p style="text-align:center;color:#666">' +
+      (quizScore >= 14 ? "Fantastico! Sei pronta per l'interrogazione! 🌟" : quizScore >= 12 ? "Bravissima! Ottima preparazione!" : quizScore >= 10 ? "Bene! Ripassiamo qualche flash card?" : "Dai, ripassiamo le flash cards e riproviamo! 💪") +
+      '</p><button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>';
+    return;
+  }
+  const qq = quizQuestions[quizIndex];
+  quizAnswered = false;
+  let html = '<div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ' + (quizIndex + 1) + ' / ' + quizQuestions.length + ' — Punteggio: ' + quizScore + '</div>';
+  html += '<div class="quiz-question"><div class="quiz-q">' + qq.q + '</div><div class="quiz-options">';
+  for (let i = 0; i < qq.opts.length; i++) {
+    html += '<button class="quiz-opt" onclick="answerQuiz(' + i + ')">' + qq.opts[i] + '</button>';
+  }
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(function(b, i) {
+    b.classList.add('disabled');
+    if (i === qq.correct) b.classList.add('correct');
+    if (i === idx && idx !== qq.correct) b.classList.add('wrong');
+  });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(function() { quizIndex++; renderQuiz(); }, 1200);
+}
+
+function restartQuiz() {
+  quizIndex = 0; quizScore = 0;
+  quizQuestions.sort(function() { return Math.random() - 0.5; });
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗺️ Geografia - Trentino-Alto Adige</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; color: #333; }
+  
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #2c3e50; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #1abc9c; }
+  
+  h1 { text-align: center; padding: 20px; background: #2c3e50; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+  
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  
+  .mindmap { padding: 20px; }
+  .region-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .region-card.trentino { border-color: #1abc9c; }
+  .region-card.altoadige { border-color: #9b59b6; }
+  
+  .region-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .region-title .emoji { font-size: 32px; }
+  
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f8f9fa; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  
+  .fun-fact { background: #fff3cd; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #2c3e50; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #1abc9c; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #1abc9c; }
+
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #1abc9c; background: #e8f8f5; }
+  .quiz-opt.correct { border-color: #2ecc71; background: #d5f5e3; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #fadbd8; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-next { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #1abc9c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .quiz-next:hover { background: #16a085; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1><span>🏔️</span> Trentino-Alto Adige</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mindmap')">🧠 Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button class="tab" onclick="showSection('quiz')">❓ Quiz</button>
+</div>
+
+<!-- MIND MAP SECTION -->
+<div class="section active" id="mindmap">
+  <div class="mindmap">
+    
+    <div class="region-card trentino">
+      <div class="region-title"><span class="emoji">🏔️</span> Trentino (Provincia di Trento)</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Capoluogo</div><div class="value">Trento</div><div class="detail">Capoluogo della regione</div></div>
+        <div class="info-box"><div class="label">Statuto</div><div class="value">Provincia autonoma 🏛️</div><div class="detail">Regione a statuto speciale</div></div>
+        <div class="info-box"><div class="label">Popolazione (regione)</div><div class="value">~1,1 milioni</div></div>
+        <div class="info-box"><div class="label">Superficie (regione)</div><div class="value">13.607 km²</div></div>
+        <div class="info-box"><div class="label">Confini</div><div class="value">Austria 🇦🇹, Svizzera 🇨🇭, Lombardia, Veneto</div></div>
+        <div class="info-box"><div class="label">Monti</div><div class="value">Dolomiti (UNESCO) 🏔️, Gruppo del Brenta, Marmolada</div></div>
+        <div class="info-box"><div class="label">Fiumi</div><div class="value">Adige</div><div class="detail">Il secondo fiume più lungo d'Italia!</div></div>
+        <div class="info-box"><div class="label">Laghi</div><div class="value">Lago di Garda (parte nord)</div></div>
+        <div class="info-box"><div class="label">Economia</div><div class="value">Turismo ⛷️, mele 🍎, vino 🍷, energia idroelettrica ⚡</div></div>
+        <div class="info-box"><div class="label">Cibi tipici</div><div class="value">Canederli, polenta, strudel</div></div>
+        <div class="info-box"><div class="label">Luoghi famosi</div><div class="value">Madonna di Campiglio, Dolomiti del Brenta</div></div>
+        <div class="info-box"><div class="label">Lingue</div><div class="value">Italiano, ladino</div></div>
+      </div>
+      <div class="fun-fact">Le Dolomiti sono Patrimonio UNESCO dal 2009! Sono chiamate "Monti Pallidi" perché al tramonto diventano rosa e arancioni 🌅</div>
+    </div>
+
+    <div class="region-card altoadige">
+      <div class="region-title"><span class="emoji">🦅</span> Alto Adige / Südtirol (Provincia di Bolzano)</div>
+      <div class="info-grid">
+        <div class="info-box"><div class="label">Capoluogo</div><div class="value">Bolzano / Bozen</div></div>
+        <div class="info-box"><div class="label">Statuto</div><div class="value">Provincia autonoma 🏛️</div><div class="detail">Grandissima autonomia!</div></div>
+        <div class="info-box"><div class="label">Lingue</div><div class="value">Tedesco 🇩🇪, italiano 🇮🇹, ladino</div><div class="detail">La maggioranza parla tedesco!</div></div>
+        <div class="info-box"><div class="label">Confini</div><div class="value">Austria 🇦🇹, Svizzera 🇨🇭</div><div class="detail">Era parte dell'Austria fino al 1919!</div></div>
+        <div class="info-box"><div class="label">Monti</div><div class="value">Ortles (3.905 m), Dolomiti</div><div class="detail">L'Ortles è la vetta più alta del Trentino-Alto Adige</div></div>
+        <div class="info-box"><div class="label">Fiumi</div><div class="value">Adige, Isarco</div></div>
+        <div class="info-box"><div class="label">Laghi</div><div class="value">Lago di Braies 💎, Lago di Carezza</div><div class="detail">Tra i più belli e fotografati d'Europa!</div></div>
+        <div class="info-box"><div class="label">Economia</div><div class="value">Turismo (sci, escursionismo), mele 🍎, vino</div></div>
+        <div class="info-box"><div class="label">Cibi tipici</div><div class="value">Speck, canederli, strudel di mele 🥧</div></div>
+        <div class="info-box"><div class="label">Luoghi famosi</div><div class="value">Bolzano (Ötzi!), mercatini di Natale 🎄, Tre Cime di Lavaredo</div></div>
+      </div>
+      <div class="fun-fact">A Bolzano si trova Ötzi, la mummia di 5.300 anni trovata nei ghiacci! 🧊 E i mercatini di Natale di Bolzano sono i più famosi d'Italia! 🎄</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FLASH CARDS SECTION -->
+<div class="section" id="flashcards">
+  <div class="flashcards">
+    <div class="card-category" id="cardCategory"></div>
+    <div class="card-counter" id="cardCounter"></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">👆 Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola le carte</button>
+  </div>
+</div>
+
+<!-- QUIZ SECTION -->
+<div class="section" id="quiz">
+  <div class="quiz">
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<script>
+// TABS
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// FLASH CARDS DATA
+const cards = [
+  { cat: "Trentino-Alto Adige", q: "Qual è il capoluogo della regione Trentino-Alto Adige?", a: "Trento", extra: "Bolzano è il capoluogo della provincia autonoma dell'Alto Adige" },
+  { cat: "Trentino-Alto Adige", q: "Quante province ha il Trentino-Alto Adige?", a: "2", extra: "Trento e Bolzano, entrambe autonome!" },
+  { cat: "Trentino-Alto Adige", q: "Che tipo di regione è il Trentino-Alto Adige?", a: "Regione a statuto speciale", extra: "Ha molta più autonomia delle regioni ordinarie 🏛️" },
+  { cat: "Trentino-Alto Adige", q: "Quali lingue si parlano in Trentino-Alto Adige?", a: "Italiano, tedesco e ladino", extra: "In Alto Adige la maggioranza parla tedesco! 🇩🇪" },
+  { cat: "Trentino-Alto Adige", q: "Con quali stati esteri confina il Trentino-Alto Adige?", a: "Austria 🇦🇹 e Svizzera 🇨🇭", extra: "L'Alto Adige era parte dell'Austria fino al 1919!" },
+  { cat: "Trentino-Alto Adige", q: "Cosa sono le Dolomiti?", a: "Montagne patrimonio UNESCO 🏔️", extra: "Chiamate 'Monti Pallidi', al tramonto diventano rosa! 🌅" },
+  { cat: "Trentino-Alto Adige", q: "Qual è la vetta più alta del Trentino-Alto Adige?", a: "L'Ortles, 3.905 m", extra: "Si trova in Alto Adige, nelle Alpi Retiche" },
+  { cat: "Trentino-Alto Adige", q: "Qual è il secondo fiume più lungo d'Italia?", a: "L'Adige!", extra: "Nasce vicino al Passo di Resia e attraversa tutta la regione" },
+  { cat: "Trentino-Alto Adige", q: "Cos'è lo speck?", a: "Prosciutto affumicato tipico dell'Alto Adige 🥩", extra: "Stagionato e leggermente affumicato, buonissimo!" },
+  { cat: "Trentino-Alto Adige", q: "Cosa sono i canederli?", a: "Grandi gnocchi di pane 🍞", extra: "Tipici della cucina tirolese, fatti con pane raffermo, speck e formaggio" },
+  { cat: "Trentino-Alto Adige", q: "Perché il Lago di Braies è famoso?", a: "È uno dei laghi più fotografati d'Europa! 📸", extra: "Acque color smeraldo circondato dalle Dolomiti 💎" },
+  { cat: "Trentino-Alto Adige", q: "Chi è Ötzi?", a: "Una mummia di 5.300 anni! 🧊", extra: "Trovata nei ghiacci nel 1991, si trova al museo di Bolzano" },
+  { cat: "Trentino-Alto Adige", q: "Qual è il frutto più coltivato in Trentino-Alto Adige?", a: "Le mele! 🍎", extra: "L'Alto Adige produce più mele di tutta Europa!" },
+  { cat: "Trentino-Alto Adige", q: "Cos'è Madonna di Campiglio?", a: "Una famosa località sciistica ⛷️", extra: "In Trentino, ai piedi delle Dolomiti del Brenta" },
+  { cat: "Trentino-Alto Adige", q: "Per cosa sono famosi i mercatini di Bolzano?", a: "Sono i mercatini di Natale più famosi d'Italia! 🎄", extra: "Tradizione austriaca con vin brulé, dolci e artigianato" },
+];
+
+let currentCard = 0;
+
+function updateCard() {
+  const card = cards[currentCard];
+  document.getElementById('cardCategory').textContent = card.cat;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').textContent = card.a;
+  document.getElementById('cardExtra').textContent = card.extra;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; updateCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; updateCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  currentCard = 0;
+  updateCard();
+}
+
+updateCard();
+
+// QUIZ
+const quizQuestions = [
+  { q: "Qual è il capoluogo della regione Trentino-Alto Adige?", opts: ["Bolzano", "Trento", "Merano", "Rovereto"], correct: 1 },
+  { q: "Quante lingue si parlano ufficialmente in Trentino-Alto Adige?", opts: ["1", "2", "3", "4"], correct: 2 },
+  { q: "L'Alto Adige era parte di quale stato fino al 1919?", opts: ["Svizzera", "Germania", "Austria", "Francia"], correct: 2 },
+  { q: "Qual è la vetta più alta del Trentino-Alto Adige?", opts: ["Marmolada", "Ortles", "Monte Bianco", "Gran Paradiso"], correct: 1 },
+  { q: "Le Dolomiti sono patrimonio UNESCO dal:", opts: ["1999", "2005", "2009", "2015"], correct: 2 },
+  { q: "Qual è il secondo fiume più lungo d'Italia?", opts: ["Tevere", "Arno", "Adige", "Po"], correct: 2 },
+  { q: "Chi è Ötzi?", opts: ["Un esploratore moderno", "Una mummia di 5.300 anni", "Un alpinista famoso", "Un pittore medievale"], correct: 1 },
+  { q: "Quale frutto è il più coltivato in Trentino-Alto Adige?", opts: ["Pere", "Arance", "Mele", "Uva"], correct: 2 },
+  { q: "Il Trentino-Alto Adige è una regione a:", opts: ["Statuto ordinario", "Statuto speciale", "Statuto europeo", "Statuto provinciale"], correct: 1 },
+  { q: "Come si chiamano le Dolomiti in modo poetico?", opts: ["Monti Bianchi", "Monti Pallidi", "Monti Rossi", "Monti Dorati"], correct: 1 },
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quizContent');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 9 ? "🏆" : quizScore >= 7 ? "👏" : quizScore >= 5 ? "👍" : "📚";
+    container.innerHTML = `
+      <div class="quiz-score">${emoji} Hai risposto bene a ${quizScore} su ${quizQuestions.length}!</div>
+      <p style="text-align:center;color:#666">${quizScore >= 9 ? "Fantastico! Sei un esperto del Trentino-Alto Adige!" : quizScore >= 7 ? "Bravissima! Quasi perfetto!" : quizScore >= 5 ? "Bene! Ripassiamo le flash cards?" : "Dai, ripassiamo insieme le flash cards! 💪"}</p>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>
+    `;
+    return;
+  }
+  const qq = quizQuestions[quizIndex];
+  quizAnswered = false;
+  container.innerHTML = `
+    <div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ${quizIndex + 1} / ${quizQuestions.length} — Punteggio: ${quizScore}</div>
+    <div class="quiz-question">
+      <div class="quiz-q">${qq.q}</div>
+      <div class="quiz-options">
+        ${qq.opts.map((o, i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const qq = quizQuestions[quizIndex];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === qq.correct) b.classList.add('correct');
+    if (i === idx && idx !== qq.correct) b.classList.add('wrong');
+  });
+  if (idx === qq.correct) quizScore++;
+  setTimeout(() => { quizIndex++; renderQuiz(); }, 1200);
+}
+
+function restartQuiz() {
+  quizIndex = 0; quizScore = 0;
+  quizQuestions.sort(() => Math.random() - 0.5);
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+</body>
+</html>

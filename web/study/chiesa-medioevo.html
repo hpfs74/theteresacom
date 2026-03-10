@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Chiesa nel Medioevo — Teresa</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
+  header { background: linear-gradient(135deg, #6b21a8, #3b82f6); color: white; padding: 20px 24px; }
+  header h1 { font-size: 1.5rem; }
+  header p { opacity: .8; font-size: .9rem; margin-top: 4px; }
+  nav { display: flex; gap: 8px; padding: 16px 24px; background: white; border-bottom: 2px solid #e2e8f0; flex-wrap: wrap; }
+  nav button { padding: 8px 18px; border: 2px solid #6b21a8; border-radius: 20px; background: white; color: #6b21a8; cursor: pointer; font-weight: 600; transition: all .2s; }
+  nav button.active, nav button:hover { background: #6b21a8; color: white; }
+  .tab { display: none; padding: 24px; max-width: 900px; margin: 0 auto; }
+  .tab.active { display: block; }
+
+  /* MAPPA MENTALE */
+  .mappa { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+  .mappa h2 { color: #6b21a8; margin-bottom: 20px; font-size: 1.3rem; }
+  .centro { background: #6b21a8; color: white; border-radius: 12px; padding: 14px 20px; text-align: center; font-weight: 700; font-size: 1.1rem; margin-bottom: 24px; }
+  .rami { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ramo { border-radius: 12px; padding: 16px; border-left: 5px solid; }
+  .ramo.rosso { background: #fff5f5; border-color: #e53e3e; }
+  .ramo.arancio { background: #fffaf0; border-color: #ed8936; }
+  .ramo.verde { background: #f0fff4; border-color: #38a169; }
+  .ramo.blu { background: #ebf8ff; border-color: #3182ce; }
+  .ramo.viola { background: #faf5ff; border-color: #805ad5; }
+  .ramo h3 { font-size: .95rem; margin-bottom: 8px; }
+  .ramo ul { list-style: none; }
+  .ramo ul li { padding: 3px 0; font-size: .88rem; }
+  .ramo ul li::before { content: "→ "; opacity: .6; }
+
+  /* FLASHCARDS */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card { perspective: 600px; height: 160px; cursor: pointer; }
+  .card-inner { position: relative; width: 100%; height: 100%; transition: transform .5s; transform-style: preserve-3d; }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 16px; text-align: center; }
+  .card-front { background: linear-gradient(135deg, #6b21a8, #3b82f6); color: white; font-weight: 600; font-size: .95rem; }
+  .card-back { background: white; border: 2px solid #6b21a8; color: #1a202c; transform: rotateY(180deg); font-size: .88rem; line-height: 1.5; }
+  .cards-hint { text-align: center; color: #718096; margin-bottom: 16px; font-size: .9rem; }
+
+  /* QUIZ */
+  .quiz-q { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .quiz-q p { font-weight: 600; margin-bottom: 12px; color: #2d3748; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .2s; font-size: .9rem; }
+  .opt:hover { border-color: #6b21a8; background: #faf5ff; }
+  .opt.correct { background: #f0fff4; border-color: #38a169; color: #276749; }
+  .opt.wrong { background: #fff5f5; border-color: #e53e3e; color: #c53030; }
+  .spiegazione { margin-top: 10px; padding: 10px; background: #ebf8ff; border-radius: 8px; font-size: .85rem; color: #2c5282; display: none; }
+  .spiegazione.show { display: block; }
+  .quiz-score { text-align: center; padding: 20px; background: white; border-radius: 12px; font-size: 1.2rem; font-weight: 700; color: #6b21a8; display: none; }
+  #btn-verifica, #btn-reset { display: block; margin: 20px auto 0; padding: 12px 32px; background: #6b21a8; color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 1rem; font-weight: 600; }
+  #btn-reset { background: #3b82f6; display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⛪ La Chiesa nel Medioevo — Anno Mille</h1>
+  <p>Lezioni 1 e 2 • Papi e imperatori: la lotta per le investiture</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('mappa')">🗺️ Mappa Mentale</button>
+  <button onclick="showTab('flash')">🃏 Flashcards</button>
+  <button onclick="showTab('quiz')">❓ Quiz</button>
+</nav>
+
+<!-- MAPPA MENTALE -->
+<div id="mappa" class="tab active">
+  <div class="mappa">
+    <h2>🗺️ Mappa Mentale</h2>
+    <div class="centro">LA CHIESA NELL'XI SECOLO</div>
+    <div class="rami">
+
+      <div class="ramo rosso">
+        <h3>🔴 Cause Interne della Crisi</h3>
+        <ul>
+          <li><strong>Simonia</strong> — vendita di cariche ecclesiastiche</li>
+          <li><strong>Nepotismo</strong> — favorire amici e parenti</li>
+          <li>Mancato rispetto del <strong>celibato</strong></li>
+          <li>Desiderio di <strong>potere</strong> e ricchezza</li>
+          <li>Clero privo di vera <strong>vocazione</strong></li>
+        </ul>
+      </div>
+
+      <div class="ramo arancio">
+        <h3>🟠 Cause Esterne della Crisi</h3>
+        <ul>
+          <li><strong>Ottone I</strong> nomina vescovi e papa</li>
+          <li>Gli imperatori scelgono <strong>vescovi-conti</strong></li>
+          <li>Vescovi politicamente capaci ma non devoti</li>
+          <li>Controllo della nomina dei <strong>papi</strong></li>
+          <li>Aristocrazia romana: 28 papi in 100 anni</li>
+        </ul>
+      </div>
+
+      <div class="ramo verde">
+        <h3>🟢 La Riforma da Cluny (910)</h3>
+        <ul>
+          <li>Monastero di <strong>Cluny</strong> in Borgogna</li>
+          <li>Maggiore severità e moralità</li>
+          <li>Autonomia dei monasteri dai feudatari</li>
+          <li>Nuovi ordini: <strong>camaldolesi</strong>, <strong>certosini</strong>, <strong>cistercensi</strong></li>
+          <li><strong>San Bernardo</strong> — grande impulso ai cistercensi</li>
+        </ul>
+      </div>
+
+      <div class="ramo blu">
+        <h3>🔵 Gregorio VII e il Dictatus Papae (1075)</h3>
+        <ul>
+          <li>Superiorità della <strong>Chiesa</strong> su ogni potere</li>
+          <li>Solo il papa può nominare e <strong>deporre</strong> i sovrani</li>
+          <li>Arma della <strong>scomunica</strong></li>
+          <li>Creazione del <strong>diritto canonico</strong></li>
+          <li>Tribunali ecclesiastici distinti da quelli civili</li>
+        </ul>
+      </div>
+
+      <div class="ramo viola" style="grid-column: span 2">
+        <h3>🟣 La Riforma Gregoriana</h3>
+        <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+          <li>Tribunali della <strong>Chiesa</strong></li>
+          <li><strong>Diritto canonico</strong></li>
+          <li>Obbligo del <strong>celibato</strong></li>
+          <li>Autorità sui <strong>concili</li>
+          <li>Obiettivo: autonomia dalla politica</li>
+          <li>Diffondere il Vangelo e aiutare i poveri</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="flash" class="tab">
+  <p class="cards-hint">👆 Clicca su una carta per vedere la risposta!</p>
+  <div class="cards-grid" id="cards-container"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="tab">
+  <div id="quiz-container"></div>
+  <div class="quiz-score" id="quiz-score"></div>
+  <button id="btn-verifica" onclick="verificaQuiz()">✅ Verifica le risposte</button>
+  <button id="btn-reset" onclick="resetQuiz()">🔄 Riprova</button>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// FLASHCARDS
+const flashData = [
+  { d: "Che cos'è la simonia?", r: "L'acquisto o la vendita di cariche ecclesiastiche (incarichi della Chiesa) per denaro. Il nome deriva da Simon Mago." },
+  { d: "Che cos'è il nepotismo?", r: "La pratica di favorire amici e parenti nell'assegnazione di beni e proprietà della Chiesa." },
+  { d: "Chi erano i vescovi-conti?", r: "Vescovi nominati dagli imperatori germanici che avevano anche funzioni politiche e militari, come i conti feudali." },
+  { d: "Chi era Ottone I?", r: "Imperatore germanico che iniziò la pratica di nominare direttamente i vescovi e persino il papa, controllando la Chiesa." },
+  { d: "Cos'era il monastero di Cluny?", r: "Un grande monastero fondato in Borgogna (Francia) nel 910, che diede il via alla riforma della Chiesa chiedendo maggiore moralità e autonomia." },
+  { d: "Quali nuovi ordini religiosi nacquero dalla riforma?", r: "I camaldolesi (1012, Toscana), i certosini (1084, Francia) e i cistercensi (1098, Borgogna)." },
+  { d: "Chi era Gregorio VII?", r: "Papa (ex monaco Ildebrando di Soana) che nel 1075 pubblicò il Dictatus papae, proclamando la superiorità della Chiesa su tutti i poteri." },
+  { d: "Cos'era il Dictatus papae?", r: "Documento del 1075 di Gregorio VII che proclamava la superiorità del papa su qualsiasi autorità politica." },
+  { d: "Cos'è la scomunica?", r: "Condanna pronunciata dalla Chiesa: chi è scomunicato viene escluso dalla comunità dei fedeli e nessuno deve obbedirgli." },
+  { d: "Cos'è il diritto canonico?", r: "Un insieme di leggi specifiche per il clero, create da Gregorio VII, diverse da quelle civili. I tribunali ecclesiastici le applicano." },
+  { d: "Cosa prevedeva la riforma gregoriana?", r: "Tribunali ecclesiastici, diritto canonico, obbligo del celibato, autorità del papa sui concili, autonomia della Chiesa dalla politica." },
+  { d: "Perché i feudi dei vescovi-conti non passavano ai loro figli?", r: "Perché i vescovi-conti non potevano avere figli legittimi (erano religiosi), quindi alla loro morte i feudi tornavano all'imperatore." },
+];
+
+const container = document.getElementById('cards-container');
+flashData.forEach((item, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<div class="card-inner">
+    <div class="card-front">${item.d}</div>
+    <div class="card-back">${item.r}</div>
+  </div>`;
+  card.onclick = () => card.classList.toggle('flipped');
+  container.appendChild(card);
+});
+
+// QUIZ
+const quizData = [
+  {
+    q: "Qual era la causa principale della crisi 'interna' della Chiesa attorno all'anno Mille?",
+    opts: ["Le invasioni dei Vichinghi", "La corruzione del clero (simonia, nepotismo, celibato)", "La mancanza di chiese nelle campagne", "I conflitti tra i monasteri"],
+    r: 1, sp: "La crisi interna era causata dalla corruzione: il clero era entrato in Chiesa per potere e denaro, non per vocazione religiosa."
+  },
+  {
+    q: "Cosa si intende con 'simonia'?",
+    opts: ["L'obbligo dei preti di non sposarsi", "La nomina dei vescovi da parte dell'imperatore", "La vendita di cariche ecclesiastiche per denaro", "La riunione dei vescovi per decisioni religiose"],
+    r: 2, sp: "La simonia è l'acquisto/vendita di incarichi religiosi. Il nome deriva da Simon Mago, che cercò di comprare i poteri dello Spirito Santo."
+  },
+  {
+    q: "Perché gli imperatori germanici volevano nominare i vescovi-conti?",
+    opts: ["Per diffondere il Cristianesimo", "Per avere uomini fedeli con feudi che tornavano all'imperatore alla loro morte", "Per impedire le invasioni arabe", "Per raccogliere le decime"],
+    r: 1, sp: "I vescovi non potevano avere figli legittimi, quindi i loro feudi tornavano all'imperatore. Era conveniente avere vescovi fedeli come vassalli."
+  },
+  {
+    q: "Dove nacque il movimento di riforma della Chiesa?",
+    opts: ["Roma", "Aquisgrana", "Cluny (Borgogna, Francia)", "Canossa"],
+    r: 2, sp: "Il monastero di Cluny, fondato nel 910 in Borgogna, fu il centro della riforma che chiedeva più moralità e autonomia per la Chiesa."
+  },
+  {
+    q: "Quale documento scrisse Gregorio VII nel 1075?",
+    opts: ["La Magna Carta", "Il Dictatus papae", "La Regola di San Benedetto", "Il Codice di Giustiniano"],
+    r: 1, sp: "Il Dictatus papae ('Dichiarazione del papa') proclamava che il papa aveva autorità superiore a qualsiasi potere politico, anche dell'imperatore."
+  },
+  {
+    q: "Cos'è la scomunica?",
+    opts: ["Un tributo da pagare al papa", "Una riunione di vescovi", "Una legge che regola il clero", "L'esclusione dalla comunità dei fedeli: nessuno deve obbedire allo scomunicato"],
+    r: 3, sp: "La scomunica era l'arma più potente del papa: lo scomunicato perdeva ogni legittimità di potere, perché i fedeli non erano più obbligati a obbedirgli."
+  },
+  {
+    q: "Quale ordine religioso fu fondato a Camaldoli in Toscana nel 1012?",
+    opts: ["I cistercensi", "I certosini", "I camaldolesi", "I benedettini"],
+    r: 2, sp: "I camaldolesi furono fondati da san Romualdo nel 1012 a Camaldoli (Toscana). I certosini nel 1084 in Francia, i cistercensi nel 1098 in Borgogna."
+  },
+  {
+    q: "Cosa prevedeva la riforma gregoriana riguardo al clero?",
+    opts: ["I preti potevano sposarsi liberamente", "Obbligo del celibato, tribunali ecclesiastici e diritto canonico", "I vescovi erano eletti dal popolo", "La Chiesa rinunciava alle proprietà terriere"],
+    r: 1, sp: "Gregorio VII impose il celibato obbligatorio, creò tribunali ecclesiastici separati da quelli civili e un diritto canonico (leggi specifiche per il clero)."
+  },
+];
+
+const qContainer = document.getElementById('quiz-container');
+quizData.forEach((item, qi) => {
+  const div = document.createElement('div');
+  div.className = 'quiz-q';
+  let optsHtml = item.opts.map((o, i) =>
+    `<div class="opt" data-qi="${qi}" data-i="${i}" onclick="selectOpt(this)">${String.fromCharCode(65+i)}. ${o}</div>`
+  ).join('');
+  div.innerHTML = `<p>${qi+1}. ${item.q}</p><div class="options">${optsHtml}</div><div class="spiegazione" id="sp-${qi}">${item.sp}</div>`;
+  qContainer.appendChild(div);
+});
+
+function selectOpt(el) {
+  const qi = el.dataset.qi;
+  if (el.classList.contains('correct') || el.classList.contains('wrong')) return;
+  const opts = document.querySelectorAll(`.opt[data-qi="${qi}"]`);
+  if ([...opts].some(o => o.classList.contains('correct') || o.classList.contains('wrong'))) return;
+  el._selected = true;
+}
+
+function selectOpt(el) {
+  const qi = parseInt(el.dataset.qi);
+  const opts = document.querySelectorAll(`.opt[data-qi="${qi}"]`);
+  if ([...opts].some(o => o.classList.contains('correct') || o.classList.contains('wrong'))) return;
+  opts.forEach(o => o.style.background = '');
+  el.style.background = '#faf5ff';
+  el.style.borderColor = '#6b21a8';
+  opts.forEach(o => delete o._sel);
+  el._sel = true;
+}
+
+function verificaQuiz() {
+  let score = 0;
+  quizData.forEach((item, qi) => {
+    const opts = document.querySelectorAll(`.opt[data-qi="${qi}"]`);
+    let answered = false;
+    opts.forEach(o => {
+      if (o._sel) {
+        answered = true;
+        const i = parseInt(o.dataset.i);
+        o.style.background = '';
+        o.style.borderColor = '';
+        if (i === item.r) { o.classList.add('correct'); score++; }
+        else { o.classList.add('wrong'); opts[item.r].classList.add('correct'); }
+        document.getElementById(`sp-${qi}`).classList.add('show');
+      }
+    });
+    if (!answered) {
+      opts[item.r].classList.add('correct');
+      document.getElementById(`sp-${qi}`).classList.add('show');
+    }
+  });
+  const scoreEl = document.getElementById('quiz-score');
+  const pct = Math.round(score/quizData.length*100);
+  const emoji = pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+  scoreEl.textContent = `${emoji} Risultato: ${score}/${quizData.length} (${pct}%)`;
+  scoreEl.style.display = 'block';
+  document.getElementById('btn-verifica').style.display = 'none';
+  document.getElementById('btn-reset').style.display = 'block';
+}
+
+function resetQuiz() {
+  document.querySelectorAll('.opt').forEach(o => {
+    o.classList.remove('correct','wrong');
+    o.style.background = '';
+    o.style.borderColor = '';
+    delete o._sel;
+  });
+  document.querySelectorAll('.spiegazione').forEach(s => s.classList.remove('show'));
+  document.getElementById('quiz-score').style.display = 'none';
+  document.getElementById('btn-verifica').style.display = 'block';
+  document.getElementById('btn-reset').style.display = 'none';
+}
+</script>
+</body>
+</html>

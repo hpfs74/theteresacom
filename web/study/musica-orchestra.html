@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎵 Musica — L'orchestra e gli strumenti</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f0ff; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #4a148c; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e91e63; }
+  h1 { text-align: center; padding: 20px; background: #4a148c; color: white; margin: 0; font-size: 24px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* Mind map */
+  .central-theme { background: linear-gradient(135deg, #4a148c, #e91e63); color: white; border-radius: 20px; padding: 28px; text-align: center; margin-bottom: 28px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .central-theme h2 { font-size: 26px; margin-bottom: 8px; }
+  .central-theme p { font-size: 16px; opacity: 0.9; }
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.orchestra { border-color: #4a148c; }
+  .topic-card.classificazione { border-color: #e91e63; }
+  .topic-card.cordofoni { border-color: #ff9800; }
+  .topic-card.aerofoni { border-color: #2196f3; }
+  .topic-card.percussione { border-color: #f44336; }
+  .topic-card.elettrofoni { border-color: #4caf50; }
+  .topic-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 30px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #faf5ff; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fce4ec; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "🎵 "; }
+  .sub-list { margin-top: 10px; padding-left: 0; list-style: none; }
+  .sub-list li { padding: 8px 12px; background: #faf5ff; border-radius: 8px; margin-bottom: 6px; font-size: 14px; }
+  .sub-list li strong { color: #4a148c; }
+
+  /* Flashcards */
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #4a148c 0%, #e91e63 100%); color: white; }
+  .flashcard-front .question { font-size: 20px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 20px; font-weight: 700; color: #4a148c; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #e91e63; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #e91e63; }
+
+  /* Quiz */
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #e91e63; background: #fce4ec; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e91e63; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .back-link { display: block; text-align: center; padding: 20px; color: #4a148c; text-decoration: none; font-weight: 600; }
+  .back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<h1><span>🎵</span> L'orchestra e le formazioni strumentali</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flashcards</button>
+  <button class="tab" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<!-- MIND MAP -->
+<div id="mappa" class="section active">
+  <div class="central-theme">
+    <h2>🎻 L'orchestra e gli strumenti musicali</h2>
+    <p>Come si classificano e organizzano gli strumenti</p>
+  </div>
+
+  <div class="topic-card orchestra">
+    <div class="topic-title"><span class="emoji">🎼</span> L'orchestra sinfonica</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Cos'è</div>
+        <div class="value">Organico strumentale</div>
+        <div class="detail">L'insieme di più strumenti che suonano insieme</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Dimensione</div>
+        <div class="value">Oltre 100 elementi</div>
+        <div class="detail">L'orchestra sinfonica moderna è la più grande</div>
+      </div>
+      <div class="info-box">
+        <div class="label">4 sezioni</div>
+        <div class="value">Archi, Legni, Ottoni, Percussioni</div>
+        <div class="detail">Gli strumenti sono raggruppati per famiglie</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Extra</div>
+        <div class="value">Arpa, pianoforte, clavicembalo, celesta</div>
+        <div class="detail">Possono essere aggiunti o tolti secondo necessità</div>
+      </div>
+    </div>
+    <div class="fun-fact">L'orchestra può anche usare strumenti non convenzionali ed elettronici per produrre rumori oltre ai suoni!</div>
+  </div>
+
+  <div class="topic-card classificazione">
+    <div class="topic-title"><span class="emoji">📋</span> La classificazione (Sachs-Hornbostel)</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Ideato da</div>
+        <div class="value">Sachs & Hornbostel (1914)</div>
+        <div class="detail">Due musicologi tedeschi</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Criterio</div>
+        <div class="value">Mezzo per produrre il suono</div>
+        <div class="detail">Come lo strumento genera la vibrazione</div>
+      </div>
+    </div>
+    <div class="fun-fact">È il sistema di classificazione più diffuso e funzionale al mondo!</div>
+  </div>
+
+  <div class="topic-card cordofoni">
+    <div class="topic-title"><span class="emoji">🎻</span> Cordofoni</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Come funzionano</div>
+        <div class="value">Vibrazione di corde</div>
+        <div class="detail">Corde di nylon, metallo o minugia (budella animale)</div>
+      </div>
+    </div>
+    <ul class="sub-list">
+      <li><strong>🎻 Corde strofinate:</strong> violino, viola, violoncello, contrabbasso (si usa l'archetto)</li>
+      <li><strong>🎸 Corde pizzicate:</strong> arpa, chitarra, clavicembalo (si pizzicano con le dita o un plettro)</li>
+      <li><strong>🎹 Corde percosse:</strong> pianoforte (i martelletti colpiscono le corde)</li>
+    </ul>
+  </div>
+
+  <div class="topic-card aerofoni">
+    <div class="topic-title"><span class="emoji">🎺</span> Aerofoni</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Come funzionano</div>
+        <div class="value">Vibrazione dell'aria</div>
+        <div class="detail">L'aria vibra dentro un tubo o una canna</div>
+      </div>
+    </div>
+    <ul class="sub-list">
+      <li><strong>🪈 Legni:</strong> flauto, clarinetto, oboe, fagotto (ancia o foro)</li>
+      <li><strong>🎺 Ottoni:</strong> tromba, trombone, corno, tuba (labbra che vibrano nel bocchino)</li>
+    </ul>
+  </div>
+
+  <div class="topic-card percussione">
+    <div class="topic-title"><span class="emoji">🥁</span> Strumenti a percussione</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Come funzionano</div>
+        <div class="value">Si colpiscono, scuotono o raschiano</div>
+        <div class="detail">Il suono nasce dalla percussione del materiale</div>
+      </div>
+    </div>
+    <ul class="sub-list">
+      <li><strong>🎵 A suono determinato:</strong> timpani, xilofono, vibrafono, campane tubolari (producono note precise)</li>
+      <li><strong>🥁 A suono indeterminato:</strong> grancassa, rullante, piatti, triangolo, tamburello (ritmo, senza nota precisa)</li>
+    </ul>
+  </div>
+
+  <div class="topic-card elettrofoni">
+    <div class="topic-title"><span class="emoji">⚡</span> Elettrofoni</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Come funzionano</div>
+        <div class="value">Il suono è generato o modificato elettronicamente</div>
+        <div class="detail">Usano circuiti elettrici e amplificazione</div>
+      </div>
+    </div>
+    <ul class="sub-list">
+      <li><strong>🎸 Chitarra elettrica:</strong> corde + pickup elettromagnetici</li>
+      <li><strong>🎹 Tastiera/sintetizzatore:</strong> genera suoni elettronicamente</li>
+      <li><strong>💻 Theremin:</strong> si suona senza toccarlo!</li>
+    </ul>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="flashcards" class="section">
+  <div class="flashcards">
+    <div class="card-counter" id="cardCounter">1 / 12</div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner" id="flashcardInner">
+        <div class="flashcard-front">
+          <div class="question" id="fcQuestion"></div>
+          <div class="hint">Tocca per girare</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="fcAnswer"></div>
+          <div class="extra" id="fcExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">← Indietro</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Avanti →</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+  <div class="quiz" id="quizContainer"></div>
+</div>
+
+<a class="back-link" href="index.html">← Torna all'indice</a>
+
+<script>
+// ---- TABS ----
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ---- FLASHCARDS ----
+const cards = [
+  { q: "Cos'è un organico strumentale?", a: "Un insieme di strumenti che suonano insieme", e: "Può essere grande (orchestra) o piccolo (duo, trio...)" },
+  { q: "Qual è l'organico strumentale più grande?", a: "L'orchestra sinfonica moderna", e: "Può superare i 100 elementi!" },
+  { q: "Quali sono le 4 sezioni dell'orchestra?", a: "Archi, Legni, Ottoni, Percussioni", e: "Gli strumenti sono raggruppati per famiglie" },
+  { q: "Chi ha ideato il sistema di classificazione degli strumenti?", a: "Sachs e Hornbostel (1914)", e: "Due musicologi tedeschi — il sistema più diffuso al mondo" },
+  { q: "Quali sono le 4 famiglie di strumenti?", a: "Cordofoni, Aerofoni, Percussioni, Elettrofoni", e: "Si classificano in base a come producono il suono" },
+  { q: "Cosa sono i cordofoni?", a: "Strumenti a corde", e: "Il suono nasce dalla vibrazione delle corde (nylon, metallo o minugia)" },
+  { q: "Quali sono i 3 tipi di cordofoni?", a: "Strofinate, pizzicate, percosse", e: "Archetto / dita-plettro / martelletti" },
+  { q: "Fai un esempio di corde strofinate", a: "Violino, viola, violoncello, contrabbasso", e: "Si usa l'archetto per far vibrare le corde" },
+  { q: "Fai un esempio di corde pizzicate", a: "Arpa, chitarra, clavicembalo", e: "Le corde vengono pizzicate con dita o plettro" },
+  { q: "Il pianoforte è a corde…?", a: "Percosse!", e: "I martelletti colpiscono le corde dall'interno" },
+  { q: "Cosa sono gli aerofoni?", a: "Strumenti in cui vibra l'aria", e: "Si dividono in legni (flauto, clarinetto…) e ottoni (tromba, trombone…)" },
+  { q: "Qual è la differenza tra percussioni a suono determinato e indeterminato?", a: "Determinato = note precise, Indeterminato = solo ritmo", e: "Es. xilofono (determinato) vs piatti (indeterminato)" },
+];
+let cardIdx = 0, cardOrder = cards.map((_, i) => i);
+
+function showCard() {
+  const c = cards[cardOrder[cardIdx]];
+  document.getElementById('fcQuestion').textContent = c.q;
+  document.getElementById('fcAnswer').textContent = c.a;
+  document.getElementById('fcExtra').textContent = c.e;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('cardCounter').textContent = (cardIdx + 1) + ' / ' + cards.length;
+  document.getElementById('prevBtn').disabled = cardIdx === 0;
+  document.getElementById('nextBtn').disabled = cardIdx === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (cardIdx < cards.length - 1) { cardIdx++; showCard(); } }
+function prevCard() { if (cardIdx > 0) { cardIdx--; showCard(); } }
+function shuffleCards() { cardOrder.sort(() => Math.random() - 0.5); cardIdx = 0; showCard(); }
+showCard();
+
+// ---- QUIZ ----
+const quizData = [
+  { q: "Quante sezioni ha l'orchestra sinfonica?", o: ["3: archi, legni, ottoni", "4: archi, legni, ottoni, percussioni", "5: archi, legni, ottoni, percussioni, elettronici", "2: archi e fiati"], c: 1 },
+  { q: "Chi ha creato il sistema di classificazione degli strumenti nel 1914?", o: ["Mozart e Beethoven", "Sachs e Hornbostel", "Vivaldi e Bach", "Verdi e Puccini"], c: 1 },
+  { q: "In base a cosa si classificano gli strumenti nel sistema Sachs-Hornbostel?", o: ["La dimensione", "Il prezzo", "Il mezzo usato per produrre il suono", "Il paese d'origine"], c: 2 },
+  { q: "Il violino è uno strumento a corde…", o: ["Pizzicate", "Percosse", "Strofinate", "Soffiate"], c: 2 },
+  { q: "La chitarra è uno strumento a corde…", o: ["Strofinate", "Pizzicate", "Percosse", "Elettroniche"], c: 1 },
+  { q: "Il pianoforte è uno strumento a corde…", o: ["Strofinate", "Pizzicate", "Percosse", "Nessuna di queste"], c: 2 },
+  { q: "Quali di questi sono aerofoni?", o: ["Violino e viola", "Tromba e clarinetto", "Pianoforte e arpa", "Timpani e xilofono"], c: 1 },
+  { q: "Uno xilofono è uno strumento a percussione…", o: ["A suono indeterminato", "A suono determinato", "A corde", "Elettronico"], c: 1 },
+  { q: "Le corde degli strumenti possono essere di…", o: ["Solo metallo", "Nylon, metallo o minugia", "Solo plastica", "Legno e vetro"], c: 1 },
+  { q: "Quanti elementi può avere un'orchestra sinfonica moderna?", o: ["Massimo 20", "Circa 50", "Oltre 100", "Esattamente 75"], c: 2 },
+];
+let score = 0, answered = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '<div class="quiz-score" id="quizScore" style="display:none"></div>';
+  quizData.forEach((q, qi) => {
+    let html = `<div class="quiz-question"><div class="quiz-q">${qi + 1}. ${q.q}</div><div class="quiz-options">`;
+    q.o.forEach((o, oi) => { html += `<button class="quiz-opt" onclick="checkAnswer(this,${qi},${oi})">${o}</button>`; });
+    html += '</div></div>';
+    container.innerHTML += html;
+  });
+  container.innerHTML += '<button class="quiz-restart" onclick="restartQuiz()" style="display:none" id="quizRestart">🔄 Ricomincia</button>';
+}
+function checkAnswer(el, qi, oi) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => { o.classList.add('disabled'); if (i === quizData[qi].c) o.classList.add('correct'); });
+  if (oi !== quizData[qi].c) el.classList.add('wrong'); else score++;
+  answered++;
+  if (answered === quizData.length) {
+    const sc = document.getElementById('quizScore');
+    sc.style.display = 'block';
+    const pct = Math.round(score / quizData.length * 100);
+    const emoji = pct === 100 ? '🌟' : pct >= 70 ? '👏' : pct >= 50 ? '💪' : '📖';
+    sc.textContent = `${emoji} Punteggio: ${score}/${quizData.length} (${pct}%)`;
+    document.getElementById('quizRestart').style.display = 'block';
+  }
+}
+function restartQuiz() { score = 0; answered = 0; buildQuiz(); }
+buildQuiz();
+</script>
+</body>
+</html>

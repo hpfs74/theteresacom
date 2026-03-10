@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📐 Geometria — U3: Angoli e Rette nel Piano</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4ff; color: #333; }
+
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #1a3c6e; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #2980b9; }
+
+  h1 { text-align: center; padding: 20px; background: #1a3c6e; color: white; margin: 0; font-size: 28px; }
+  h1 span { font-size: 36px; }
+
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.angolo { border-color: #2980b9; }
+  .topic-card.tipi { border-color: #e67e22; }
+  .topic-card.relazioni { border-color: #27ae60; }
+  .topic-card.bisettrice { border-color: #8e44ad; }
+  .topic-card.rette { border-color: #e74c3c; }
+  .topic-card.parallele { border-color: #1abc9c; }
+  .topic-card.trasversale { border-color: #f39c12; }
+
+  .topic-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 32px; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #f0f4ff; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+
+  .fun-fact { background: #e8f0ff; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+
+  .angle-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 12px; }
+  .angle-type { text-align: center; background: #f0f4ff; border-radius: 12px; padding: 14px 8px; }
+  .angle-type .deg { font-size: 28px; font-weight: 700; color: #2980b9; }
+  .angle-type .name { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .angle-type .icon { font-size: 32px; }
+
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #2980b9 0%, #1a3c6e 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #1a3c6e; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #2980b9; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #2980b9; }
+
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #2980b9; background: #f0f4ff; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #2980b9; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+
+  .back-btn { display: inline-block; margin: 15px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-weight: 600; }
+  .back-btn:hover { background: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<h1><a href="index.html" class="back-btn">← Indice</a> <span>📐</span> Geometria — U3: Angoli e Rette nel Piano</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flash')">🃏 Flashcard</button>
+  <button class="tab" onclick="showSection('quiz')">❓ Quiz</button>
+</div>
+
+<!-- ========== MAPPA MENTALE ========== -->
+<div id="mappa" class="section active">
+
+  <div class="topic-card angolo">
+    <div class="topic-title"><span class="emoji">📐</span> L'Angolo</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Definizione</div>
+        <div class="value">Parte di piano tra due semirette</div>
+        <div class="detail">Le semirette si chiamano LATI, l'origine comune si chiama VERTICE</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Notazione</div>
+        <div class="value">AV̂B</div>
+        <div class="detail">Il vertice (V) va sempre al centro. Oppure: α, β, γ</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Si misura in</div>
+        <div class="value">Gradi (°)</div>
+        <div class="detail">L'ampiezza indica quanto è "aperto"</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Tipi</div>
+        <div class="value">Convesso e Concavo</div>
+        <div class="detail">Convesso < 180°, Concavo > 180°</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card tipi">
+    <div class="topic-title"><span class="emoji">🔶</span> Tipi di Angolo</div>
+    <div class="angle-types">
+      <div class="angle-type">
+        <div class="icon">∟</div>
+        <div class="deg">0°</div>
+        <div class="name">NULLO</div>
+      </div>
+      <div class="angle-type">
+        <div class="icon">⟨</div>
+        <div class="deg">&lt; 90°</div>
+        <div class="name">ACUTO</div>
+      </div>
+      <div class="angle-type">
+        <div class="icon">∟</div>
+        <div class="deg">90°</div>
+        <div class="name">RETTO</div>
+      </div>
+      <div class="angle-type">
+        <div class="icon">⟩</div>
+        <div class="deg">&gt; 90°</div>
+        <div class="name">OTTUSO</div>
+      </div>
+      <div class="angle-type">
+        <div class="icon">—</div>
+        <div class="deg">180°</div>
+        <div class="name">PIATTO</div>
+      </div>
+      <div class="angle-type">
+        <div class="icon">⭕</div>
+        <div class="deg">360°</div>
+        <div class="name">GIRO</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card relazioni">
+    <div class="topic-title"><span class="emoji">🔗</span> Relazioni tra Angoli</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Consecutivi</div>
+        <div class="value">Vertice e un lato in comune</div>
+        <div class="detail">Stanno da parti opposte del lato comune</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Adiacenti</div>
+        <div class="value">Consecutivi e la somma = 180°</div>
+        <div class="detail">Formano un angolo piatto</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Complementari</div>
+        <div class="value">La somma = 90°</div>
+        <div class="detail">Esempio: 30° + 60° = 90°</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Supplementari</div>
+        <div class="value">La somma = 180°</div>
+        <div class="detail">Esempio: 50° + 130° = 180°</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Esplementari</div>
+        <div class="value">La somma = 360°</div>
+        <div class="detail">Esempio: 100° + 260° = 360°</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Opposti al vertice</div>
+        <div class="value">Formati da 2 rette incidenti</div>
+        <div class="detail">Sono CONGRUENTI: α = β e γ = δ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card bisettrice">
+    <div class="topic-title"><span class="emoji">✂️</span> La Bisettrice</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Definizione</div>
+        <div class="value">Semiretta che divide l'angolo in 2 parti uguali</div>
+        <div class="detail">Parte dal vertice</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Proprietà</div>
+        <div class="value">AV̂B = BV̂C</div>
+        <div class="detail">Le due metà sono congruenti</div>
+      </div>
+    </div>
+    <div class="fun-fact">La bisettrice è come tagliare una torta esattamente a metà!</div>
+  </div>
+
+  <div class="topic-card rette">
+    <div class="topic-title"><span class="emoji">✖️</span> Rette Incidenti e Perpendicolari</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Rette incidenti</div>
+        <div class="value">Un solo punto in comune</div>
+        <div class="detail">Formano 4 angoli nel punto di intersezione</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Perpendicolari</div>
+        <div class="value">Incidenti che formano 4 angoli retti (90°)</div>
+        <div class="detail">Si scrive: r ⊥ s</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Angoli opposti al vertice</div>
+        <div class="value">Sono sempre congruenti</div>
+        <div class="detail">α = γ e β = δ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card parallele">
+    <div class="topic-title"><span class="emoji">═</span> Rette Parallele</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Definizione</div>
+        <div class="value">Non hanno punti in comune</div>
+        <div class="detail">Si scrive: a // b</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Individuano</div>
+        <div class="value">Una direzione</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card trasversale">
+    <div class="topic-title"><span class="emoji">↗️</span> Rette Parallele tagliate da una Trasversale</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Angoli alterni interni ed esterni</div>
+        <div class="value">Sono CONGRUENTI</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Angoli corrispondenti</div>
+        <div class="value">Sono CONGRUENTI</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Angoli coniugati interni ed esterni</div>
+        <div class="value">Sono SUPPLEMENTARI (somma = 180°)</div>
+      </div>
+    </div>
+    <div class="fun-fact">Quando una retta taglia due parallele, si formano 8 angoli con relazioni speciali!</div>
+  </div>
+
+</div>
+
+<!-- ========== FLASHCARD ========== -->
+<div id="flash" class="section">
+  <div class="flashcards">
+    <div class="card-category">Geometria — U3</div>
+    <div class="card-counter" id="cardCounter">1 / 20</div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">Tocca per girare ↻</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">← Prec</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Succ →</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<!-- ========== QUIZ ========== -->
+<div id="quiz" class="section">
+  <div class="quiz" id="quizContainer"></div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// === FLASHCARDS ===
+const cards = [
+  { q: "Cos'è un ANGOLO?", a: "Parte di piano tra due semirette con la stessa origine", e: "Le semirette = LATI, l'origine = VERTICE" },
+  { q: "Come si indica un angolo?", a: "AV̂B (vertice al centro) oppure α, β, γ", e: "La lettera del vertice va sempre nel mezzo" },
+  { q: "In cosa si misura l'ampiezza di un angolo?", a: "In gradi (°)", e: "Indica quanto è 'aperto' l'angolo" },
+  { q: "Quanto misura un angolo RETTO?", a: "90°", e: "Come l'angolo di un quaderno!" },
+  { q: "Quanto misura un angolo PIATTO?", a: "180°", e: "I due lati formano una linea retta" },
+  { q: "Quanto misura un angolo GIRO?", a: "360°", e: "Un giro completo!" },
+  { q: "Com'è un angolo ACUTO?", a: "Minore di 90°", e: "Più 'stretto' di un angolo retto" },
+  { q: "Com'è un angolo OTTUSO?", a: "Maggiore di 90° e minore di 180°", e: "Più 'aperto' di un angolo retto" },
+  { q: "Quando due angoli sono CONSECUTIVI?", a: "Hanno il vertice e un lato in comune", e: "E stanno da parti opposte del lato comune" },
+  { q: "Quando due angoli sono ADIACENTI?", a: "Sono consecutivi e la loro somma è 180°", e: "Formano un angolo piatto" },
+  { q: "Quando due angoli sono COMPLEMENTARI?", a: "La loro somma è 90°", e: "Es: 30° + 60° = 90°" },
+  { q: "Quando due angoli sono SUPPLEMENTARI?", a: "La loro somma è 180°", e: "Es: 50° + 130° = 180°" },
+  { q: "Quando due angoli sono ESPLEMENTARI?", a: "La loro somma è 360°", e: "Es: 100° + 260° = 360°" },
+  { q: "Cos'è la BISETTRICE?", a: "La semiretta che divide l'angolo in 2 parti uguali", e: "Parte dal vertice: AV̂B = BV̂C" },
+  { q: "Cosa sono gli angoli OPPOSTI AL VERTICE?", a: "Angoli formati da 2 rette incidenti, uno di fronte all'altro", e: "Sono sempre CONGRUENTI: α = γ e β = δ" },
+  { q: "Cosa sono le rette INCIDENTI?", a: "Due rette con un solo punto in comune", e: "Il punto si chiama 'punto di intersezione'" },
+  { q: "Quando due rette sono PERPENDICOLARI?", a: "Quando formano 4 angoli retti (90°)", e: "Si scrive: r ⊥ s" },
+  { q: "Quando due rette sono PARALLELE?", a: "Quando non hanno punti in comune", e: "Si scrive: a // b" },
+  { q: "Due parallele tagliate da una trasversale: angoli alterni?", a: "Sono CONGRUENTI", e: "Sia gli interni che gli esterni" },
+  { q: "Due parallele tagliate da una trasversale: angoli coniugati?", a: "Sono SUPPLEMENTARI (somma = 180°)", e: "Sia gli interni che gli esterni" }
+];
+
+let currentCard = 0;
+function showCard() {
+  const c = cards[currentCard];
+  document.getElementById('cardQuestion').textContent = c.q;
+  document.getElementById('cardAnswer').textContent = c.a;
+  document.getElementById('cardExtra').textContent = c.e;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; showCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; showCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  currentCard = 0; showCard();
+}
+showCard();
+
+// === QUIZ ===
+const quizData = [
+  { q: "Un angolo è formato da:", o: ["Due rette parallele", "Due semirette con la stessa origine", "Due segmenti qualsiasi", "Un punto e una retta"], c: 1 },
+  { q: "Come si chiamano le due semirette che formano un angolo?", o: ["Estremi", "Vertici", "Lati", "Origini"], c: 2 },
+  { q: "Un angolo di 90° si chiama:", o: ["Piatto", "Acuto", "Giro", "Retto"], c: 3 },
+  { q: "Un angolo acuto misura:", o: ["Più di 90°", "Esattamente 90°", "Meno di 90°", "180°"], c: 2 },
+  { q: "Un angolo piatto misura:", o: ["90°", "360°", "45°", "180°"], c: 3 },
+  { q: "Due angoli complementari sommano:", o: ["180°", "360°", "90°", "270°"], c: 2 },
+  { q: "Due angoli supplementari sommano:", o: ["90°", "180°", "360°", "45°"], c: 1 },
+  { q: "Due angoli esplementari sommano:", o: ["90°", "180°", "270°", "360°"], c: 3 },
+  { q: "La bisettrice di un angolo:", o: ["Lo triplica", "Lo raddoppia", "Lo divide in 2 parti uguali", "Lo annulla"], c: 2 },
+  { q: "Gli angoli opposti al vertice sono:", o: ["Supplementari", "Congruenti", "Complementari", "Esplementari"], c: 1 },
+  { q: "Due rette perpendicolari formano angoli di:", o: ["45°", "180°", "60°", "90°"], c: 3 },
+  { q: "Come si scrive 'r perpendicolare a s'?", o: ["r // s", "r ⊥ s", "r = s", "r + s"], c: 1 },
+  { q: "Due rette parallele:", o: ["Si incontrano in un punto", "Formano angoli retti", "Non hanno punti in comune", "Sono la stessa retta"], c: 2 },
+  { q: "Se α = 30°, il suo complementare misura:", o: ["150°", "330°", "60°", "90°"], c: 2 },
+  { q: "Se α = 50°, il suo supplementare misura:", o: ["310°", "130°", "40°", "50°"], c: 1 },
+  { q: "Angoli alterni interni (parallele + trasversale) sono:", o: ["Supplementari", "Esplementari", "Congruenti", "Complementari"], c: 2 }
+];
+
+let quizScore = 0;
+let quizCurrent = 0;
+let quizShuffled = [];
+
+function buildQuiz() {
+  quizScore = 0;
+  quizCurrent = 0;
+  quizShuffled = [...quizData].sort(() => Math.random() - 0.5);
+  showQuizQuestion();
+}
+
+function showQuizQuestion() {
+  const container = document.getElementById('quizContainer');
+  if (quizCurrent >= quizShuffled.length) {
+    const pct = Math.round(quizScore / quizShuffled.length * 100);
+    const emoji = pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+    container.innerHTML = `
+      <div class="quiz-score">${emoji} Risultato finale: ${quizScore} / ${quizShuffled.length} (${pct}%)</div>
+      <button class="quiz-restart" onclick="buildQuiz()">🔄 Ricomincia</button>`;
+    return;
+  }
+  const q = quizShuffled[quizCurrent];
+  container.innerHTML = `
+    <div class="quiz-score" id="quizScore">Domanda ${quizCurrent + 1} / ${quizShuffled.length} — Punti: ${quizScore}</div>
+    <div class="quiz-question">
+      <div class="quiz-q">${quizCurrent + 1}. ${q.q}</div>
+      <div class="quiz-options">
+        ${q.o.map((opt, oi) => `<button class="quiz-opt" onclick="checkAnswer(this, ${oi}, ${q.c})">${opt}</button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function checkAnswer(btn, selected, correct) {
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => { o.classList.add('disabled'); if (i === correct) o.classList.add('correct'); });
+  if (selected !== correct) btn.classList.add('wrong'); else quizScore++;
+  quizCurrent++;
+  setTimeout(showQuizQuestion, 1200);
+}
+buildQuiz();
+</script>
+</body>
+</html>

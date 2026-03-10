@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La crisi e la riforma della Chiesa — Teresa</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
+  header { background: linear-gradient(135deg, #6b21a8, #3b82f6); color: white; padding: 20px 24px; }
+  header h1 { font-size: 1.5rem; }
+  header p { opacity: .8; font-size: .9rem; margin-top: 4px; }
+  nav { display: flex; gap: 8px; padding: 16px 24px; background: white; border-bottom: 2px solid #e2e8f0; flex-wrap: wrap; }
+  nav button { padding: 8px 18px; border: 2px solid #6b21a8; border-radius: 20px; background: white; color: #6b21a8; cursor: pointer; font-weight: 600; transition: all .2s; }
+  nav button.active, nav button:hover { background: #6b21a8; color: white; }
+  .tab { display: none; padding: 24px; max-width: 900px; margin: 0 auto; }
+  .tab.active { display: block; }
+
+  /* MAPPA MENTALE */
+  .mappa { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+  .mappa h2 { color: #6b21a8; margin-bottom: 20px; font-size: 1.3rem; }
+  .centro { background: #6b21a8; color: white; border-radius: 12px; padding: 14px 20px; text-align: center; font-weight: 700; font-size: 1.1rem; margin-bottom: 24px; }
+  .rami { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ramo { border-radius: 12px; padding: 16px; border-left: 5px solid; }
+  .ramo.rosso { background: #fff5f5; border-color: #e53e3e; }
+  .ramo.arancio { background: #fffaf0; border-color: #ed8936; }
+  .ramo.verde { background: #f0fff4; border-color: #38a169; }
+  .ramo.blu { background: #ebf8ff; border-color: #3182ce; }
+  .ramo.viola { background: #faf5ff; border-color: #805ad5; }
+  .ramo h3 { font-size: .95rem; margin-bottom: 8px; }
+  .ramo ul { list-style: none; }
+  .ramo ul li { padding: 3px 0; font-size: .88rem; }
+  .ramo ul li::before { content: "→ "; opacity: .6; }
+
+  /* FLASHCARDS */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card { perspective: 600px; height: 160px; cursor: pointer; }
+  .card-inner { position: relative; width: 100%; height: 100%; transition: transform .5s; transform-style: preserve-3d; }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 16px; text-align: center; }
+  .card-front { background: linear-gradient(135deg, #6b21a8, #3b82f6); color: white; font-weight: 600; font-size: .95rem; }
+  .card-back { background: white; border: 2px solid #6b21a8; color: #1a202c; transform: rotateY(180deg); font-size: .88rem; line-height: 1.5; }
+  .cards-hint { text-align: center; color: #718096; margin-bottom: 16px; font-size: .9rem; }
+
+  /* QUIZ */
+  .quiz-q { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+  .quiz-q p { font-weight: 600; margin-bottom: 12px; color: #2d3748; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all .2s; font-size: .9rem; }
+  .opt:hover { border-color: #6b21a8; background: #faf5ff; }
+  .opt.correct { background: #f0fff4; border-color: #38a169; color: #276749; }
+  .opt.wrong { background: #fff5f5; border-color: #e53e3e; color: #c53030; }
+  .spiegazione { margin-top: 10px; padding: 10px; background: #ebf8ff; border-radius: 8px; font-size: .85rem; color: #2c5282; display: none; }
+  .spiegazione.show { display: block; }
+  .quiz-score { text-align: center; padding: 20px; background: white; border-radius: 12px; font-size: 1.2rem; font-weight: 700; color: #6b21a8; display: none; }
+  #btn-verifica, #btn-reset { display: block; margin: 20px auto 0; padding: 12px 32px; background: #6b21a8; color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 1rem; font-weight: 600; }
+  #btn-reset { background: #3b82f6; display: none; }
+  a.back { display: block; text-align: center; padding: 16px; color: #6b21a8; font-weight: 600; text-decoration: none; }
+  a.back:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⛪ La crisi e la riforma della Chiesa</h1>
+  <p>Lezioni 1 e 2 · U10 — Papi e imperatori: la lotta per le investiture</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('mappa', this)">🗺️ Mappa Mentale</button>
+  <button onclick="showTab('flash', this)">🃏 Flashcards</button>
+  <button onclick="showTab('quiz', this)">❓ Quiz</button>
+</nav>
+
+<!-- MAPPA MENTALE -->
+<div id="mappa" class="tab active">
+  <div class="mappa">
+    <h2>🗺️ Mappa Mentale</h2>
+    <div class="centro">LA CRISI E LA RIFORMA DELLA CHIESA — XI SECOLO</div>
+    <div class="rami">
+
+      <div class="ramo rosso">
+        <h3>🔴 Cause Interne della Crisi</h3>
+        <ul>
+          <li><strong>Simonia</strong> — vendita di cariche ecclesiastiche</li>
+          <li><strong>Nepotismo</strong> — favorire amici e parenti</li>
+          <li>Mancato rispetto del <strong>celibato</strong></li>
+          <li>Desiderio di <strong>potere</strong> e ricchezza</li>
+          <li>28 papi in 100 anni (855–955): caos totale</li>
+        </ul>
+      </div>
+
+      <div class="ramo arancio">
+        <h3>🟠 Cause Esterne: gli Imperatori</h3>
+        <ul>
+          <li><strong>Ottone I</strong> nomina vescovi e papa</li>
+          <li>Gli imperatori scelgono <strong>vescovi-conti</strong></li>
+          <li>Vescovi politicamente capaci, non devoti</li>
+          <li>Alla morte del vescovo, il feudo torna all'<strong>imperatore</strong></li>
+          <li>Controllo della nomina dei <strong>papi</strong></li>
+        </ul>
+      </div>
+
+      <div class="ramo verde">
+        <h3>🟢 La Riforma da Cluny (910)</h3>
+        <ul>
+          <li>Monastero di <strong>Cluny</strong> in Borgogna, Francia</li>
+          <li>Maggiore moralità e severità nel clero</li>
+          <li>Autonomia dei monasteri dai signori feudali</li>
+          <li><strong>Camaldolesi</strong> — san Romualdo, Toscana 1012</li>
+          <li><strong>Certosini</strong> — san Bruno, Francia 1084</li>
+          <li><strong>Cistercensi</strong> — Borgogna 1098, san Bernardo</li>
+        </ul>
+      </div>
+
+      <div class="ramo blu">
+        <h3>🔵 Gregorio VII — Dictatus Papae (1075)</h3>
+        <ul>
+          <li>Ex monaco <strong>Ildebrando di Soana</strong></li>
+          <li>Superiorità del <strong>papa</strong> su ogni potere</li>
+          <li>Solo il papa può <strong>consacrare</strong> e <strong>deporre</strong> i sovrani</li>
+          <li>Arma della <strong>scomunica</strong> — escluso dalla comunità dei fedeli</li>
+          <li>Nessun fedele deve obbedire a un re scomunicato</li>
+        </ul>
+      </div>
+
+      <div class="ramo viola" style="grid-column: span 2">
+        <h3>🟣 La Riforma Gregoriana</h3>
+        <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+          <li><strong>Tribunali ecclesiastici</strong> — separati da quelli civili</li>
+          <li><strong>Diritto canonico</strong> — leggi solo per il clero</li>
+          <li>Obbligo del <strong>celibato</strong> — stop ai figli dei preti</li>
+          <li>Autorità assoluta del papa sui <strong>concili</strong></li>
+          <li>Obiettivo: <strong>autonomia</strong> dalla politica</li>
+          <li>Missione: Vangelo, preghiera, aiuto ai poveri</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="flash" class="tab">
+  <p class="cards-hint">👆 Clicca su una carta per vedere la risposta!</p>
+  <div class="cards-grid" id="cards-container"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="tab">
+  <div id="quiz-container"></div>
+  <div class="quiz-score" id="quiz-score"></div>
+  <button id="btn-verifica" onclick="verificaQuiz()">✅ Verifica le risposte</button>
+  <button id="btn-reset" onclick="resetQuiz()">🔄 Riprova</button>
+</div>
+
+<a class="back" href="index.html">← Torna all'indice</a>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// FLASHCARDS
+const flashData = [
+  { d: "Cos'è la SIMONIA?", r: "La compravendita di cariche ecclesiastiche per denaro. Il nome viene da Simon Mago, che cercò di comprare i poteri dello Spirito Santo da san Pietro." },
+  { d: "Cos'è il NEPOTISMO?", r: "La pratica di assegnare beni e proprietà della Chiesa ad amici e parenti, invece di usarle per i fedeli." },
+  { d: "Cosa si diffuse tra il clero medievale attorno all'anno Mille?", r: "Una profonda corruzione: simonia, nepotismo, mancato celibato, sete di potere. Il clero si comportava da uomini di potere, non da guide spirituali." },
+  { d: "Quanti papi ci furono tra l'855 e il 955?", r: "28 papi in soli 100 anni! Alcuni furono deposti, imprigionati o assassinati. Segno del caos totale nella Chiesa." },
+  { d: "Chi erano i VESCOVI-CONTI e perché gli imperatori li volevano?", r: "Vescovi con funzioni politiche e militari. Gli imperatori li preferivano perché non avevano figli legittimi: alla loro morte il feudo tornava all'imperatore." },
+  { d: "Chi era OTTONE I e cosa c'entrava con la Chiesa?", r: "Imperatore germanico che iniziò la pratica di nominare direttamente i vescovi e persino il papa, scegliendo non i più devoti ma i più fedeli a lui." },
+  { d: "Dove e quando nacque il movimento di riforma della Chiesa?", r: "Nel monastero di Cluny, in Borgogna (Francia), fondato nel 910. Da lì si diffuse in tutta Europa l'idea di una Chiesa più pura e autonoma." },
+  { d: "Chi erano i CAMALDOLESI?", r: "Ordine religioso fondato da san Romualdo nel 1012 a Camaldoli, in Toscana." },
+  { d: "Chi erano i CERTOSINI?", r: "Ordine religioso fondato nel 1084 da san Bruno di Colonia nell'eremo di La Chartreuse, vicino a Grenoble (Francia)." },
+  { d: "Chi erano i CISTERCENSI e quale contributo diedero?", r: "Ordine fondato nel 1098 a Cîteaux (Borgogna). San Bernardo li rese famosi. Avviarono bonifiche, dissodamento di terre e aziende agricole." },
+  { d: "Chi era GREGORIO VII?", r: "Papa (ex monaco Ildebrando di Soana) che nel 1075 pubblicò il Dictatus papae, proclamando la superiorità assoluta del papa su ogni potere politico." },
+  { d: "Cos'era il DICTATUS PAPAE (1075)?", r: "Documento di Gregorio VII che dichiarava: solo il papa può consacrare e deporre i sovrani, perché ogni potere sulla terra viene da Dio." },
+  { d: "Cos'è la SCOMUNICA?", r: "Condanna del papa che esclude qualcuno dalla comunità dei fedeli. Anche l'imperatore può essere scomunicato. I sudditi non devono obbedire a un sovrano scomunicato." },
+  { d: "Cosa sono i TRIBUNALI ECCLESIASTICI?", r: "Tribunali creati da Gregorio VII per giudicare i religiosi, separati da quelli civili. Applicano il diritto canonico." },
+  { d: "Cos'è il DIRITTO CANONICO?", r: "Un insieme di leggi valide solo per il clero, diverse da quelle civili. Creato da Gregorio VII come parte della riforma gregoriana." },
+  { d: "Cosa si intende per RIFORMA GREGORIANA?", r: "L'insieme delle riforme di Gregorio VII: tribunali ecclesiastici, diritto canonico, obbligo del celibato, autorità assoluta del papa sui concili. Scopo: liberare la Chiesa dal potere politico." },
+  { d: "Perché Gregorio VII impose il celibato obbligatorio?", r: "Per evitare che i preti usassero le ricchezze della Chiesa per mantenere la propria famiglia, e per dare regole morali al clero." },
+  { d: "Cos'è un CONCILIO?", r: "Un'assemblea di vescovi convocata per prendere decisioni su questioni teologiche o riguardanti la Chiesa. Gregorio VII affermò l'autorità assoluta del papa sui concili." },
+];
+
+const container = document.getElementById('cards-container');
+flashData.forEach((item) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<div class="card-inner">
+    <div class="card-front">${item.d}</div>
+    <div class="card-back">${item.r}</div>
+  </div>`;
+  card.onclick = () => card.classList.toggle('flipped');
+  container.appendChild(card);
+});
+
+// QUIZ
+const quizData = [
+  { q: "Cos'è la simonia?", opts: ["Il rispetto del celibato da parte dei preti", "La compravendita di cariche ecclesiastiche per denaro", "La nomina del papa da parte dell'imperatore", "Un nuovo ordine monastico"], r: 1, sp: "Simonia = comprare/vendere incarichi religiosi. Il nome viene da Simon Mago, che cercò di comprare i poteri apostolici." },
+  { q: "Quanti papi ci furono tra l'855 e il 955?", opts: ["5", "12", "28", "50"], r: 2, sp: "Ben 28 papi in 100 anni! Alcuni deposti, imprigionati o assassinati: segno del caos totale della Chiesa in quel periodo." },
+  { q: "Perché gli imperatori preferivano nominare vescovi-conti?", opts: ["Perché erano più devoti e religiosi", "Perché pagavano più tasse", "Perché senza figli legittimi, il feudo tornava all'imperatore alla loro morte", "Per rispettare la tradizione romana"], r: 2, sp: "Strategia perfetta: il vescovo gestiva il feudo da fedele vassallo, e senza eredi legittimi il feudo tornava all'imperatore alla sua morte." },
+  { q: "Dove fu fondato il monastero di Cluny?", opts: ["In Toscana (Italia)", "In Borgogna (Francia)", "In Sassonia (Germania)", "In Castiglia (Spagna)"], r: 1, sp: "Cluny fu fondato in Borgogna, Francia, nel 910. Divenne il centro della riforma della Chiesa in tutta Europa." },
+  { q: "Chi fondò i Camaldolesi?", opts: ["San Bernardo", "San Bruno di Colonia", "San Romualdo", "Gregorio VII"], r: 2, sp: "San Romualdo fondò i Camaldolesi nel 1012 a Camaldoli, in Toscana." },
+  { q: "Cos'era il Dictatus Papae (1075)?", opts: ["Un libro di preghiere medievali", "Un accordo di pace tra papa e imperatore", "Il documento con cui Gregorio VII proclamava la superiorità del papa su ogni potere politico", "Una raccolta di leggi civili del Medioevo"], r: 2, sp: "Il Dictatus Papae dichiarava che solo il papa può consacrare e deporre i sovrani, perché ogni potere viene da Dio." },
+  { q: "Cosa succede a chi viene scomunicato?", opts: ["Deve pagare una multa alla Chiesa", "Viene escluso dalla comunità dei fedeli e nessuno deve obbedirgli", "Deve partire per la crociata", "Viene imprigionato nel palazzo papale"], r: 1, sp: "La scomunica era l'arma più potente del papa: lo scomunicato perdeva ogni legittimità, perché i fedeli non erano più obbligati a obbedirgli." },
+  { q: "Cosa sono i tribunali ecclesiastici?", opts: ["Tribunali dell'imperatore per giudicare i papi", "Assemblee di vescovi per eleggere il papa", "Tribunali della Chiesa separati da quelli civili, per giudicare i religiosi", "Corti reali che applicano le leggi romane"], r: 2, sp: "Creati da Gregorio VII, i tribunali ecclesiastici giudicavano i religiosi applicando il diritto canonico, indipendentemente dal potere civile." },
+  { q: "Cos'è il diritto canonico?", opts: ["Le antiche leggi dell'Impero Romano", "Un insieme di leggi valide solo per il clero, diverse da quelle civili", "Le regole dei tornei cavallereschi", "Il codice penale del papa"], r: 1, sp: "Il diritto canonico = leggi specifiche per il clero, create da Gregorio VII e applicate dai tribunali ecclesiastici." },
+  { q: "Quale contributo diedero i Cistercensi all'economia medievale?", opts: ["Costruirono le prime università", "Svilupparono rotte commerciali marittime", "Avviarono bonifiche, dissodamento delle terre e aziende agricole efficienti", "Crearono le prime monete d'oro"], r: 2, sp: "I Cistercensi, grazie all'impulso di san Bernardo, trasformarono terre incolte in efficienti aziende agricole, contribuendo molto allo sviluppo economico." },
+  { q: "Qual era l'obiettivo finale della riforma gregoriana?", opts: ["Conquistare nuovi territori per la Chiesa", "Aumentare le tasse dei fedeli", "Liberare la Chiesa dall'influenza del potere politico e farla tornare alla sua missione spirituale", "Costruire nuove cattedrali in tutta Europa"], r: 2, sp: "Gregorio VII voleva che la Chiesa potesse svolgere la sua vera missione: predicare il Vangelo, pregare, aiutare i poveri e i malati, libera dai potenti." },
+  { q: "Perché Gregorio VII impose l'obbligo del celibato?", opts: ["Per punire i preti più ribelli", "Per evitare che le ricchezze della Chiesa finissero alle famiglie dei preti", "Per imitare i monaci buddisti", "Per ridurre il numero di ecclesiastici"], r: 1, sp: "Il celibato obbligatorio serviva per dare regole morali al clero e impedire che le ricchezze della Chiesa venissero usate per mantenere moglie e figli." },
+];
+
+const qContainer = document.getElementById('quiz-container');
+quizData.forEach((item, qi) => {
+  const div = document.createElement('div');
+  div.className = 'quiz-q';
+  let optsHtml = item.opts.map((o, i) =>
+    `<div class="opt" data-qi="${qi}" data-i="${i}" onclick="selectOpt(this)">${String.fromCharCode(65+i)}. ${o}</div>`
+  ).join('');
+  div.innerHTML = `<p>${qi+1}. ${item.q}</p><div class="options">${optsHtml}</div><div class="spiegazione" id="sp-${qi}">${item.sp}</div>`;
+  qContainer.appendChild(div);
+});
+
+function selectOpt(el) {
+  const qi = parseInt(el.dataset.qi);
+  const opts = document.querySelectorAll(`.opt[data-qi="${qi}"]`);
+  if ([...opts].some(o => o.classList.contains('correct') || o.classList.contains('wrong'))) return;
+  opts.forEach(o => { o.style.background = ''; o.style.borderColor = ''; delete o._sel; });
+  el.style.background = '#faf5ff';
+  el.style.borderColor = '#6b21a8';
+  el._sel = true;
+}
+
+function verificaQuiz() {
+  let score = 0;
+  quizData.forEach((item, qi) => {
+    const opts = document.querySelectorAll(`.opt[data-qi="${qi}"]`);
+    let answered = false;
+    opts.forEach(o => {
+      if (o._sel) {
+        answered = true;
+        const i = parseInt(o.dataset.i);
+        o.style.background = ''; o.style.borderColor = '';
+        if (i === item.r) { o.classList.add('correct'); score++; }
+        else { o.classList.add('wrong'); opts[item.r].classList.add('correct'); }
+        document.getElementById(`sp-${qi}`).classList.add('show');
+      }
+    });
+    if (!answered) { opts[item.r].classList.add('correct'); document.getElementById(`sp-${qi}`).classList.add('show'); }
+  });
+  const scoreEl = document.getElementById('quiz-score');
+  const pct = Math.round(score / quizData.length * 100);
+  const emoji = pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+  scoreEl.textContent = `${emoji} Risultato: ${score}/${quizData.length} (${pct}%)`;
+  scoreEl.style.display = 'block';
+  document.getElementById('btn-verifica').style.display = 'none';
+  document.getElementById('btn-reset').style.display = 'block';
+}
+
+function resetQuiz() {
+  document.querySelectorAll('.opt').forEach(o => {
+    o.classList.remove('correct', 'wrong');
+    o.style.background = ''; o.style.borderColor = '';
+    delete o._sel;
+  });
+  document.querySelectorAll('.spiegazione').forEach(s => s.classList.remove('show'));
+  document.getElementById('quiz-score').style.display = 'none';
+  document.getElementById('btn-verifica').style.display = 'block';
+  document.getElementById('btn-reset').style.display = 'none';
+}
+</script>
+</body>
+</html>

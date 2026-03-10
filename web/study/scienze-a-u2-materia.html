@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Scienze — Libro A - U2: La Materia e le sue Proprietà</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff8f0; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #c0392b; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #e74c3c; }
+  h1 { text-align: center; padding: 20px; background: #c0392b; color: white; margin: 0; font-size: 26px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.materia { border-color: #e74c3c; }
+  .topic-card.massa { border-color: #e67e22; }
+  .topic-card.molecole { border-color: #3498db; }
+  .topic-card.stati { border-color: #27ae60; }
+  .topic-card.impenetrabilita { border-color: #8e44ad; }
+  .topic-card.liquidi { border-color: #2980b9; }
+  .topic-card.forze { border-color: #f39c12; }
+  .topic-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 32px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #fff8f0; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fef0e0; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "💡 "; }
+  .vs-table { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .vs-col { background: #fff8f0; border-radius: 10px; padding: 14px; text-align: center; }
+  .vs-col h4 { font-size: 14px; margin-bottom: 8px; }
+  .vs-col .icon { font-size: 32px; margin-bottom: 6px; }
+  .vs-col p { font-size: 13px; color: #555; }
+
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+  .flashcard-front .question { font-size: 22px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 24px; font-weight: 700; color: #c0392b; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #e74c3c; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #e74c3c; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #e74c3c; background: #fff8f0; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #e74c3c; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .back-btn { display: inline-block; margin: 15px; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-weight: 600; }
+  .back-btn:hover { background: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<h1><a href="index.html" class="back-btn">← Indice</a> <span>⚗️</span> Scienze — Libro A - U2: La Materia e le sue Proprietà</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flash')">🃏 Flashcard</button>
+  <button class="tab" onclick="showSection('quiz')">❓ Quiz</button>
+</div>
+
+<div id="mappa" class="section active">
+
+  <div class="topic-card materia">
+    <div class="topic-title"><span class="emoji">🌍</span> La Materia e i Corpi</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Materia</div>
+        <div class="value">Tutto ciò che ci circonda</div>
+        <div class="detail">L'acqua, gli alberi, le case, gli animali, tu stesso</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Corpo</div>
+        <div class="value">Una porzione di materia</div>
+        <div class="detail">Occupa uno spazio e ha un volume</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Volume</div>
+        <div class="value">Lo spazio occupato da un corpo</div>
+        <div class="detail">Unità di misura: metro cubo (m³)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card massa">
+    <div class="topic-title"><span class="emoji">⚖️</span> Massa, Peso, Densità</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Massa</div>
+        <div class="value">Quantità di materia di un corpo</div>
+        <div class="detail">Si misura con la bilancia a due bracci — unità: kg</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Peso</div>
+        <div class="value">Forza con cui la Terra attrae un corpo</div>
+        <div class="detail">Cambia sulla Luna o su altri pianeti! Si misura col dinamometro</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Densità</div>
+        <div class="value">Massa ÷ Volume</div>
+        <div class="detail">Quanta materia c'è in un certo spazio</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Peso specifico</div>
+        <div class="value">Peso ÷ Volume</div>
+        <div class="detail">Il peso dell'unità di volume di un corpo</div>
+      </div>
+    </div>
+    <div class="fun-fact">La massa non cambia mai — pesi 60 kg sia sulla Terra che sulla Luna. Ma il PESO sì: sulla Luna peseresti solo 10 kg!</div>
+  </div>
+
+  <div class="topic-card molecole">
+    <div class="topic-title"><span class="emoji">⚛️</span> Molecole e Atomi</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Sostanza</div>
+        <div class="value">Un tipo di materia con caratteristiche proprie</div>
+        <div class="detail">Es: zucchero, sale, ferro, vetro</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Molecola</div>
+        <div class="value">La parte più piccola di una sostanza</div>
+        <div class="detail">Ha tutte le proprietà della sostanza stessa</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Atomo</div>
+        <div class="value">Le particelle che formano le molecole</div>
+        <div class="detail">Sono ancora più piccoli delle molecole</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Elemento vs Composto</div>
+        <div class="value">Elemento = atomi uguali; Composto = atomi diversi</div>
+        <div class="detail">H₂O è un composto (H + O); O₂ è un elemento (solo O)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card stati">
+    <div class="topic-title"><span class="emoji">🧊</span> I Tre Stati della Materia</div>
+    <div class="vs-table">
+      <div class="vs-col">
+        <div class="icon">🧊</div>
+        <h4>SOLIDO</h4>
+        <p><strong>Volume proprio</strong></p>
+        <p><strong>Forma propria</strong></p>
+        <p style="margin-top:8px; font-size:12px;">Forze di coesione <strong>forti</strong></p>
+        <p style="font-size:12px;">Molecole vicine e ordinate</p>
+      </div>
+      <div class="vs-col">
+        <div class="icon">💧</div>
+        <h4>LIQUIDO</h4>
+        <p><strong>Volume proprio</strong></p>
+        <p>Forma del <strong>recipiente</strong></p>
+        <p style="margin-top:8px; font-size:12px;">Forze di coesione <strong>deboli</strong></p>
+        <p style="font-size:12px;">Molecole vicine ma disordinate</p>
+      </div>
+      <div class="vs-col">
+        <div class="icon">💨</div>
+        <h4>GAS / VAPORE</h4>
+        <p><strong>Né volume né forma</strong> propri</p>
+        <p>Occupa tutto lo spazio</p>
+        <p style="margin-top:8px; font-size:12px;">Forze di coesione <strong>quasi inesistenti</strong></p>
+        <p style="font-size:12px;">Molecole lontane e in movimento</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card impenetrabilita">
+    <div class="topic-title"><span class="emoji">🛡️</span> Proprietà della Materia</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Impenetrabilità</div>
+        <div class="value">Due corpi non possono occupare lo stesso spazio</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Comprimibilità</div>
+        <div class="value">Alcuni corpi possono diminuire il volume</div>
+        <div class="detail">Es: schiacciare un palloncino (l'aria si comprime)</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Elasticità</div>
+        <div class="value">Capacità di riprendere la forma originaria</div>
+        <div class="detail">Es: tirare un elastico e lasciarlo andare</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Diffusione</div>
+        <div class="value">Le sostanze si mescolano spontaneamente</div>
+        <div class="detail">Es: inchiostro che colora tutta l'acqua</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card liquidi">
+    <div class="topic-title"><span class="emoji">💧</span> Proprietà dei Liquidi</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Superficie orizzontale</div>
+        <div class="value">La superficie è sempre piana</div>
+        <div class="detail">Anche se inclini il recipiente</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Tensione superficiale</div>
+        <div class="value">Pellicola sulla superficie dell'acqua</div>
+        <div class="detail">Permette a piccoli insetti di camminarci sopra!</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Capillarità</div>
+        <div class="value">L'acqua sale in tubi molto sottili</div>
+        <div class="detail">Così le piante portano l'acqua dalle radici alle foglie</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Vasi comunicanti</div>
+        <div class="value">Il liquido si dispone allo stesso livello</div>
+        <div class="detail">In tutti i recipienti collegati tra loro</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-card forze">
+    <div class="topic-title"><span class="emoji">🔗</span> Forze di Coesione</div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="label">Cosa sono</div>
+        <div class="value">Forze che tengono unite le molecole</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Nei solidi</div>
+        <div class="value">FORTI → forma e volume propri</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Nei liquidi</div>
+        <div class="value">DEBOLI → volume proprio, forma no</div>
+      </div>
+      <div class="info-box">
+        <div class="label">Nei gas</div>
+        <div class="value">QUASI INESISTENTI → né forma né volume</div>
+      </div>
+    </div>
+    <div class="fun-fact">Più forti sono le forze di coesione, più le molecole stanno vicine e ordinate → solido. Meno forti → liquido → gas!</div>
+  </div>
+
+</div>
+
+<!-- FLASHCARD -->
+<div id="flash" class="section">
+  <div class="flashcards">
+    <div class="card-category">Scienze — Libro A U2</div>
+    <div class="card-counter" id="cardCounter">1 / 24</div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="question" id="cardQuestion"></div>
+          <div class="hint">Tocca per girare ↻</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="answer" id="cardAnswer"></div>
+          <div class="extra" id="cardExtra"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="prevBtn" onclick="prevCard()">← Prec</button>
+      <button class="card-btn next" id="nextBtn" onclick="nextCard()">Succ →</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="section">
+  <div class="quiz" id="quizContainer"></div>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { q: "Cos'è la materia?", a: "Tutto ciò che ci circonda", e: "Acqua, alberi, case, animali, noi stessi" },
+  { q: "Cos'è un corpo?", a: "Una porzione di materia", e: "Occupa uno spazio e ha un volume" },
+  { q: "Come si misura il volume?", a: "In metri cubi (m³)", e: "È lo spazio occupato da un corpo" },
+  { q: "Cos'è la MASSA?", a: "La quantità di materia che forma un corpo", e: "Si misura con la bilancia a due bracci — unità: kg" },
+  { q: "Cos'è il PESO?", a: "La forza con cui la Terra attrae un corpo", e: "Cambia sulla Luna! Si misura col dinamometro" },
+  { q: "Che differenza c'è tra massa e peso?", a: "La massa non cambia mai, il peso cambia col pianeta", e: "Sulla Luna pesi 1/6 di quello che pesi sulla Terra" },
+  { q: "Come si calcola la DENSITÀ?", a: "Massa ÷ Volume", e: "Quanta materia c'è in un certo spazio" },
+  { q: "Come si calcola il PESO SPECIFICO?", a: "Peso ÷ Volume", e: "Il peso dell'unità di volume" },
+  { q: "Cos'è una SOSTANZA?", a: "Un tipo di materia con caratteristiche proprie", e: "Es: zucchero, sale, ferro, vetro" },
+  { q: "Cos'è una MOLECOLA?", a: "La parte più piccola di una sostanza", e: "Ha tutte le proprietà della sostanza stessa" },
+  { q: "Cos'è un ATOMO?", a: "La particella che forma le molecole", e: "Più piccolo della molecola" },
+  { q: "Cos'è un ELEMENTO?", a: "Sostanza formata da atomi tutti uguali", e: "Es: O₂ (solo ossigeno)" },
+  { q: "Cos'è un COMPOSTO?", a: "Sostanza formata da atomi diversi", e: "Es: H₂O (idrogeno + ossigeno)" },
+  { q: "Quali sono i 3 stati della materia?", a: "Solido, Liquido, Gassoso (aeriforme)", e: "" },
+  { q: "Come è un SOLIDO?", a: "Ha volume e forma propri", e: "Forze di coesione forti — molecole vicine e ordinate" },
+  { q: "Come è un LIQUIDO?", a: "Ha volume proprio ma forma del recipiente", e: "Forze di coesione deboli" },
+  { q: "Come è un GAS?", a: "Non ha né volume né forma propri", e: "Forze di coesione quasi inesistenti" },
+  { q: "Cos'è l'IMPENETRABILITÀ?", a: "Due corpi non possono occupare lo stesso spazio", e: "" },
+  { q: "Cos'è la COMPRIMIBILITÀ?", a: "Capacità di diminuire il volume", e: "Es: schiacciare un palloncino" },
+  { q: "Cos'è l'ELASTICITÀ?", a: "Capacità di riprendere la forma originaria", e: "Es: un elastico che si tira e si lascia" },
+  { q: "Cos'è la DIFFUSIONE?", a: "Le sostanze si mescolano spontaneamente", e: "Es: inchiostro che colora tutta l'acqua" },
+  { q: "Cos'è la TENSIONE SUPERFICIALE?", a: "Pellicola sulla superficie dell'acqua", e: "Permette a piccoli insetti di camminarci sopra" },
+  { q: "Cos'è la CAPILLARITÀ?", a: "L'acqua sale in tubi molto sottili", e: "Così le piante portano l'acqua dalle radici alle foglie" },
+  { q: "Cosa sono i VASI COMUNICANTI?", a: "Recipienti collegati dove il liquido si mette allo stesso livello", e: "" }
+];
+
+let currentCard = 0;
+function showCard() {
+  const c = cards[currentCard];
+  document.getElementById('cardQuestion').textContent = c.q;
+  document.getElementById('cardAnswer').textContent = c.a;
+  document.getElementById('cardExtra').textContent = c.e;
+  document.getElementById('cardCounter').textContent = `${currentCard + 1} / ${cards.length}`;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('prevBtn').disabled = currentCard === 0;
+  document.getElementById('nextBtn').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length - 1) { currentCard++; showCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; showCard(); } }
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  currentCard = 0; showCard();
+}
+showCard();
+
+const quizData = [
+  { q: "La materia è:", o: ["Solo gli oggetti solidi", "Solo ciò che si vede", "Tutto ciò che ci circonda", "Solo i liquidi e i gas"], c: 2 },
+  { q: "La massa si misura con:", o: ["Il dinamometro", "Il termometro", "La bilancia a due bracci", "Il metro"], c: 2 },
+  { q: "Il peso di un corpo cambia se:", o: ["Cambi il colore", "Lo porti sulla Luna", "Lo misuri due volte", "Lo riscaldi"], c: 1 },
+  { q: "La densità si calcola:", o: ["Peso × Volume", "Massa ÷ Volume", "Volume ÷ Massa", "Peso + Volume"], c: 1 },
+  { q: "La molecola è:", o: ["Un atomo molto grande", "La parte più piccola di una sostanza con le sue proprietà", "Un tipo di cellula", "Un corpo solido"], c: 1 },
+  { q: "Un ELEMENTO è formato da:", o: ["Atomi tutti diversi", "Atomi tutti uguali", "Solo molecole", "Solo elettroni"], c: 1 },
+  { q: "Un COMPOSTO è formato da:", o: ["Atomi tutti uguali", "Solo ossigeno", "Atomi diversi", "Solo idrogeno"], c: 2 },
+  { q: "In quali stati la materia ha volume proprio?", o: ["In tutti e tre", "Liquido e aeriforme", "Solido e aeriforme", "Solido e liquido"], c: 3 },
+  { q: "In quali stati la materia NON ha forma propria?", o: ["Solido e liquido", "Liquido e aeriforme", "Solo aeriforme", "Solo solido"], c: 1 },
+  { q: "Le forze di coesione sono più forti nei:", o: ["Gas", "Liquidi", "Solidi", "Vapori"], c: 2 },
+  { q: "L'impenetrabilità significa che:", o: ["I corpi si possono attraversare", "Due corpi non possono occupare lo stesso spazio", "I corpi sono trasparenti", "I corpi si comprimono"], c: 1 },
+  { q: "La capillarità è una proprietà dei:", o: ["Solidi", "Gas", "Liquidi", "Vapori"], c: 2 },
+  { q: "La tensione superficiale permette:", o: ["Ai pesci di nuotare", "A piccoli insetti di camminare sull'acqua", "All'acqua di ghiacciare", "Ai gas di espandersi"], c: 1 },
+  { q: "Nei vasi comunicanti il liquido:", o: ["Sale in uno e scende nell'altro", "Si dispone allo stesso livello", "Evapora", "Resta solo in un recipiente"], c: 1 },
+  { q: "Un ago d'acciaio galleggia sull'acqua grazie a:", o: ["La capillarità", "L'impenetrabilità", "La tensione superficiale", "L'elasticità"], c: 2 },
+  { q: "L'unità di misura della massa è:", o: ["Il newton", "Il metro cubo", "Il kilogrammo (kg)", "Il litro"], c: 2 },
+  { q: "La roccia è allo stato:", o: ["Liquido", "Aeriforme", "Solido", "Gassoso"], c: 2 },
+  { q: "Il vapore acqueo è allo stato:", o: ["Solido", "Liquido", "Aeriforme", "Plasma"], c: 2 }
+];
+
+let quizScore = 0, quizCurrent = 0, quizShuffled = [];
+function buildQuiz() {
+  quizScore = 0; quizCurrent = 0;
+  quizShuffled = [...quizData].sort(() => Math.random() - 0.5);
+  showQuizQuestion();
+}
+function showQuizQuestion() {
+  const container = document.getElementById('quizContainer');
+  if (quizCurrent >= quizShuffled.length) {
+    const pct = Math.round(quizScore / quizShuffled.length * 100);
+    const emoji = pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+    container.innerHTML = `<div class="quiz-score">${emoji} Risultato finale: ${quizScore} / ${quizShuffled.length} (${pct}%)</div><button class="quiz-restart" onclick="buildQuiz()">🔄 Ricomincia</button>`;
+    return;
+  }
+  const q = quizShuffled[quizCurrent];
+  container.innerHTML = `<div class="quiz-score">Domanda ${quizCurrent + 1} / ${quizShuffled.length} — Punti: ${quizScore}</div><div class="quiz-question"><div class="quiz-q">${quizCurrent + 1}. ${q.q}</div><div class="quiz-options">${q.o.map((opt, oi) => `<button class="quiz-opt" onclick="checkAnswer(this, ${oi}, ${q.c})">${opt}</button>`).join('')}</div></div>`;
+}
+function checkAnswer(btn, selected, correct) {
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => { o.classList.add('disabled'); if (i === correct) o.classList.add('correct'); });
+  if (selected !== correct) btn.classList.add('wrong'); else quizScore++;
+  quizCurrent++;
+  setTimeout(showQuizQuestion, 1200);
+}
+buildQuiz();
+</script>
+</body>
+</html>

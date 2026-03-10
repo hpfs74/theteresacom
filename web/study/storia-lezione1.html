@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📜 Storia — Lez. 1: L'Europa si avvia alla ripresa</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fdf6ee; color: #333; }
+  .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; background: #6b3a2a; flex-wrap: wrap; }
+  .tab { padding: 12px 24px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+  .tab:hover { background: rgba(255,255,255,0.25); }
+  .tab.active { background: #c0392b; }
+  h1 { text-align: center; padding: 20px; background: #6b3a2a; color: white; margin: 0; font-size: 26px; }
+  h1 span { font-size: 36px; }
+  .section { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+  .topic-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 6px solid; }
+  .topic-card.paure { border-color: #8e44ad; }
+  .topic-card.fame { border-color: #d35400; }
+  .topic-card.incursioni { border-color: #c0392b; }
+  .topic-card.natura { border-color: #2980b9; }
+  .topic-card.malattie { border-color: #27ae60; }
+  .topic-card.morte { border-color: #2c3e50; }
+  .topic-card.superstizioni { border-color: #8e44ad; }
+  .topic-card.ripresa { border-color: #f39c12; }
+  .topic-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .topic-title .emoji { font-size: 30px; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .info-box { background: #fefaf5; border-radius: 10px; padding: 14px; }
+  .info-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 600; }
+  .info-box .value { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .info-box .detail { font-size: 13px; color: #666; margin-top: 2px; }
+  .fun-fact { background: #fef5e7; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 14px; }
+  .fun-fact::before { content: "📜 "; }
+  .central-theme { background: linear-gradient(135deg, #6b3a2a, #c0392b); color: white; border-radius: 20px; padding: 28px; text-align: center; margin-bottom: 28px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .central-theme h2 { font-size: 26px; margin-bottom: 8px; }
+  .central-theme p { font-size: 16px; opacity: 0.9; }
+  .flashcards { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+  .card-counter { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .card-category { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 10px; font-weight: 600; }
+  .flashcard { width: 100%; max-width: 500px; height: 280px; perspective: 1000px; cursor: pointer; margin-bottom: 20px; }
+  .flashcard-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .flashcard-front { background: linear-gradient(135deg, #6b3a2a 0%, #c0392b 100%); color: white; }
+  .flashcard-front .question { font-size: 20px; font-weight: 600; line-height: 1.4; }
+  .flashcard-front .hint { font-size: 13px; opacity: 0.7; margin-top: 15px; }
+  .flashcard-back { background: white; transform: rotateY(180deg); }
+  .flashcard-back .answer { font-size: 22px; font-weight: 700; color: #6b3a2a; }
+  .flashcard-back .extra { font-size: 14px; color: #666; margin-top: 10px; line-height: 1.5; }
+  .card-nav { display: flex; gap: 12px; align-items: center; }
+  .card-btn { padding: 12px 28px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+  .card-btn.prev { background: #ecf0f1; color: #2c3e50; }
+  .card-btn.next { background: #c0392b; color: white; }
+  .card-btn:hover { transform: scale(1.05); }
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .shuffle-btn { margin-top: 15px; padding: 10px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-size: 14px; }
+  .shuffle-btn:hover { border-color: #c0392b; }
+  .quiz { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+  .quiz-question { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  .quiz-q { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt { padding: 14px 18px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; font-size: 15px; transition: all 0.2s; background: white; text-align: left; }
+  .quiz-opt:hover { border-color: #c0392b; background: #fef5f0; }
+  .quiz-opt.correct { border-color: #27ae60; background: #d4edda; }
+  .quiz-opt.wrong { border-color: #e74c3c; background: #f8d7da; }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-score { text-align: center; font-size: 20px; font-weight: 600; padding: 20px; }
+  .quiz-restart { display: block; margin: 15px auto; padding: 12px 30px; border: none; border-radius: 25px; background: #c0392b; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .back-link { display: block; text-align: center; padding: 20px; color: #6b3a2a; text-decoration: none; font-weight: 600; }
+  .back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<h1><span>📜</span> Lezione 1 — L'Europa si avvia alla ripresa</h1>
+<div class="tabs">
+  <button class="tab active" onclick="showSection('mappa')">🗺️ Mappa</button>
+  <button class="tab" onclick="showSection('flashcards')">🃏 Flashcards</button>
+  <button class="tab" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<div id="mappa" class="section active">
+  <div class="central-theme">
+    <h2>📜 L'Europa attorno all'anno Mille</h2>
+    <p>Dalle grandi paure del Medioevo alla ripresa economica e politica</p>
+  </div>
+
+  <div class="topic-card paure">
+    <div class="topic-title"><span class="emoji">😨</span> Il sentimento dominante: la PAURA</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Cos'era</div><div class="value">Sentimento collettivo</div><div class="detail">Condiviso da tutti nella società europea medievale</div></div>
+      <div class="info-box"><div class="label">4 cause principali</div><div class="value">Fame · Incursioni · Natura · Malattie</div><div class="detail">Tutte si riassumono nella paura della morte</div></div>
+    </div>
+    <div class="fun-fact">La paura era così diffusa che influenzava ogni aspetto della vita quotidiana medievale.</div>
+  </div>
+
+  <div class="topic-card fame">
+    <div class="topic-title"><span class="emoji">🌾</span> Fame e Carestie</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Cause</div><div class="value">Cattivo raccolto o guerra</div><div class="detail">Impedivano di coltivare i campi</div></div>
+      <div class="info-box"><div class="label">Caratteristica</div><div class="value">Potevano colpire in ogni momento</div><div class="detail">Non solo da cause naturali, anche da conflitti</div></div>
+    </div>
+  </div>
+
+  <div class="topic-card incursioni">
+    <div class="topic-title"><span class="emoji">⚔️</span> Incursioni e Saccheggi</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Il problema</div><div class="value">Attacchi improvvisi</div><div class="detail">Potevano verificarsi in ogni momento</div></div>
+      <div class="info-box"><div class="label">La gente comune</div><div class="value">Indifesa</div><div class="detail">Poteva solo affidarsi alla protezione di un castello</div></div>
+    </div>
+  </div>
+
+  <div class="topic-card natura">
+    <div class="topic-title"><span class="emoji">🌊</span> Fenomeni Naturali</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Esempi</div><div class="value">Tempeste e alluvioni</div><div class="detail">Rovinavano le coltivazioni</div></div>
+      <div class="info-box"><div class="label">Conseguenze</div><div class="value">Distruggevano case dei contadini</div><div class="detail">Le misere abitazioni non resistevano</div></div>
+    </div>
+  </div>
+
+  <div class="topic-card malattie">
+    <div class="topic-title"><span class="emoji">🤒</span> Malattie</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">La più temuta</div><div class="value">La Peste</div><div class="detail">Malattia contagiosa che causava la morte in breve tempo</div></div>
+      <div class="info-box"><div class="label">Perché così spaventosa</div><div class="value">Nessuna cura</div><div class="detail">Non si conoscevano né la causa né la cura</div></div>
+    </div>
+    <div class="fun-fact">Le malattie suscitavano grande timore perché la medicina medievale era quasi inesistente.</div>
+  </div>
+
+  <div class="topic-card morte">
+    <div class="topic-title"><span class="emoji">💀</span> La Paura della Morte</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Nel Medioevo</div><div class="value">Presenza costante e quotidiana</div><div class="detail">Si poteva morire per le cause più varie</div></div>
+      <div class="info-box"><div class="label">Differenza con oggi</div><div class="value">Molto più intensa e continua</div><div class="detail">Vedere morire persone care era un'esperienza frequente</div></div>
+      <div class="info-box"><div class="label">Paura religiosa</div><div class="value">Punizione divina</div><div class="detail">Paura dei peccati, del diavolo e dell'inferno</div></div>
+    </div>
+  </div>
+
+  <div class="topic-card superstizioni">
+    <div class="topic-title"><span class="emoji">🔮</span> Superstizioni e Credenze</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Si credeva in</div><div class="value">Influsso degli astri</div><div class="detail">Le stelle influenzavano il destino</div></div>
+      <div class="info-box"><div class="label">Figure temute</div><div class="value">Maghi, streghe, demoni</div><div class="detail">Mostri e spiriti maligni</div></div>
+      <div class="info-box"><div class="label">Prima dell'anno 1000</div><div class="value">Giudizio universale</div><div class="detail">Molti credevano nella fine del mondo al termine del primo millennio</div></div>
+    </div>
+    <div class="fun-fact">La miniatura nel libro mostra un diavolo che ruba l'anima di un uomo mentre dorme — tipica paura medievale!</div>
+  </div>
+
+  <div class="topic-card ripresa">
+    <div class="topic-title"><span class="emoji">☀️</span> La Ripresa dopo l'anno Mille</div>
+    <div class="info-grid">
+      <div class="info-box"><div class="label">Cosa successe</div><div class="value">Forte ripresa economica</div><div class="detail">Durò fino a tutto il XIII secolo</div></div>
+      <div class="info-box"><div class="label">La fine del mondo?</div><div class="value">Non si verificò!</div><div class="detail">Al contrario, l'Europa prosperò</div></div>
+      <div class="info-box"><div class="label">Fattore chiave</div><div class="value">Maggiore stabilità politica</div><div class="detail">Sovrani e feudatari resero il potere più solido, meno conflitti</div></div>
+    </div>
+    <div class="fun-fact">L'anno Mille segna uno spartiacque: dalla paura alla ripresa!</div>
+  </div>
+</div>
+
+<div id="flashcards" class="section">
+  <div class="flashcards">
+    <div class="card-category" id="fc-cat"></div>
+    <div class="card-counter" id="fc-counter"></div>
+    <div class="flashcard" id="fc" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front"><div class="question" id="fc-q"></div><div class="hint">👆 Tocca per girare</div></div>
+        <div class="flashcard-back"><div class="answer" id="fc-a"></div><div class="extra" id="fc-extra"></div></div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button class="card-btn prev" id="fc-prev" onclick="prevCard()">⬅️ Indietro</button>
+      <button class="card-btn next" id="fc-next" onclick="nextCard()">Avanti ➡️</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffleCards()">🔀 Mescola</button>
+  </div>
+</div>
+
+<div id="quiz" class="section">
+  <div class="quiz" id="quiz-container"></div>
+</div>
+
+<a href="index.html" class="back-link">← Torna all'indice</a>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const cards = [
+  { cat: "Le paure", q: "Qual era il sentimento che caratterizzava la società europea nel Medioevo?", a: "La PAURA", extra: "Un sentimento collettivo, condiviso da tutti." },
+  { cat: "Le paure", q: "Quali sono i 4 motivi di paura collettiva nel Medioevo?", a: "Fame, Incursioni, Natura, Malattie", extra: "Carestie, saccheggi, tempeste/alluvioni, e soprattutto la peste." },
+  { cat: "Fame e carestie", q: "Cosa causava le carestie nel Medioevo?", a: "Cattivo raccolto o guerre", extra: "Le guerre impedivano di coltivare i campi." },
+  { cat: "Incursioni", q: "Come poteva difendersi la gente comune dalle incursioni?", a: "Non poteva!", extra: "L'unica speranza era affidarsi alla protezione di un castello." },
+  { cat: "Fenomeni naturali", q: "Quali fenomeni naturali spaventavano la gente?", a: "Tempeste e alluvioni", extra: "Rovinavano le coltivazioni e distruggevano le case dei contadini." },
+  { cat: "Malattie", q: "Qual era la malattia più temuta nel Medioevo?", a: "La PESTE", extra: "Contagiosa, causava la morte in breve tempo. Nessuno conosceva la causa né la cura." },
+  { cat: "La morte", q: "Come era la morte nel Medioevo rispetto a oggi?", a: "Presenza costante e quotidiana", extra: "Si poteva morire per le cause più varie. Molto diversa dall'esperienza di oggi." },
+  { cat: "La morte", q: "Cosa portava con sé la paura della morte?", a: "Paura della punizione divina", extra: "Terrore per i peccati commessi, paura del diavolo e dell'inferno." },
+  { cat: "Superstizioni", q: "In cosa credeva la gente per superstizione?", a: "Astri, maghi, streghe, demoni", extra: "Si credeva nell'influsso degli astri, nel potere dei maghi e delle streghe, nell'esistenza di mostri e spiriti maligni." },
+  { cat: "Anno Mille", q: "Cosa si temeva prima dell'anno Mille?", a: "Il giudizio universale e la fine del mondo", extra: "Molti credevano che il mondo sarebbe finito al termine del primo millennio dopo Cristo." },
+  { cat: "La ripresa", q: "La fine del mondo si verificò dopo l'anno Mille?", a: "NO! Ci fu una forte ripresa!", extra: "La vita economica in Europa conobbe una forte ripresa fino al XIII secolo." },
+  { cat: "La ripresa", q: "Cosa favorì la ripresa dopo l'anno Mille?", a: "Maggiore stabilità politica", extra: "Sovrani e feudatari resero il potere più solido, i conflitti diminuirono." },
+  { cat: "Ricordi?", q: "L'anno Mille divide il Medioevo in quali due parti?", a: "Alto Medioevo e Basso Medioevo", extra: "L'anno Mille è usato dagli storici come spartiacque." },
+];
+
+let currentCard = 0;
+function renderCard() {
+  const c = cards[currentCard];
+  document.getElementById('fc-cat').textContent = c.cat;
+  document.getElementById('fc-counter').textContent = (currentCard+1) + ' / ' + cards.length;
+  document.getElementById('fc-q').textContent = c.q;
+  document.getElementById('fc-a').textContent = c.a;
+  document.getElementById('fc-extra').textContent = c.extra;
+  document.getElementById('fc').classList.remove('flipped');
+  document.getElementById('fc-prev').disabled = currentCard === 0;
+  document.getElementById('fc-next').disabled = currentCard === cards.length - 1;
+}
+function flipCard() { document.getElementById('fc').classList.toggle('flipped'); }
+function nextCard() { if (currentCard < cards.length-1) { currentCard++; renderCard(); } }
+function prevCard() { if (currentCard > 0) { currentCard--; renderCard(); } }
+function shuffleCards() {
+  for (let i = cards.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [cards[i],cards[j]] = [cards[j],cards[i]]; }
+  currentCard = 0; renderCard();
+}
+renderCard();
+
+const quizQuestions = [
+  { q: "Qual era il sentimento collettivo che dominava la società europea nel Medioevo?", opts: ["La gioia per i raccolti", "La paura", "L'entusiasmo per le scoperte", "La noia"], correct: 1 },
+  { q: "Quale di questi NON è uno dei 4 motivi di paura collettiva citati nel testo?", opts: ["Fame e carestie", "Terremoti", "Incursioni e saccheggi", "Malattie"], correct: 1 },
+  { q: "Cosa poteva fare la gente comune per difendersi dalle incursioni?", opts: ["Combattere con le proprie armi", "Scappare nei boschi", "Affidarsi alla protezione di un castello", "Costruire mura attorno al villaggio"], correct: 2 },
+  { q: "Qual era la malattia più temuta nel Medioevo?", opts: ["Il vaiolo", "La peste", "La malaria", "L'influenza"], correct: 1 },
+  { q: "Perché la peste faceva così paura?", opts: ["Colpiva solo i nobili", "Non si conoscevano né la causa né la cura", "Durava molti anni", "Si poteva curare solo con erbe rare"], correct: 1 },
+  { q: "Come era la morte nel Medioevo rispetto a oggi?", opts: ["Era molto rara", "Era una presenza costante e quotidiana", "Colpiva solo gli anziani", "Non faceva paura a nessuno"], correct: 1 },
+  { q: "Cosa portava con sé la paura della morte?", opts: ["Voglia di viaggiare", "Paura della punizione divina e del diavolo", "Desiderio di ricchezza", "Fiducia nella scienza"], correct: 1 },
+  { q: "In cosa credevano le persone per superstizione?", opts: ["Nella scienza moderna", "Nell'influsso degli astri, maghi e streghe", "Nei viaggi in mare", "Nella democrazia"], correct: 1 },
+  { q: "Cosa temevano molti prima dell'anno Mille?", opts: ["Una grande carestia", "Il giudizio universale e la fine del mondo", "L'arrivo dei Vichinghi", "Un'eclissi di sole"], correct: 1 },
+  { q: "Cosa successe DAVVERO dopo l'anno Mille?", opts: ["Il mondo finì", "Le paure aumentarono", "Ci fu una forte ripresa economica", "Iniziarono le Crociate contro Roma"], correct: 2 },
+  { q: "Fino a quando durò la ripresa economica dopo l'anno Mille?", opts: ["Fino al XII secolo", "Fino a tutto il XIII secolo", "Solo 50 anni", "Fino al XV secolo"], correct: 1 },
+  { q: "Cosa favorì la ripresa europea?", opts: ["La scoperta dell'America", "Maggiore stabilità politica", "L'invenzione della stampa", "Le nuove religioni"], correct: 1 },
+];
+
+let quizIndex = 0, quizScore = 0, quizAnswered = false;
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  if (quizIndex >= quizQuestions.length) {
+    const emoji = quizScore >= 10 ? '🏆' : quizScore >= 8 ? '👏' : quizScore >= 6 ? '👍' : '🌱';
+    container.innerHTML = '<div class="quiz-score">' + emoji + ' Hai risposto bene a ' + quizScore + ' su ' + quizQuestions.length + '!</div><p style="text-align:center;color:#666;margin-top:8px">' + (quizScore >= 10 ? "Fantastico! Sei pronta per l'interrogazione! 🌟" : quizScore >= 8 ? "Bravissima! Ottima preparazione!" : quizScore >= 6 ? "Bene! Ripassiamo qualche flash card?" : "Dai, ripassiamo le flash cards e riproviamo! 💪") + '</p><button class="quiz-restart" onclick="restartQuiz()">🔄 Ricomincia</button>';
+    return;
+  }
+  const qq = quizQuestions[quizIndex]; quizAnswered = false;
+  let html = '<div class="card-counter" style="text-align:center;margin-bottom:10px">Domanda ' + (quizIndex+1) + ' / ' + quizQuestions.length + ' — Punteggio: ' + quizScore + '</div>';
+  html += '<div class="quiz-question"><div class="quiz-q">' + qq.q + '</div><div class="quiz-options">';
+  for (let i = 0; i < qq.opts.length; i++) html += '<button class="quiz-opt" onclick="answerQuiz(' + i + ')">' + qq.opts[i] + '</button>';
+  html += '</div></div>'; container.innerHTML = html;
+}
+function answerQuiz(idx) {
+  if (quizAnswered) return; quizAnswered = true;
+  const qq = quizQuestions[quizIndex]; const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(function(b,i) { b.classList.add('disabled'); if (i===qq.correct) b.classList.add('correct'); });
+  if (idx !== qq.correct) btns[idx].classList.add('wrong');
+  if (idx === qq.correct) quizScore++;
+  setTimeout(function() { quizIndex++; renderQuiz(); }, 1200);
+}
+function restartQuiz() { quizIndex=0; quizScore=0; quizQuestions.sort(function(){return Math.random()-0.5;}); renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>
